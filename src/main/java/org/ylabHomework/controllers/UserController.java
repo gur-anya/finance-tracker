@@ -5,9 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
+import org.ylabHomework.serviceClasses.Constants;
 import org.ylabHomework.services.TransactionService;
 import org.ylabHomework.services.UserService;
-import org.ylabHomework.serviceClasses.Constants;
 
 import java.util.List;
 import java.util.Scanner;

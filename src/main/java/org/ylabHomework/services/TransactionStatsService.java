@@ -124,7 +124,7 @@ public class TransactionStatsService {
      */
     public FinancialReport generateGeneralReport(LocalDateTime startTime, LocalDateTime endTime) {
         List<Transaction> transactions = getTransactionsForPeriod(startTime, endTime);
-        if (transactions != null) {
+        if (!transactions.isEmpty()) {
             double[] basicStats = getBasicStats(transactions);
             assert basicStats != null;
             double totalIncome = basicStats[0];
@@ -187,7 +187,7 @@ public class TransactionStatsService {
     private double[] calculateGoalData() {
         List<Transaction> goalTransactions = repository.getTransactionsByCategory("цель");
 
-        if (goalTransactions != null) {
+        if (!goalTransactions.isEmpty()) {
             double[] basicStats = getBasicStats(goalTransactions);
 
             assert basicStats != null;

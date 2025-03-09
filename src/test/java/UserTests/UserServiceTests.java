@@ -12,6 +12,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+
 @DisplayName("Тесты для сервиса, работающего с пользователем")
 public class UserServiceTests {
     private UserRepository repo;
