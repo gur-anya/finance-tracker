@@ -5,7 +5,16 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-
+/**
+ * Класс, описывающий модель для транзакций.
+ *  * <p>
+ *  * Содержит тип, сумму, категорию транзакции, дату создания и описание.
+ *  * </p>
+ *
+ *   @author Gureva Anna
+ *   @version 1.0
+ *   @since 07.03.2025
+ */
 @Getter
 @Setter
 public class Transaction {

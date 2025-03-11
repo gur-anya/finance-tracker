@@ -2,6 +2,7 @@ package org.ylabHomework.services;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.java.Log;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.UserRepository;
 
@@ -23,6 +24,8 @@ import java.util.regex.Pattern;
 public class UserService {
     private final UserRepository repository;
     private final byte[] salt = generateSalt();
+
+
 
     /**
      * Конструктор для создания сервиса с заданным репозиторием для работы с пользователями.
@@ -54,15 +57,12 @@ public class UserService {
      * @return массив, где первый элемент - результат входа true/false,
      * а второй элемент - сообщение о причине неудачи при входе или имя пользователя
      */
-    public Object[] loginUser(String email, String password) {
+    public LoginResult loginUser(String email, String password) {
         User foundUser = repository.readUserByEmail(email);
-        if (foundUser == null) {
-            return new Object[]{false, "unknownEmail"};
-        }
         if (comparePass(password, foundUser.getEmail())) {
-            return new Object[]{true, foundUser.getName()};
+            return new LoginResult(true, foundUser);
         } else {
-            return new Object[]{false, "wrongPass"};
+            return new LoginResult(false, null);
         }
     }
 
@@ -236,4 +236,11 @@ public class UserService {
         return new ArrayList<>(repository.getUsers());
     }
 
+    /**
+     * Результат логина.
+     *
+     * @param success успешность логина
+     * @param user пользователь, который залогинился
+     */
+    public record LoginResult (boolean success, User user) {}
 }

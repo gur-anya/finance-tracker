@@ -1,15 +1,8 @@
-/**
- * Контроллер для управления транзакциями пользователя через консольный интерфейс.
- * <p>
- * * @author Gureva Anna
- * * @version 1.0
- * * @since 09.03.2025
- * </p>
- */
 package org.ylabHomework.controllers;
 
 import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
+import org.ylabHomework.serviceClasses.Constants;
 import org.ylabHomework.services.TransactionService;
 import org.ylabHomework.services.TransactionStatsService;
 
@@ -19,15 +12,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
-
+/**
+ * Контроллер для управления транзакциями пользователя через консольный интерфейс.
+ * <p>
+ * * @author Gureva Anna
+ * * @version 1.0
+ * * @since 09.03.2025
+ * </p>
+ */
 public class TransactionController {
 
     /**
      * Конструктор для создания контроллера с заданными сервисами и пользователем.
      *
-     * @param service       сервис для работы с транзакциями
-     * @param controller    контроллер пользователя
-     * @param user          пользователь, с транзакциями которого ведётся работа
+     * @param service    сервис для работы с транзакциями
+     * @param controller контроллер пользователя
+     * @param user       пользователь, с транзакциями которого ведётся работа
      */
     public TransactionController(TransactionService service, UserController controller, User user) {
         this.service = service;
@@ -44,53 +44,122 @@ public class TransactionController {
 
     /**
      * Отображает главное меню управления транзакциями и обрабатывает выбор пользователя.
+     * <p>Позволяет перейти к управлению транзакциями, статистике, вернуться в меню пользователя или выйти из программы.</p>
      */
     public void showMainMenu() {
+        mainLoop:
         while (true) {
-            System.out.println("""
-                    Выберите действие:
-                    1. Просмотреть транзакции
-                    2. Добавить транзакцию
-                    3. Редактировать транзакции
-                    4. Удалить транзакцию
-                    5. Управлять бюджетом на месяц
-                    6. Управлять целью
-                    7. Перейти в меню анализа
-                    8. Назад
-                    9. Выход из программы
-                    """);
+            System.out.println(Constants.TRANSACTIONS_MAIN_PAGE);
             String input = scanner.nextLine();
 
             switch (input) {
-                case "1" -> showTransactions();
-                case "2" -> createTransaction();
-                case "3" -> showSettings();
-                case "4" -> deleteTransaction();
-                case "5" -> manageMonthlyBudget();
-                case "6" -> manageGoal();
-                case "7" -> doAnalysis();
-                case "8" -> userController.showMainPageUser();
-                case "9" -> System.exit(0);
+                case "1" -> {
+                    showTransactionManagement();
+                    break mainLoop;
+                }
+                case "2" -> {
+                    showStatsAndAnalysisMenu();
+                    break mainLoop;
+                }
+                case "3" -> {
+                    userController.showMainPageUser();
+                    break mainLoop;
+                }
+                case "4" -> {
+                    exitApp();
+                    break mainLoop;
+                }
+                default -> System.out.println("Пожалуйста, введите 1, 2, 3 или 4.");
+            }
+        }
+    }
+
+    /**
+     * Отображает меню настроек для управления транзакциями.
+     * <p>Предоставляет пользователю возможность просмотра, добавления, редактирования и удаления транзакций.</p>
+     */
+    public void showTransactionManagement() {
+        mainLoop:
+        while (true) {
+            System.out.println(Constants.TRANSACTIONS_MANAGEMENT_MENU);
+            String input = scanner.nextLine();
+            switch (input) {
+                case "1" -> {
+                    showTransactionsFilter();
+                    break mainLoop;
+                }
+                case "2" -> {
+                    createTransaction();
+                    break mainLoop;
+                }
+                case "3" -> {
+                    updateTransaction();
+                    break mainLoop;
+                }
+                case "4" -> {
+                    deleteTransaction();
+                    break mainLoop;
+                }
+                case "5" -> {
+                    showMainMenu();
+                    break mainLoop;
+                }
                 default -> System.out.println("Пожалуйста, введите 1, 2, 3, 4 или 5.");
             }
         }
     }
 
     /**
-     * Отображает меню фильтрации транзакций и выполняет выбранный фильтр.
+     * Отображает меню статистики и анализа финансов.
+     * <p>Позволяет управлять бюджетом, целями, просматривать баланс, сводку за период, анализ по категориям и общий отчет.</p>
      */
-    public void showTransactions() {
+    public void showStatsAndAnalysisMenu() {
         mainLoop:
         while (true) {
-            System.out.println("""
-                    Выберите фильтр для транзакций:
-                    1. До даты
-                    2. После даты
-                    3. По категории
-                    4. По типу (доход/расход)
-                    5. Все (без фильтра)
-                    6. Назад
-                    """);
+            System.out.println(Constants.STATS_AND_ANALYSIS_MENU);
+            String input = scanner.nextLine();
+            switch (input) {
+                case "1" -> {
+                    manageMonthlyBudget();
+                    break mainLoop;
+                }
+                case "2" -> {
+                    manageGoal();
+                    break mainLoop;
+                }
+                case "3" -> {
+                    showBalance();
+                    break mainLoop;
+                }
+                case "4" -> {
+                    getSummary();
+                    break mainLoop;
+                }
+                case "5" -> {
+                    showCategoryAnalysis();
+                    break mainLoop;
+                }
+                case "6" -> {
+                    showGeneralReport();
+                    break mainLoop;
+                }
+                case "7" -> {
+                    showMainMenu();
+                    break mainLoop;
+                }
+                default -> System.out.println("Пожалуйста, введите 1, 2, 3, 4, 5, 6 или 7.");
+            }
+        }
+    }
+
+    /**
+     * Отображает меню фильтрации транзакций и выполняет выбранный фильтр.
+     * <p>Предоставляет фильтры по дате, категории, типу транзакции или вывод всех транзакций.</p>
+     */
+    public void showTransactionsFilter() {
+        mainLoop:
+        while (true) {
+            System.out.println(Constants.FILTER_CHOOSING_MENU);
             String show = scanner.nextLine();
             switch (show) {
                 case "1" -> {
@@ -119,7 +188,7 @@ public class TransactionController {
                     showTransactionList(transactions);
                 }
                 case "6" -> {
-                    showMainMenu();
+                    showTransactionManagement();
                     break mainLoop;
                 }
                 default -> System.out.println("Пожалуйста, введите 1, 2, 3, 4, 5 или 6.");
@@ -128,47 +197,10 @@ public class TransactionController {
     }
 
     /**
-     * Отображает меню настроек для управления транзакциями.
-     */
-    public void showSettings() {
-        System.out.println("""
-                Выберите действие:
-                1. Добавить новую транзакцию
-                2. Отредактировать существующую
-                3. Удалить транзакцию
-                4. В главное меню
-                """);
-
-        mainLoop:
-        while (true) {
-            String input = scanner.nextLine();
-            switch (input) {
-                case "1" -> {
-                    createTransaction();
-                    break mainLoop;
-                }
-                case "2" -> {
-                    updateTransaction();
-                    break mainLoop;
-                }
-                case "3" -> {
-                    deleteTransaction();
-                    break mainLoop;
-                }
-                case "4" -> {
-                    showMainMenu();
-                    break mainLoop;
-                }
-                default -> System.out.println("Пожалуйста, введите 1, 2, 3 или 4.");
-            }
-        }
-    }
-
-    /**
      * Создаёт новую транзакцию на основе введённых пользователем данных.
+     * <p>Запрашивает тип, сумму, категорию и описание, затем сохраняет транзакцию через сервис.</p>
      */
     public void createTransaction() {
-        System.out.println("Введите тип транзакции (доход/расход):");
         Transaction.TransactionTYPE type = getTransactionTypeInput();
 
         System.out.println("Введите сумму:");
@@ -184,12 +216,10 @@ public class TransactionController {
         }
 
         System.out.println(service.createTransaction(type, sum, category, description));
-        if (type == Transaction.TransactionTYPE.EXPENSE && user.getMonthlyBudget() != 0) {
-            double monthlyBudget = statsService.checkMonthlyBudgetLimit();
-            if (monthlyBudget < 0) {
-                notifyAboutMonthlyLimit(Math.abs(monthlyBudget));
-            }
+        if (type == Transaction.TransactionTYPE.EXPENSE && service.getMonthlyBudget() != 0) {
+            checkExpenseLimitReminder();
         }
+        showTransactionManagement();
     }
 
     /**
@@ -201,7 +231,7 @@ public class TransactionController {
         String category;
         while (true) {
             category = scanner.nextLine();
-            if (Objects.equals(category.toLowerCase().trim(), "цель") && user.getGoal() == 0) {
+            if (Objects.equals(category.toLowerCase().trim(), "цель") && service.getGoal() == 0) {
                 System.out.println("Вы еще не установили цель! Установите цель в меню управления.");
                 System.out.println("Хотите прервать создание транзакции и создать цель прямо сейчас? да/нет");
                 String input = scanner.nextLine();
@@ -227,45 +257,32 @@ public class TransactionController {
 
     /**
      * Обновляет существующую транзакцию на основе выбора пользователя.
+     * <p>Позволяет изменить тип, сумму, категорию или описание выбранной транзакции.</p>
      */
     public void updateTransaction() {
         Transaction transaction = chooseListOfTransactions();
         if (transaction != null) {
-            System.out.println("""
-                    Что хотите отредактировать:
-                    1. Тип
-                    2. Сумму
-                    3. Категорию
-                    4. Описание
-                    5. В главное меню
-                    """);
-
             mainLoop:
             while (true) {
+                System.out.println(Constants.UPDATE_TRANSACTIONS_MENU);
                 String input = scanner.nextLine();
                 switch (input) {
                     case "1" -> {
                         Transaction.TransactionTYPE newType = getTransactionTypeInput();
-                        if (newType == Transaction.TransactionTYPE.EXPENSE && user.getMonthlyBudget() != 0) {
-                            double monthlyBudget = statsService.checkMonthlyBudgetLimit();
-                            if (monthlyBudget < 0) {
-                                notifyAboutMonthlyLimit(Math.abs(monthlyBudget));
-                            }
+                        if (newType == Transaction.TransactionTYPE.EXPENSE && service.getMonthlyBudget() != 0) {
+                           checkMonthlyBudgetLimit();
                         }
                         System.out.println(service.updateTransactionType(newType, transaction));
-                        break mainLoop;
                     }
                     case "2" -> {
                         System.out.println("Введите новую сумму:");
                         double newSum = getDoubleInput();
                         System.out.println(service.updateTransactionSum(newSum, transaction));
-                        break mainLoop;
                     }
                     case "3" -> {
                         System.out.println("Введите новую категорию:");
                         String newCategory = scanner.nextLine();
                         System.out.println(service.updateTransactionCategory(newCategory, transaction));
-                        break mainLoop;
                     }
                     case "4" -> {
                         System.out.println("Введите новое описание:");
@@ -274,10 +291,9 @@ public class TransactionController {
                             newDescription = "-";
                         }
                         System.out.println(service.updateTransactionDescription(newDescription, transaction));
-                        break mainLoop;
                     }
                     case "5" -> {
-                        showSettings();
+                        showTransactionManagement();
                         break mainLoop;
                     }
                     default -> System.out.println("Пожалуйста, введите 1, 2, 3, 4 или 5.");
@@ -288,6 +304,7 @@ public class TransactionController {
 
     /**
      * Удаляет существующую транзакцию по выбору пользователя.
+     * <p>Запрашивает подтверждение перед удалением выбранной транзакции.</p>
      */
     public void deleteTransaction() {
         Transaction transaction = chooseListOfTransactions();
@@ -299,10 +316,11 @@ public class TransactionController {
                 switch (input.toLowerCase()) {
                     case "да" -> {
                         System.out.println(service.deleteTransaction(transaction));
+                        showTransactionManagement();
                         break mainLoop;
                     }
                     case "нет" -> {
-                        showSettings();
+                        showTransactionManagement();
                         break mainLoop;
                     }
                     default -> System.out.println("Пожалуйста, введите да или нет.");
@@ -313,9 +331,10 @@ public class TransactionController {
 
     /**
      * Управляет месячным бюджетом пользователя.
+     * <p>Позволяет изменить бюджет или проверить остаток.</p>
      */
     public void manageMonthlyBudget() {
-        double monthlyBudget = user.getMonthlyBudget();
+        double monthlyBudget = service.getMonthlyBudget();
         mainLoop:
         while (true) {
             if (monthlyBudget != 0) {
@@ -323,12 +342,7 @@ public class TransactionController {
             } else {
                 System.out.println("Вы пока не установили месячный бюджет. Сделайте это прямо сейчас!");
             }
-            System.out.println("""
-                    Выберите действие:
-                    1. Изменить бюджет на месяц
-                    2. Проверить остаток на месяц
-                    3. В меню управления бюджетом
-                    """);
+            System.out.println(Constants.MONTHLY_BUDGET_MENU);
             String input = scanner.nextLine();
 
             switch (input) {
@@ -341,7 +355,7 @@ public class TransactionController {
                     break mainLoop;
                 }
                 case "3" -> {
-                    showMainMenu();
+                    showStatsAndAnalysisMenu();
                     break mainLoop;
                 }
                 default -> System.out.println("Пожалуйста, введите 1, 2 или 3.");
@@ -351,6 +365,7 @@ public class TransactionController {
 
     /**
      * Обновляет месячный бюджет пользователя.
+     * <p>Запрашивает новый бюджет и сохраняет его для пользователя.</p>
      */
     public void updateMonthlyBudget() {
         while (true) {
@@ -358,7 +373,7 @@ public class TransactionController {
             String input = scanner.nextLine();
             if (isDoublePos(input)) {
                 double newBudget = Double.parseDouble(input);
-                user.setMonthlyBudget(newBudget);
+                service.setMonthlyBudget(newBudget);
                 System.out.println("Новый месячный бюджет " + String.format("%.2f", newBudget) + " руб. успешно установлен!");
                 break;
             } else {
@@ -370,6 +385,7 @@ public class TransactionController {
 
     /**
      * Проверяет остаток месячного бюджета.
+     * <p>Выводит информацию об остатке или превышении бюджета.</p>
      */
     public void checkMonthlyBudgetLimit() {
         double balance = statsService.checkMonthlyBudgetLimit();
@@ -389,14 +405,41 @@ public class TransactionController {
      * @param overgo сумма превышения
      */
     public void notifyAboutMonthlyLimit(double overgo) {
-        System.out.println("Внимание! Вы превысили установленный месячный бюджет на " + String.format("%.2f", overgo) + " руб.");
+        String message = "Внимание! Вы превысили установленный месячный бюджет на " + String.format("%.2f", overgo) + " руб." + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+        sendEmailNotification(message);
+    }
+
+    /**
+     * Проверяет, достиг ли пользователь лимита расходов, и отправляет напоминание.
+     */
+    public void checkExpenseLimitReminder() {
+        if (service.getMonthlyBudget() == 0) {
+            return;
+        }
+        double remainingBudget = statsService.checkMonthlyBudgetLimit();
+        if (remainingBudget <= 0) {
+            notifyAboutMonthlyLimit(Math.abs(remainingBudget));
+        } else if (remainingBudget <= user.getMonthlyBudget() * 0.1) {
+            System.out.println("Осторожно! Остаток бюджета составляет " + String.format("%.2f", remainingBudget) +
+                    " руб. (менее 10% от лимита).");
+        }
+    }
+
+    /**
+     * Имитирует отправку email-уведомления пользователю через консоль.
+     *
+     * @param message сообщение для отправки
+     */
+    public void sendEmailNotification(String message) {
+        System.out.println("Отправлено письмо на почту " + user.getEmail() + " с содержанием: " + message);
     }
 
     /**
      * Управляет финансовой целью пользователя.
+     * <p>Позволяет изменить цель или проверить прогресс по ней.</p>
      */
     public void manageGoal() {
-        double goal = user.getGoal();
+        double goal = service.getGoal();
         mainLoop:
         while (true) {
             if (goal != 0) {
@@ -404,12 +447,7 @@ public class TransactionController {
             } else {
                 System.out.println("Вы пока не установили цель. Сделайте это прямо сейчас!");
             }
-            System.out.println("""
-                    Выберите действие:
-                    1. Изменить цель
-                    2. Проверить прогресс по цели
-                    3. В меню управления целью
-                    """);
+            System.out.println(Constants.GOAL_MENU);
             String input = scanner.nextLine();
 
             switch (input) {
@@ -422,7 +460,7 @@ public class TransactionController {
                     break mainLoop;
                 }
                 case "3" -> {
-                    showMainMenu();
+                    showStatsAndAnalysisMenu();
                     break mainLoop;
                 }
                 default -> System.out.println("Пожалуйста, введите 1, 2 или 3.");
@@ -432,6 +470,7 @@ public class TransactionController {
 
     /**
      * Обновляет финансовую цель пользователя.
+     * <p>Запрашивает новую цель и сохраняет её для пользователя.</p>
      */
     public void updateGoal() {
         while (true) {
@@ -439,18 +478,19 @@ public class TransactionController {
             String input = scanner.nextLine();
             if (isDoublePos(input)) {
                 double newGoal = Double.parseDouble(input);
-                user.setGoal(newGoal);
+                service.setGoal(newGoal);
                 System.out.println("Новая цель " + String.format("%.2f", newGoal) + " руб. успешно установлена! Управляйте сбережениями по цели, добавляя транзакции в категорию \"Цель\".");
                 break;
             } else {
                 System.out.println("Некорректный ввод! Введите положительное число.");
             }
         }
-        manageMonthlyBudget();
+        manageGoal();
     }
 
     /**
      * Проверяет прогресс по финансовой цели пользователя.
+     * <p>Выводит информацию о накоплениях относительно установленной цели.</p>
      */
     public void getGoalProgress() {
         double leftToGoal = statsService.checkGoalProgress();
@@ -465,49 +505,8 @@ public class TransactionController {
     }
 
     /**
-     * Отображает меню анализа финансовых данных и выполняет выбранное действие.
-     */
-    public void doAnalysis() {
-        mainLoop:
-        while (true) {
-            System.out.println("""
-                    Выберите действие:
-                    1. Вывести текущий баланс с учетом всех транзакций
-                    2. Рассчитать суммарный доход и расход за период
-                    3. Проанализировать общие расходы по категориям
-                    4. Сформировать отчет по финансовому состоянию
-                    5. Назад
-                    """);
-            String input = scanner.nextLine();
-
-            switch (input) {
-                case "1" -> {
-                    showBalance();
-                    break mainLoop;
-                }
-                case "2" -> {
-                    getSummary();
-                    break mainLoop;
-                }
-                case "3" -> {
-                    showCategoryAnalysis();
-                    break mainLoop;
-                }
-                case "4" -> {
-                    showGeneralReport();
-                    break mainLoop;
-                }
-                case "5" -> {
-                    showMainMenu();
-                    break mainLoop;
-                }
-                default -> System.out.println("Пожалуйста, введите 1, 2, 3, 4 или 5.");
-            }
-        }
-    }
-
-    /**
      * Выводит анализ транзакций по категориям в виде таблицы.
+     * <p>Показывает суммарные расходы по каждой категории.</p>
      */
     public void showCategoryAnalysis() {
         Map<String, Double> categoryAnalysis = statsService.analyzeExpenseByCategories();
@@ -522,14 +521,17 @@ public class TransactionController {
         System.out.println("-".repeat(35));
 
         for (Map.Entry<String, Double> entry : categoryAnalysis.entrySet()) {
-            String category = entry.getKey();
+            String category = entry.getKey().substring(0, 1).toUpperCase() + entry.getKey().substring(1);
             double expense = Math.abs(entry.getValue());
             System.out.printf("%-20s %15.2f руб.%n", category, expense);
         }
+
+        showStatsAndAnalysisMenu();
     }
 
     /**
      * Отображает меню для формирования финансового отчёта.
+     * <p>Запрашивает временные рамки и выводит детализированный отчет.</p>
      */
     public void showGeneralReport() {
         LocalDateTime startTime, endTime;
@@ -553,8 +555,8 @@ public class TransactionController {
     /**
      * Выводит финансовый отчёт за указанный период.
      *
-     * @param startTimestamp начальная дата периода
-     * @param endTimestamp   конечная дата периода
+     * @param startTimestamp начальная дата периода (может быть null)
+     * @param endTimestamp   конечная дата периода (может быть null)
      */
     public void printGeneralReport(LocalDateTime startTimestamp, LocalDateTime endTimestamp) {
         TransactionStatsService.FinancialReport report = statsService.generateGeneralReport(startTimestamp, endTimestamp);
@@ -579,9 +581,9 @@ public class TransactionController {
         System.out.printf("%-20s %-15s %-15s %-15s%n", "Категория", "Доход, руб.", "Расход, руб.", "Баланс, руб.");
         System.out.println("-".repeat(65));
         for (Map.Entry<String, double[]> entry : report.categoryReport().entrySet()) {
-            String category = entry.getKey();
+            String category = entry.getKey().substring(0, 1).toUpperCase() + entry.getKey().substring(1);
             double[] stats = entry.getValue();
-            System.out.printf("%-20s %-15.2f руб. %-15.2f руб. %-15.2f руб.%n",
+            System.out.printf("%-20s %-15.2f %-15.2f  %-15.2f %n",
                     category,
                     stats[0],
                     stats[1],
@@ -600,19 +602,24 @@ public class TransactionController {
             System.out.printf("%-25s %-15.2f руб.%n", "Накоплено:", goalData[3]);
             System.out.printf("%-25s %-15.2f руб.%n", "Осталось накопить:", goalData[4]);
         }
+
+        showStatsAndAnalysisMenu();
     }
 
     /**
      * Выводит текущий баланс пользователя.
+     * <p>Рассчитывает и отображает итоговый баланс на основе всех транзакций.</p>
      */
     public void showBalance() {
         double balance = statsService.calculateBalance();
         System.out.print("Ваш баланс: ");
         System.out.printf("%15.2f руб.%n", balance);
+        showStatsAndAnalysisMenu();
     }
 
     /**
      * Выводит суммарный доход, расход и баланс за указанный период.
+     * <p>Запрашивает временные рамки и выводит сводку.</p>
      */
     public void getSummary() {
         LocalDateTime timestamp1, timestamp2;
@@ -630,15 +637,22 @@ public class TransactionController {
         double totalIncome = stats[0];
         double totalExpense = stats[1];
         double balance = stats[2];
-        System.out.println("Период: " + timestamp1 + " - " + timestamp2);
+        System.out.println("Период: " + timestamp1.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) + " - " + timestamp2.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")));
         System.out.print("Доходы: ");
         System.out.printf("%15.2f руб.%n", totalIncome);
         System.out.print("Расходы: ");
         System.out.printf("%15.2f руб.%n", totalExpense);
         System.out.print("Итоговый баланс: ");
         System.out.printf("%15.2f руб.%n", balance);
+
+        showStatsAndAnalysisMenu();
     }
 
+    /**
+     * Выводит список транзакций в консоль.
+     *
+     * @param transactions список транзакций для отображения
+     */
     private void showTransactionList(List<Transaction> transactions) {
         if (transactions.isEmpty()) {
             System.out.println("Транзакции не найдены!");
@@ -660,26 +674,37 @@ public class TransactionController {
         }
     }
 
+    /**
+     * Запрашивает у пользователя тип транзакции (доход или расход).
+     *
+     * @return выбранный тип транзакции
+     */
     private Transaction.TransactionTYPE getTransactionTypeInput() {
         Transaction.TransactionTYPE type;
+        System.out.println("Выберите тип транзакции (1 - доход, 2 - расход):");
         mainLoop:
         while (true) {
             String input = scanner.nextLine().toLowerCase().trim();
             switch (input) {
-                case "доход" -> {
+                case "1" -> {
                     type = Transaction.TransactionTYPE.INCOME;
                     break mainLoop;
                 }
-                case "расход" -> {
+                case "2" -> {
                     type = Transaction.TransactionTYPE.EXPENSE;
                     break mainLoop;
                 }
-                default -> System.out.println("Пожалуйста, введите \"доход\" или \"расход\":");
+                default -> System.out.println("Пожалуйста, введите 1 или 2:");
             }
         }
         return type;
     }
 
+    /**
+     * Запрашивает у пользователя положительное число для суммы транзакции.
+     *
+     * @return введённая сумма
+     */
     private double getDoubleInput() {
         while (true) {
             String input = scanner.nextLine();
@@ -691,6 +716,11 @@ public class TransactionController {
         }
     }
 
+    /**
+     * Запрашивает у пользователя дату и время в формате dd.MM.yyyy HH:mm.
+     *
+     * @return введённая дата и время
+     */
     private LocalDateTime getTimestampInput() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         while (true) {
@@ -704,13 +734,17 @@ public class TransactionController {
         }
     }
 
+    /**
+     * Запрашивает у пользователя дату и время для периода отчета, позволяя оставить поле пустым.
+     *
+     * @return введённая дата и время или null, если поле пустое
+     */
     private LocalDateTime periodInput() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         String startInput = scanner.nextLine();
         if (!startInput.isEmpty()) {
             while (true) {
                 try {
-                    System.out.println("Введите дату (dd.MM.yyyy HH:mm):");
                     return LocalDateTime.parse(startInput, formatter);
                 } catch (Exception e) {
                     System.out.println("Неверный формат! Используйте dd.MM.yyyy HH:mm");
@@ -722,6 +756,11 @@ public class TransactionController {
         }
     }
 
+    /**
+     * Позволяет пользователю выбрать транзакцию из списка для редактирования или удаления.
+     *
+     * @return выбранная транзакция или null, если список пуст
+     */
     private Transaction chooseListOfTransactions() {
         List<Transaction> transactionList = service.getAllTransactions();
         showTransactionList(transactionList);
@@ -748,6 +787,12 @@ public class TransactionController {
         return transaction;
     }
 
+    /**
+     * Проверяет, является ли строка положительным числом.
+     *
+     * @param str строка для проверки
+     * @return true, если строка — положительное число, иначе false
+     */
     private boolean isDoublePos(String str) {
         try {
             double parsedDouble = Double.parseDouble(str);
@@ -755,5 +800,12 @@ public class TransactionController {
         } catch (NumberFormatException e) {
             return false;
         }
+    }
+
+    /**
+     * Завершает выполнение программы.
+     */
+    public void exitApp() {
+        System.exit(0);
     }
 }

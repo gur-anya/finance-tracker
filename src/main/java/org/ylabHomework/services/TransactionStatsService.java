@@ -12,16 +12,39 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Сервис для работы с со статистикой сущности Transaction.
+ * <p>
+ * * @author Gureva Anna
+ * * @version 1.0
+ * * @since 09.03.2025
+ * </p>
+ */
 public class TransactionStatsService {
+
+    public final TransactionRepository repository;
+
+
+    public final User user;
+
+    /**
+     * Конструктор сервиса статистики транзакций.
+     *
+     * @param repository репозиторий транзакций
+     * @param user       пользователь, для которого выполняется анализ
+     */
     public TransactionStatsService(TransactionRepository repository, User user) {
         this.repository = repository;
         this.user = user;
     }
 
-    public final TransactionRepository repository;
-    public final User user;
 
-
+    /**
+     * Проверяет остаток месячного бюджета пользователя.
+     * Учитывает доходы и расходы за текущий месяц относительно установленного бюджета.
+     *
+     * @return остаток бюджета (положительное значение — есть запас, отрицательное — превышение)
+     */
     public double checkMonthlyBudgetLimit() {
         List<Transaction> incomes = repository.getTransactionsByType(Transaction.TransactionTYPE.INCOME);
         List<Transaction> expenses = repository.getTransactionsByType(Transaction.TransactionTYPE.EXPENSE);
@@ -43,6 +66,12 @@ public class TransactionStatsService {
         return user.getMonthlyBudget() + totalIncome - totalExpense;
     }
 
+    /**
+     * Проверяет прогресс достижения финансовой цели пользователя.
+     * Учитывает транзакции с категорией "цель".
+     *
+     * @return разница между целью и накоплениями (положительное — осталось накопить, отрицательное — превышение)
+     */
     public double checkGoalProgress() {
         String goalCategory = "цель";
 
@@ -62,13 +91,17 @@ public class TransactionStatsService {
         return user.getGoal() - totalIncome + totalExpense;
     }
 
-
+    /**
+     * Анализирует расходы пользователя по категориям.
+     * Возвращает карту, где ключ — категория, значение — сумма расходов (отрицательная).
+     *
+     * @return карта категорий и соответствующих расходов
+     */
     public Map<String, Double> analyzeExpenseByCategories() {
         List<Transaction> transactionList = repository.getAllTransactions();
         Map<String, Double> result = new LinkedHashMap<>();
         for (Transaction transaction : transactionList) {
             String category = transaction.getCategory().toLowerCase().trim();
-            category = category.substring(0, 1).toUpperCase() + category.substring(1);
             double currTrans = transaction.getSum();
             if (transaction.getType() == Transaction.TransactionTYPE.EXPENSE) {
                 result.put(category, result.getOrDefault(category, 0.0) - currTrans);
@@ -98,6 +131,13 @@ public class TransactionStatsService {
         return totalIncome - totalExpense;
     }
 
+    /**
+     * Возвращает статистику доходов и расходов за указанный период.
+     *
+     * @param timestamp1 начальная дата периода
+     * @param timestamp2 конечная дата периода
+     * @return массив: [доходы, расходы, баланс]
+     */
     public double[] getIncomeExpenseForPeriod(LocalDateTime timestamp1, LocalDateTime timestamp2) {
         List<Transaction> transactionList = repository.getTransactionsBetweenTimestamps(timestamp1, timestamp2);
 
@@ -112,7 +152,6 @@ public class TransactionStatsService {
                 .sum();
 
         return new double[]{totalIncome, Math.abs(totalExpense), totalIncome - totalExpense};
-
     }
 
     /**
@@ -120,7 +159,7 @@ public class TransactionStatsService {
      *
      * @param startTime начальная дата периода (может быть null для полного периода)
      * @param endTime   конечная дата периода (может быть null для полного периода)
-     * @return объект FinancialReport с данными отчёта
+     * @return объект FinancialReport с данными отчёта или null, если транзакций нет
      */
     public FinancialReport generateGeneralReport(LocalDateTime startTime, LocalDateTime endTime) {
         List<Transaction> transactions = getTransactionsForPeriod(startTime, endTime);
@@ -130,7 +169,6 @@ public class TransactionStatsService {
             double totalIncome = basicStats[0];
             double totalExpense = basicStats[1];
             double totalBalance = basicStats[2];
-
 
             Map<String, double[]> categoryReport = new HashMap<>();
             for (Transaction transaction : transactions) {
@@ -164,7 +202,11 @@ public class TransactionStatsService {
     }
 
     /**
-     * Вспомогательный метод для получения транзакций за период.
+     * Вспомогательный метод для получения транзакций за указанный период.
+     *
+     * @param startTime начальная дата периода (может быть null)
+     * @param endTime   конечная дата периода (может быть null)
+     * @return список транзакций за период или все транзакции, если период не задан
      */
     private List<Transaction> getTransactionsForPeriod(LocalDateTime startTime, LocalDateTime endTime) {
         if (startTime == null && endTime == null) {
@@ -183,6 +225,8 @@ public class TransactionStatsService {
 
     /**
      * Вспомогательный метод для расчёта статистики по финансовой цели.
+     *
+     * @return массив: [цель, доходы по цели, расходы по цели, накоплено, осталось накопить], или null, если нет транзакций
      */
     private double[] calculateGoalData() {
         List<Transaction> goalTransactions = repository.getTransactionsByCategory("цель");
@@ -195,7 +239,6 @@ public class TransactionStatsService {
             double goalExpense = basicStats[1];
             double saved = basicStats[2];
 
-
             double goalAmount = repository.getGoal();
             double leftToSave = goalAmount - saved;
 
@@ -203,7 +246,12 @@ public class TransactionStatsService {
         } else return null;
     }
 
-
+    /**
+     * Вспомогательный метод для подсчёта базовой статистики по списку транзакций.
+     *
+     * @param transactionsList список транзакций
+     * @return массив: [доходы, расходы, баланс], или null, если список пуст
+     */
     private double[] getBasicStats(List<Transaction> transactionsList) {
         if (transactionsList.isEmpty()) {
             return null;
@@ -223,7 +271,13 @@ public class TransactionStatsService {
     }
 
     /**
-     * Финансовый отчёт.
+     * Финансовый отчёт пользователя.
+     *
+     * @param totalIncome   общий доход за период
+     * @param totalExpense  общий расход за период
+     * @param totalBalance  итоговый баланс за период
+     * @param categoryReport статистика по категориям (доходы, расходы, баланс)
+     * @param goalData      данные по финансовой цели (цель, доходы, расходы, накоплено, осталось)
      */
     public record FinancialReport(
             double totalIncome,

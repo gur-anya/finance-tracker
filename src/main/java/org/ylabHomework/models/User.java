@@ -5,6 +5,8 @@ import lombok.Setter;
 
 import java.util.*;
 
+import static java.util.Objects.hash;
+
 /**
  * Класс, описывающий модель для пользователя.
  *  * <p>
@@ -29,26 +31,21 @@ public class User {
     private double monthlyBudget;
     private double goal;
 
-    /**
-     * Переопределение метода equals для корректного сравнения пользователей.
-     * @param obj пользователь, с которым производится сравнение
-     * @return true, если пользователи имеют одинаковое имя, адрес почты и пароль (являются одним и тем же пользователем), false - иначе.
-     */
+
     @Override
     public boolean equals(Object obj) {
+        if (obj == null || getClass() != obj.getClass()) return false;
         User toWork = (User) obj;
         return (Objects.equals(this.email, toWork.email) &
                 Objects.equals(this.name, toWork.name) &
                 Objects.equals(this.password, toWork.password));
     }
 
-    /**
-     * Конструктор для создания нового пользователя. List для хранения транзакций создается в конструкторе.
-     * @param name имя пользователя
-     * @param email адрес электронной почты пользователя
-     * @param password закодированный пароль
-     * @param role роль пользователя (0 - администратор, 1 - обычный пользователь)
-     */
+    @Override
+    public int hashCode() {
+        return hash(this.email, this.name, this.password);
+    }
+
     public User(String name, String email, String password, int role) {
         this.name = name;
         this.email = email;

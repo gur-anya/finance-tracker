@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Репозиторий для работы с сущностью Transaction.
  * <p>
- * * @author Gureva Annd
+ * * @author Gureva Anna
  * * @version 1.0
  * * @since 07.03.2025
  * </p>
@@ -220,6 +220,13 @@ public class TransactionRepository {
         this.user.setGoal(goal);
     }
 
+    /**
+     * Фильтрует список транзакций, возвращая те, которые произошли после указанного времени или в момент времени.
+     *
+     * @param timestamp временная метка, начиная с которой нужно отфильтровать транзакции
+     * @param sorted    исходный список транзакций для фильтрации
+     * @return список транзакций, произошедших после или в момент указанной временной метки
+     */
     public List<Transaction> getSortedTransactionsAfterTimestamp(LocalDateTime timestamp, List<Transaction> sorted) {
         List<Transaction> result = new ArrayList<>();
         for (Transaction transaction : sorted) {
@@ -230,6 +237,14 @@ public class TransactionRepository {
         return result;
     }
 
+    /**
+     * Фильтрует список транзакций по указанной категории.
+     * <p>Сравнение категорий выполняется без учёта регистра и пробелов в начале или конце.</p>
+     *
+     * @param category категория транзакций для фильтрации (в нижнем регистре, без лишних пробелов)
+     * @param sorted   исходный список транзакций для фильтрации
+     * @return список транзакций, соответствующих указанной категории
+     */
     public List<Transaction> getSortedTransactionsByCategory(String category, List<Transaction> sorted) {
         List<Transaction> result = new ArrayList<>();
         for (Transaction transaction : sorted) {

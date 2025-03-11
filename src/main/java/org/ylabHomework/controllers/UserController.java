@@ -3,6 +3,7 @@ package org.ylabHomework.controllers;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
 import org.ylabHomework.serviceClasses.Constants;
@@ -30,33 +31,46 @@ public class UserController {
      */
     public UserController(UserService service) {
         this.service = service;
+
+
+        service.createUser("admin", "admin@ya.ru", "imcooladmin");
+        service.readUserByEmail("admin@ya.ru").setRole(0);
+        service.createUser("anya", "anya@ya.ru", "1234");
+        service.readUserByEmail("anya@ya.ru").getTransactions().add(new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "Стипендия", "ура!"));
+        service.readUserByEmail("anya@ya.ru").getTransactions().add(new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "Карамельный макиато", "необходимость"));
     }
 
     private final Scanner scanner = new Scanner(System.in);
     private final UserService service;
-    private String userEmail = "";
-    private String userName = "";
+    private User loggedUser = null;
     private boolean mainPageShown = false;
-
 
     /**
      * Показывает приветственный экран, где выводит меню выбора действий:
      * зарегистрироваться, войти в аккаунт или выйти из программы.
      */
     public void showGreetingScreen() {
+        mainLoop:
         while (true) {
             if (!mainPageShown) {
                 System.out.println("Здравствуйте! Введите 1, чтобы зарегистрироваться, 2 - чтобы войти в существующий аккаунт, 3 - чтобы выйти из программы");
+                setMainPageShown(true);
             }
-            setMainPageShown(true);
             String i = scanner.nextLine();
             switch (i) {
                 case "1" -> {
                     registerNewUser();
-                    System.out.println("Введите 1, чтобы зарегистрироваться, 2 - чтобы войти в существующий аккаунт");
+                    System.out.println("Введите 1, чтобы зарегистрироваться, 2 - чтобы войти в существующий аккаунт, 3 - чтобы выйти из программы");
                 }
-                case "2" -> loginUser();
-                case "3" -> System.exit(0);
+                case "2" -> {
+                    loginUser();
+                    break mainLoop;
+                }
+                case "3" -> {
+                    exitApp();
+                    break mainLoop;
+                }
+
                 default ->
                         System.out.println("Пожалуйста, введите 1, чтобы зарегистрироваться, 2 - чтобы войти в существующий аккаунт, 3 - чтобы выйти!");
             }
@@ -96,6 +110,8 @@ public class UserController {
             String state = service.nameCheck(name);
             if (!state.equals("Имя не может быть пустым! Пожалуйста, введите имя!")) {
                 break;
+            } else {
+                System.out.println(state);
             }
         }
         return name;
@@ -192,8 +208,9 @@ public class UserController {
         if (service.emailCheck(email).equals("Пользователь с таким email уже зарегистрирован!")) {
             if (service.readUserByEmail(email).isActive()) {
                 enterPasswordInLogin(email);
+                loggedUser = service.readUserByEmail(email);
                 if (service.readUserByEmail(email).getRole() == 1) {
-                    System.out.println("Здравствуйте, " + userName + "!");
+                    System.out.println("Здравствуйте, " + loggedUser.getName() + "!");
                     showMainPageUser();
                 } else {
                     showMainPageAdmin();
@@ -209,7 +226,7 @@ public class UserController {
     }
 
     /**
-     * Проверяет соответствие введенного при логине пароля настощяему паролю пользователя. Устанавливает userEmail, userName,
+     * Проверяет соответствие введенного при логине пароля настощяему паролю пользователя. Устанавливает loggedUser,
      * если соответствие присутствует, иначе просит повторить ввод до ввода верного пароля или предлагает вернуться на главный экран.
      *
      * @param email адрес электронной почты пользователя, который входит в аккаунт.
@@ -219,10 +236,9 @@ public class UserController {
         while (true) {
             System.out.println("Введите пароль");
             password = scanner.nextLine();
-            Object[] loginResults = service.loginUser(email, password);
-            if (Boolean.parseBoolean(loginResults[0].toString())) {
-                userEmail = email;
-                userName = loginResults[1].toString();
+            UserService.LoginResult loginResult = service.loginUser(email, password);
+            if (loginResult.success()) {
+                loggedUser = loginResult.user();
                 System.out.println("Авторизируем...");
                 break;
             } else {
@@ -250,14 +266,14 @@ public class UserController {
             String j = scanner.nextLine();
             switch (j) {
                 case "1" -> {
-                    goToTransactionsController(service.readUserByEmail(userEmail));
+                    goToTransactionsController();
                     break mainLoop;
                 }
                 case "2" -> {
                     showPersonalAccountSettings();
                     break mainLoop;
                 }
-                case "3" -> System.exit(0);
+                case "3" -> exitApp();
                 default ->
                         System.out.println("Пожалуйста, нажмите 1, чтобы перейти к трекингу финансов, 2 - чтобы перейти в личный кабинет, 3 - чтобы выйти из программы!");
             }
@@ -328,11 +344,10 @@ public class UserController {
     }
 
     /**
-     * Обеспечивает выход пользователя из системы. Ставит userEmail и userName как "", показывает главную страницу.
+     * Обеспечивает выход пользователя из системы.
      */
     public void logoutUser() {
-        userEmail = "";
-        userName = "";
+        setLoggedUser(null);
         showGreetingScreen();
     }
 
@@ -344,10 +359,10 @@ public class UserController {
         while (true) {
             System.out.println("Введите старый пароль");
             String exPass = scanner.nextLine();
-            if (service.comparePass(exPass, userEmail)) {
+            if (service.comparePass(exPass, loggedUser.getEmail())) {
                 System.out.println("Введите новый пароль");
                 updatedValue = scanner.nextLine();
-                service.updatePassword(updatedValue, userEmail);
+                service.updatePassword(updatedValue, loggedUser.getEmail());
                 System.out.println("Пароль успешно обновлен!");
                 break;
             } else {
@@ -366,9 +381,8 @@ public class UserController {
         while (true) {
             System.out.println("Введите новый адрес электронной почты");
             updatedValue = scanner.nextLine();
-            String res = service.updateEmail(updatedValue, userEmail);
+            String res = service.updateEmail(updatedValue, loggedUser.getEmail());
             if (res.equals(updatedValue)) {
-                userEmail = updatedValue;
                 System.out.println("Адрес электронной почты обновлен успешно! Новый адрес: " + updatedValue);
                 break;
             } else {
@@ -387,9 +401,8 @@ public class UserController {
         while (true) {
             System.out.println("Введите новое имя");
             updatedValue = scanner.nextLine();
-            String res = service.updateName(updatedValue, userEmail);
+            String res = service.updateName(updatedValue, loggedUser.getEmail());
             if (res.equals(updatedValue)) {
-                userName = updatedValue;
                 System.out.println(updatedValue + ", имя изменено успешно!");
                 break;
             } else {
@@ -409,9 +422,8 @@ public class UserController {
             String i = scanner.nextLine().toLowerCase();
             switch (i) {
                 case "да" -> {
-                    service.deleteUserByEmail(userEmail);
-                    userEmail = "";
-                    userName = "";
+                    service.deleteUserByEmail(loggedUser.getEmail());
+                    setLoggedUser(null);
                     System.out.println("Аккаунт успешно удален.");
                     showGreetingScreen();
                     break mainLoop;
@@ -441,7 +453,7 @@ public class UserController {
                         System.out.println("Ни одного пользователя не создано!");
                     } else {
                         List<User> users = service.getAllUsers();
-                        users.remove(service.readUserByEmail(userEmail));
+                        users.remove(service.readUserByEmail(loggedUser.getEmail()));
                         int num = 1;
                         for (User user : users) {
                             System.out.println(num + ". " + user.getName() + ", " + user.getEmail() + ", активен=" + user.isActive());
@@ -505,10 +517,21 @@ public class UserController {
         }
     }
 
-    private void goToTransactionsController(User user) {
-        TransactionRepository transRepository = new TransactionRepository(user);
-        TransactionService transService = new TransactionService(transRepository, user);
-        TransactionController transController = new TransactionController(transService, this, user);
+    /**
+     * Завершает выполнение программы.
+     */
+    public void exitApp() {
+        System.exit(0);
+    }
+
+    /**
+     * Переносит пользователя на страницу для управления его транзакциями.
+     */
+
+    private void goToTransactionsController() {
+        TransactionRepository transRepository = new TransactionRepository(this.loggedUser);
+        TransactionService transService = new TransactionService(transRepository, this.loggedUser);
+        TransactionController transController = new TransactionController(transService, this, this.loggedUser);
         transController.showMainMenu();
     }
 }

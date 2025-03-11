@@ -7,7 +7,6 @@ import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.UserRepository;
 import org.ylabHomework.services.UserService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,12 +14,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Тесты для сервиса, работающего с пользователем")
 public class UserServiceTests {
-    private UserRepository repo;
     private UserService service;
 
     @BeforeEach
     void setUp() {
-        repo = new UserRepository();
+        UserRepository repo = new UserRepository();
         service = new UserService(repo);
     }
 
@@ -112,29 +110,21 @@ public class UserServiceTests {
     @DisplayName("Попытка входа в систему зарегистрированного пользователя")
     public void loginUser() {
         service.createUser("anya", "anya@ya.ru", "1234");
-        Object[] expected = new Object[]{true, "anya"};
-        Object[] actual = service.loginUser("anya@ya.ru", "1234");
-        assertThat(actual).containsExactly(expected);
-    }
-
-    @Test
-    @DisplayName("Попытка входа в систему с незарегистрированным email")
-    public void loginUserUnknownEmail() {
-        service.createUser("anya", "anya@ya.ru", "1234");
-        Object[] expected = new Object[]{false, "unknownEmail"};
-        Object[] actual = service.loginUser("anyaa@ya.ru", "1234");
-        assertThat(actual).containsExactly(expected);
+        UserService.LoginResult result = service.loginUser("anya@ya.ru", "1234");
+        assertThat(result.success()).isTrue();
+        assertThat(result.user()).isNotNull();
+        assertThat(result.user().getName()).isEqualTo("anya");
+        assertThat(result.user().getEmail()).isEqualTo("anya@ya.ru");
     }
 
     @Test
     @DisplayName("Попытка входа в систему с зарегистрированным email, но неподходящим паролем")
     public void loginUserWrongPass() {
         service.createUser("anya", "anya@ya.ru", "1234");
-        Object[] expected = new Object[]{false, "wrongPass"};
-        Object[] actual = service.loginUser("anya@ya.ru", "5678");
-        assertThat(actual).containsExactly(expected);
+        UserService.LoginResult result = service.loginUser("anya@ya.ru", "5678");
+        assertThat(result.success()).isFalse();
+        assertThat(result.user()).isNull();
     }
-
     @Test
     @DisplayName("Добавление пользователя")
     public void createUser() {

@@ -18,6 +18,7 @@ import java.util.Set;
 public class UserRepository {
     private final Map<String, User> users;
 
+
     /**
      * Конструктор для инициализации репозитория для работы с пользователем, используя коллекции вместо сессии соединения с базой данных.
      */
@@ -87,6 +88,7 @@ public class UserRepository {
     public void updateEmail(String newEmail, User user) {
             String oldEmail = user.getEmail().toLowerCase().trim();
             String normalizedNewEmail = newEmail.toLowerCase().trim();
+            user.setEmail(normalizedNewEmail);
             users.remove(oldEmail);
             users.put(normalizedNewEmail, user);
     }

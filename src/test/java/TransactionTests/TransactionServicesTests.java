@@ -279,8 +279,8 @@ public class TransactionServicesTests {
 
         Map<String, Double> result = statService.analyzeExpenseByCategories();
         assertThat(result).hasSize(2);
-        assertThat(result).containsEntry("Карамельный макиато", -250.0);
-        assertThat(result).containsEntry("Булочка", -50.0);
+        assertThat(result).containsEntry("карамельный макиато", -250.0);
+        assertThat(result).containsEntry("булочка", -50.0);
     }
 
     @Test

@@ -183,4 +183,40 @@ public class TransactionService {
         }
         return "Транзакция не найдена!";
     }
+
+    /**
+     * Получает месячный бюджет пользователя.
+     *
+     * @return значение месячного бюджета
+     */
+    public double getMonthlyBudget() {
+        return repository.getMonthlyBudget();
+    }
+
+    /**
+     * Устанавливает месячный бюджет пользователя.
+     *
+     * @param budget новое значение бюджета
+     */
+    public void setMonthlyBudget(double budget) {
+        repository.setMonthlyBudget(budget);
+    }
+
+    /**
+     * Получает финансовую цель пользователя.
+     *
+     * @return значение финансовой цели
+     */
+    public double getGoal() {
+        return repository.getGoal();
+    }
+
+    /**
+     * Устанавливает финансовую цель пользователя.
+     *
+     * @param goal новое значение цели
+     */
+    public void setGoal(double goal) {
+        repository.setGoal(goal);
+    }
 }
