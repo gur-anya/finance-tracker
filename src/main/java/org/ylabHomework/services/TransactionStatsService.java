@@ -23,8 +23,6 @@ import java.util.Map;
 public class TransactionStatsService {
 
     public final TransactionRepository repository;
-
-
     public final User user;
 
     /**
@@ -37,7 +35,6 @@ public class TransactionStatsService {
         this.repository = repository;
         this.user = user;
     }
-
 
     /**
      * Проверяет остаток месячного бюджета пользователя.
@@ -113,9 +110,9 @@ public class TransactionStatsService {
     /**
      * Подсчитывает текущий баланс пользователя на основе всех транзакций.
      *
-     * @return текущий баланс (доходы минус расходы)
+     * @return уведомление текущем балансе (доходы минус расходы)
      */
-    public double calculateBalance() {
+    public String calculateBalance() {
         List<Transaction> transactionList = repository.getAllTransactions();
 
         double totalIncome = transactionList.stream()
@@ -128,7 +125,9 @@ public class TransactionStatsService {
                 .mapToDouble(Transaction::getSum)
                 .sum();
 
-        return totalIncome - totalExpense;
+        double balance = totalIncome - totalExpense;
+
+        return String.format("Ваш баланс: %15.2f руб.", balance);
     }
 
     /**
@@ -198,7 +197,8 @@ public class TransactionStatsService {
             double[] goalData = calculateGoalData();
 
             return new FinancialReport(totalIncome, totalExpense, totalBalance, categoryReport, goalData);
-        } else return null;
+        }
+        return null;
     }
 
     /**
@@ -211,22 +211,20 @@ public class TransactionStatsService {
     private List<Transaction> getTransactionsForPeriod(LocalDateTime startTime, LocalDateTime endTime) {
         if (startTime == null && endTime == null) {
             return repository.getAllTransactions();
-        } else {
-            if (startTime != null && endTime != null) {
-                return repository.getTransactionsBetweenTimestamps(startTime, endTime);
-            }
-            if (startTime != null) {
-                return repository.getTransactionsAfterTimestamp(startTime);
-            } else {
-                return repository.getTransactionsBeforeTimestamp(endTime);
-            }
         }
+        if (startTime != null && endTime != null) {
+            return repository.getTransactionsBetweenTimestamps(startTime, endTime);
+        }
+        if (startTime != null) {
+            return repository.getTransactionsAfterTimestamp(startTime);
+        }
+        return repository.getTransactionsBeforeTimestamp(endTime);
     }
 
     /**
      * Вспомогательный метод для расчёта статистики по финансовой цели.
      *
-     * @return массив: [цель, доходы по цели, расходы по цели, накоплено, осталось накопить], или null, если нет транзакций
+     * @return массив: [цель, доходы по цели, расходы по цели, накоплено, осталось], или null, если нет транзакций
      */
     private double[] calculateGoalData() {
         List<Transaction> goalTransactions = repository.getTransactionsByCategory("цель");
@@ -243,7 +241,8 @@ public class TransactionStatsService {
             double leftToSave = goalAmount - saved;
 
             return new double[]{goalAmount, goalIncome, goalExpense, saved, leftToSave};
-        } else return null;
+        }
+        return null;
     }
 
     /**
@@ -268,6 +267,109 @@ public class TransactionStatsService {
         double balance = income - expense;
 
         return new double[]{income, expense, balance};
+    }
+
+    /**
+     * Возвращает прогресс достижения финансовой цели в виде строки.
+     *
+     * @return сообщение о прогрессе цели
+     */
+    public String getGoalProgress() {
+        if (user.getGoal() == 0){
+            return "";
+        }
+        double leftToGoal = checkGoalProgress();
+        if (leftToGoal < 0) {
+            return "Поздравляем! Вы превысили цель на " + String.format("%.2f", Math.abs(leftToGoal)) + " руб.!";
+        }
+        if (leftToGoal == 0) {
+            return "Поздравляем! Вы достигли своей цели!";
+        }
+        return "До цели осталось накопить " + String.format("%.2f", leftToGoal) + " руб. Отличный результат!";
+    }
+
+    /**
+     * Возвращает анализ расходов по категориям в виде строки.
+     *
+     * @return отформатированный анализ категорий
+     */
+    public String getCategoryAnalysis() {
+        Map<String, Double> categoryAnalysis = analyzeExpenseByCategories();
+        if (categoryAnalysis.isEmpty()) {
+            return "Нет транзакций для анализа!";
+        }
+        StringBuilder sb = new StringBuilder("Анализ расходов по категориям:\n");
+        sb.append(String.format("%-20s %-15s%n", "Категория", "Расходы")).append("-".repeat(35)).append("\n");
+        for (Map.Entry<String, Double> entry : categoryAnalysis.entrySet()) {
+            String category = entry.getKey().substring(0, 1).toUpperCase() + entry.getKey().substring(1);
+            double expense = Math.abs(entry.getValue());
+            sb.append(String.format("%-20s %15.2f руб.%n", category, expense));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Возвращает сводку доходов и расходов за период в виде строки.
+     *
+     * @param timestamp1 начальная дата периода
+     * @param timestamp2 конечная дата периода
+     * @return отформатированная сводка
+     */
+    public String getSummary(LocalDateTime timestamp1, LocalDateTime timestamp2) {
+        if (timestamp1.isAfter(timestamp2)) {
+            LocalDateTime aux = timestamp1;
+            timestamp1 = timestamp2;
+            timestamp2 = aux;
+        }
+        double[] stats = getIncomeExpenseForPeriod(timestamp1, timestamp2);
+        return String.format("Период: %s - %s%nДоходы: %15.2f руб.%nРасходы: %15.2f руб.%nИтоговый баланс: %15.2f руб.",
+                timestamp1.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")),
+                timestamp2.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")),
+                stats[0], stats[1], stats[2]);
+    }
+
+    /**
+     * Генерирует отформатированный финансовый отчёт за указанный период.
+     *
+     * @param startTime начальная дата периода (может быть null)
+     * @param endTime   конечная дата периода (может быть null)
+     * @return строка с отчётом или сообщение об отсутствии данных
+     */
+    public String generateGeneralReportFormatted(LocalDateTime startTime, LocalDateTime endTime) {
+        FinancialReport report = generateGeneralReport(startTime, endTime);
+        if (report == null) {
+            return "Транзакции за период не найдены!";
+        }
+
+        StringBuilder sb = new StringBuilder("ФИНАНСОВЫЙ ОТЧЁТ\n");
+        sb.append("-".repeat(50)).append("\n");
+        sb.append("Общие данные:\n");
+        sb.append(String.format("Доходы: %15.2f руб.%n", report.totalIncome()));
+        sb.append(String.format("Расходы: %15.2f руб.%n", report.totalExpense()));
+        sb.append(String.format("Баланс: %15.2f руб.%n", report.totalBalance()));
+        sb.append("-".repeat(50)).append("\n");
+
+        sb.append("По категориям:\n");
+        sb.append(String.format("%-20s %-15s %-15s %-15s%n", "Категория", "Доходы", "Расходы", "Баланс"));
+        sb.append("-".repeat(65)).append("\n");
+        for (Map.Entry<String, double[]> entry : report.categoryReport().entrySet()) {
+            String category = entry.getKey().substring(0, 1).toUpperCase() + entry.getKey().substring(1);
+            double[] stats = entry.getValue();
+            sb.append(String.format("%-20s %15.2f %15.2f %15.2f%n", category, stats[0], stats[1], stats[2]));
+        }
+        sb.append("-".repeat(65)).append("\n");
+
+        if (report.goalData() != null) {
+            sb.append("Прогресс цели:\n");
+            sb.append(String.format("Цель: %15.2f руб.%n", report.goalData()[0]));
+            sb.append(String.format("Доходы: %15.2f руб.%n", report.goalData()[1]));
+            sb.append(String.format("Расходы: %15.2f руб.%n", report.goalData()[2]));
+            sb.append(String.format("Накоплено: %15.2f руб.%n", report.goalData()[3]));
+            sb.append(String.format("Осталось: %15.2f руб.%n", report.goalData()[4]));
+            sb.append("-".repeat(50)).append("\n");
+        }
+
+        return sb.toString();
     }
 
     /**

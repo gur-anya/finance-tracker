@@ -11,7 +11,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 @DisplayName("Тесты для сервиса, работающего с пользователем")
 public class UserServiceTests {
     private UserService service;
@@ -44,7 +43,7 @@ public class UserServiceTests {
     @Test
     @DisplayName("Проверка приемлемого имени")
     public void checkName() {
-        String expected = "anya";
+        String expected = "OK";
         String actual = service.nameCheck("anya");
         assertThat(actual).isEqualTo(expected);
     }
@@ -53,7 +52,7 @@ public class UserServiceTests {
     @DisplayName("Проверка неприемлемого email (нет @, .)")
     public void incorrectEmail1() {
         String actual = service.emailCheck("anya");
-        String expected = "Пожалуйста, введите корректный email!";
+        String expected = "INVALID";
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -61,7 +60,7 @@ public class UserServiceTests {
     @DisplayName("Проверка неприемлемого email (нет .)")
     public void incorrectEmail2() {
         String actual = service.emailCheck("anya@ya");
-        String expected = "Пожалуйста, введите корректный email!";
+        String expected = "INVALID";
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -69,7 +68,7 @@ public class UserServiceTests {
     @DisplayName("Проверка неприемлемого email (кириллицей)")
     public void incorrectEmail3() {
         String actual = service.emailCheck("аня@я.ру");
-        String expected = "Пожалуйста, введите корректный email!";
+        String expected = "INVALID";
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -77,7 +76,7 @@ public class UserServiceTests {
     @DisplayName("Проверка неприемлемого email (нет @)")
     public void incorrectEmail4() {
         String actual = service.emailCheck("anya.ru");
-        String expected = "Пожалуйста, введите корректный email!";
+        String expected = "INVALID";
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -85,7 +84,7 @@ public class UserServiceTests {
     @DisplayName("Проверка неприемлемого email (пустой email)")
     public void incorrectEmail5() {
         String actual = service.emailCheck("");
-        String expected = "Пожалуйста, введите корректный email!";
+        String expected = "INVALID";
         assertThat(actual).isEqualTo(expected);
     }
 
@@ -93,7 +92,7 @@ public class UserServiceTests {
     @DisplayName("Проверка неприемлемого email (такой уже зарегистрирован)")
     public void nonUniqueEmail() {
         service.createUser("anya", "anya@ya.ru", "1234");
-        String expected = "Пользователь с таким email уже зарегистрирован!";
+        String expected = "FOUND";
         String actual = service.emailCheck("anya@ya.ru");
         assertThat(actual).isEqualTo(expected);
     }
@@ -101,7 +100,7 @@ public class UserServiceTests {
     @Test
     @DisplayName("Проверка приемлемого email")
     public void checkEmail() {
-        String expected = "anya@ya.ru";
+        String expected = "OK";
         String actual = service.emailCheck("anya@ya.ru");
         assertThat(actual).isEqualTo(expected);
     }
@@ -125,6 +124,7 @@ public class UserServiceTests {
         assertThat(result.success()).isFalse();
         assertThat(result.user()).isNull();
     }
+
     @Test
     @DisplayName("Добавление пользователя")
     public void createUser() {
@@ -136,7 +136,7 @@ public class UserServiceTests {
     @DisplayName("Обновление имени пользователя")
     public void updateName() {
         service.createUser("anya", "anya@ya.ru", "1234");
-        String expected = "newAnya";
+        String expected = "newAnya, имя изменено успешно!";
         String actual = service.updateName("newAnya", "anya@ya.ru");
         assertThat(actual).isEqualTo(expected);
         assertThat(service.readUserByEmail("anya@ya.ru").getName()).isEqualTo("newAnya");
@@ -146,7 +146,7 @@ public class UserServiceTests {
     @DisplayName("Обновление email пользователя")
     public void updateEmail() {
         service.createUser("anya", "anya@ya.ru", "1234");
-        String expected = "newanya@ya.ru";
+        String expected = "Адрес электронной почты обновлен успешно! Новый адрес: newanya@ya.ru";
         String actual = service.updateEmail("newanya@ya.ru", "anya@ya.ru");
         assertThat(actual).isEqualTo(expected);
         assertThat(service.readUserByEmail("newanya@ya.ru")).isNotNull();

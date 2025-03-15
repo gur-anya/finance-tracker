@@ -12,7 +12,7 @@ import java.util.Set;
  * <p>
  * * @author Gureva Anna
  * * @version 1.0
- * * @since 19.10.2024
+ * * @since 09.03.2025
  * </p>
  */
 public class UserRepository {
@@ -63,10 +63,15 @@ public class UserRepository {
      * Удаляет пользователя по заданному адресу электронной почты.
      *
      * @param email адрес электронной почты пользователя; нормализуется в методе
+     * @return true, если удалено успешно, false иначе
      */
-    public void deleteUserByEmail(String email) {
+    public boolean deleteUserByEmail(String email) {
         String normalizedEmail = email.toLowerCase().trim();
-        users.remove(normalizedEmail);
+       if(users.remove(normalizedEmail) != null){
+           return true;
+       } else {
+           return false;
+       }
     }
 
     /**

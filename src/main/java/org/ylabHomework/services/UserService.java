@@ -2,7 +2,6 @@ package org.ylabHomework.services;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.extern.java.Log;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.UserRepository;
 
@@ -16,7 +15,7 @@ import java.util.regex.Pattern;
  * <p>
  * * @author Gureva Anna
  * * @version 1.0
- * * @since 19.10.2024
+ * * @since 09.03.2025
  * </p>
  */
 @Getter
@@ -24,8 +23,6 @@ import java.util.regex.Pattern;
 public class UserService {
     private final UserRepository repository;
     private final byte[] salt = generateSalt();
-
-
 
     /**
      * Конструктор для создания сервиса с заданным репозиторием для работы с пользователями.
@@ -44,8 +41,9 @@ public class UserService {
      * @param password пароль пользователя; шифруется в методе
      */
     public void createUser(String name, String email, String password) {
+        String normalizedEmail = email.toLowerCase().trim();
         String encryptedPass = encrypt(password);
-        User user = new User(name, email.toLowerCase().trim(), encryptedPass, 1);
+        User user = new User(name, normalizedEmail, encryptedPass, 1);
         repository.addUser(user);
     }
 
@@ -54,16 +52,15 @@ public class UserService {
      *
      * @param email    электронная почта пользователя
      * @param password пароль пользователя в незашифрованном виде; сравнивается с зашифрованным в методе
-     * @return массив, где первый элемент - результат входа true/false,
-     * а второй элемент - сообщение о причине неудачи при входе или имя пользователя
+     * @return объект LoginResult с результатом входа и пользователем, если вход успешен
      */
     public LoginResult loginUser(String email, String password) {
-        User foundUser = repository.readUserByEmail(email);
-        if (comparePass(password, foundUser.getEmail())) {
+        String normalizedEmail = email.toLowerCase().trim();
+        User foundUser = repository.readUserByEmail(normalizedEmail);
+        if (foundUser != null && comparePass(password, normalizedEmail)) {
             return new LoginResult(true, foundUser);
-        } else {
-            return new LoginResult(false, null);
         }
+        return new LoginResult(false, null);
     }
 
     private byte[] generateSalt() {
@@ -107,7 +104,8 @@ public class UserService {
      * @return true, если пароли совпадают; иначе false
      */
     public boolean comparePass(String passToCheck, String userEmail) {
-        User foundUser = repository.readUserByEmail(userEmail);
+        String normalizedEmail = userEmail.toLowerCase().trim();
+        User foundUser = repository.readUserByEmail(normalizedEmail);
         if (foundUser == null) {
             return false;
         }
@@ -124,9 +122,8 @@ public class UserService {
     public String nameCheck(String name) {
         if (name.isEmpty()) {
             return "Имя не может быть пустым! Пожалуйста, введите имя!";
-        } else {
-            return name;
         }
+        return "OK";
     }
 
     /**
@@ -134,18 +131,17 @@ public class UserService {
      * и не зарегистрирована ли она уже другим пользователем).
      *
      * @param email электронная почта пользователя
-     * @return электронная почта или сообщение об ошибке
+     * @return "OK" если новый email корректен, "FOUND" если email существует, "INVALID" если некорректен
      */
     public String emailCheck(String email) {
-        if (!isEmailValid(email)) {
-            return "Пожалуйста, введите корректный email!";
-        } else {
-            String normalizedEmail = email.toLowerCase().trim();
-            if (repository.getEmails().contains(normalizedEmail)) {
-                return "Пользователь с таким email уже зарегистрирован!";
-            }
+        String normalizedEmail = email.toLowerCase().trim();
+        if (!isEmailValid(normalizedEmail)) {
+            return "INVALID";
         }
-        return email;
+        if (repository.getEmails().contains(normalizedEmail)) {
+            return "FOUND";
+        }
+        return "OK";
     }
 
     private boolean isEmailValid(String email) {
@@ -162,13 +158,15 @@ public class UserService {
      * @return новое имя или сообщение об ошибке
      */
     public String updateName(String newName, String email) {
-        User user = repository.readUserByEmail(email);
+        String normalizedEmail = email.toLowerCase().trim();
+        User user = repository.readUserByEmail(normalizedEmail);
         if (user == null) {
             return "Пользователь не найден!";
         }
         String res = nameCheck(newName);
-        if (res.equals(newName)) {
+        if (res.equals("OK")) {
             repository.updateName(newName, user);
+            return newName + ", имя изменено успешно!";
         }
         return res;
     }
@@ -181,15 +179,21 @@ public class UserService {
      * @return новая электронная почта или сообщение об ошибке
      */
     public String updateEmail(String newEmail, String oldEmail) {
-        User user = repository.readUserByEmail(oldEmail);
+        String normalizedOldEmail = oldEmail.toLowerCase().trim();
+        String normalizedNewEmail = newEmail.toLowerCase().trim();
+        User user = repository.readUserByEmail(normalizedOldEmail);
         if (user == null) {
             return "Пользователь не найден!";
         }
         String res = emailCheck(newEmail);
-        if (res.equals(newEmail)) {
-            repository.updateEmail(newEmail, user);
+        if (res.equals("OK")) {
+            repository.updateEmail(normalizedNewEmail, user);
+            return "Адрес электронной почты обновлен успешно! Новый адрес: " + newEmail;
         }
-        return res;
+        if (res.equals("INVALID")) {
+            return "Пожалуйста, введите корректный email!";
+        }
+        return "Email уже занят!";
     }
 
     /**
@@ -199,22 +203,31 @@ public class UserService {
      * @param email   электронная почта пользователя
      */
     public void updatePassword(String newPass, String email) {
-        User user = repository.readUserByEmail(email);
+        String normalizedEmail = email.toLowerCase().trim();
+        User user = repository.readUserByEmail(normalizedEmail);
         String encryptedPass = encrypt(newPass);
         repository.updatePassword(encryptedPass, user);
     }
 
-    public void updateActive(boolean isActive, String email){
-        User user = repository.readUserByEmail(email);
+    public void updateActive(boolean isActive, String email) {
+        String normalizedEmail = email.toLowerCase().trim();
+        User user = repository.readUserByEmail(normalizedEmail);
         repository.updateActive(isActive, user);
     }
+
     /**
      * Удаляет пользователя.
      *
      * @param email электронная почта пользователя, которого нужно удалить
+     * @return статус удаления пользователя
      */
-    public void deleteUserByEmail(String email) {
-        repository.deleteUserByEmail(email);
+    public String deleteUserByEmail(String email) {
+        String normalizedEmail = email.toLowerCase().trim();
+        if (repository.deleteUserByEmail(normalizedEmail)) {
+            return "Пользователь " + normalizedEmail + " удален успешно!";
+        } else {
+            return "Не удалось найти пользователя с " + normalizedEmail + "!";
+        }
     }
 
     /**
@@ -224,7 +237,8 @@ public class UserService {
      * @return объект User, если пользователь найден; null иначе
      */
     public User readUserByEmail(String email) {
-        return repository.readUserByEmail(email);
+        String normalizedEmail = email.toLowerCase().trim();
+        return repository.readUserByEmail(normalizedEmail);
     }
 
     /**
@@ -237,10 +251,90 @@ public class UserService {
     }
 
     /**
+     * Проверяет совпадение паролей при регистрации.
+     *
+     * @param password первый введённый пароль
+     * @param repeatedPass повторно введённый пароль
+     * @return true, если пароли совпадают; иначе false
+     */
+    public boolean checkPasswordMatch(String password, String repeatedPass) {
+        return password.equals(repeatedPass);
+    }
+
+    /**
+     * Проверяет, активен ли пользователь.
+     *
+     * @param email электронная почта пользователя
+     * @return true, если пользователь активен; false, если заблокирован или не найден
+     */
+    public boolean isUserActive(String email) {
+        String normalizedEmail = email.toLowerCase().trim();
+        User user = repository.readUserByEmail(normalizedEmail);
+        return user != null && user.isActive();
+    }
+
+    /**
+     * Обновляет пароль пользователя с проверкой старого пароля.
+     *
+     * @param oldPass старый пароль для проверки
+     * @param newPass новый пароль в незашифрованном виде
+     * @param email   электронная почта пользователя
+     * @return сообщение об успешном обновлении или об ошибке
+     */
+    public String updatePassword(String oldPass, String newPass, String email) {
+        String normalizedEmail = email.toLowerCase().trim();
+        if (comparePass(oldPass, normalizedEmail)) {
+            updatePassword(newPass, normalizedEmail);
+            return "Пароль успешно обновлен!";
+        }
+        return "Неправильный пароль! Повторите попытку!";
+    }
+
+    /**
+     * Блокирует пользователя по его email.
+     *
+     * @param email электронная почта пользователя
+     * @return сообщение об успешной блокировке или об ошибке
+     */
+    public String blockUser(String email) {
+        String normalizedEmail = email.toLowerCase().trim();
+        User user = repository.readUserByEmail(normalizedEmail);
+        if (user == null) {
+            return "Пользователь с таким email не найден!";
+        }
+        if (!user.isActive()) {
+            return "Пользователь уже заблокирован.";
+        }
+        user.setActive(false);
+        repository.updateActive(false, user);
+        return "Успешно";
+    }
+
+    /**
+     * Разблокирует пользователя по его email.
+     *
+     * @param email электронная почта пользователя
+     * @return сообщение об успешной разблокировке или об ошибке
+     */
+    public String unblockUser(String email) {
+        String normalizedEmail = email.toLowerCase().trim();
+        User user = repository.readUserByEmail(normalizedEmail);
+        if (user == null) {
+            return "Пользователь с таким email не найден!";
+        }
+        if (user.isActive()) {
+            return "Пользователь не заблокирован.";
+        }
+        user.setActive(true);
+        repository.updateActive(true, user);
+        return "Успешно";
+    }
+
+    /**
      * Результат логина.
      *
      * @param success успешность логина
      * @param user пользователь, который залогинился
      */
-    public record LoginResult (boolean success, User user) {}
+    public record LoginResult(boolean success, User user) {}
 }

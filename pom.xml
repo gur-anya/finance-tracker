@@ -17,6 +17,7 @@
         <assertj.ver>3.26.3</assertj.ver>
         <mockito.ver>1.1.0</mockito.ver>
         <surefire.ver>3.2.5</surefire.ver>
+        <liquibase.ver>4.31.1</liquibase.ver>
     </properties>
 
 
@@ -47,6 +48,13 @@
             <artifactId>mockito-1.10.19-extended</artifactId>
             <version>${mockito.ver}</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.ver}</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
