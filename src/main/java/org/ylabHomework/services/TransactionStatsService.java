@@ -43,8 +43,8 @@ public class TransactionStatsService {
      * @return остаток бюджета (положительное значение — есть запас, отрицательное — превышение)
      */
     public double checkMonthlyBudgetLimit() {
-        List<Transaction> incomes = repository.getTransactionsByType(Transaction.TransactionTYPE.INCOME);
-        List<Transaction> expenses = repository.getTransactionsByType(Transaction.TransactionTYPE.EXPENSE);
+        List<Transaction> incomes = repository.getTransactionsByType(1);
+        List<Transaction> expenses = repository.getTransactionsByType(2);
 
         LocalDateTime startOfMonth = LocalDateTime.of(
                 LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), 1),
@@ -72,8 +72,8 @@ public class TransactionStatsService {
     public double checkGoalProgress() {
         String goalCategory = "цель";
 
-        List<Transaction> incomes = repository.getTransactionsByType(Transaction.TransactionTYPE.INCOME);
-        List<Transaction> expenses = repository.getTransactionsByType(Transaction.TransactionTYPE.EXPENSE);
+        List<Transaction> incomes = repository.getTransactionsByType(1);
+        List<Transaction> expenses = repository.getTransactionsByType(2);
 
         List<Transaction> sortedIncomes = repository.getSortedTransactionsByCategory(goalCategory, incomes);
         List<Transaction> sortedExpenses = repository.getSortedTransactionsByCategory(goalCategory, expenses);
@@ -100,7 +100,7 @@ public class TransactionStatsService {
         for (Transaction transaction : transactionList) {
             String category = transaction.getCategory().toLowerCase().trim();
             double currTrans = transaction.getSum();
-            if (transaction.getType() == Transaction.TransactionTYPE.EXPENSE) {
+            if (transaction.getType() == 2) {
                 result.put(category, result.getOrDefault(category, 0.0) - currTrans);
             }
         }
@@ -116,12 +116,12 @@ public class TransactionStatsService {
         List<Transaction> transactionList = repository.getAllTransactions();
 
         double totalIncome = transactionList.stream()
-                .filter(t -> t.getType() == Transaction.TransactionTYPE.INCOME)
+                .filter(t -> t.getType() == 1)
                 .mapToDouble(Transaction::getSum)
                 .sum();
 
         double totalExpense = transactionList.stream()
-                .filter(t -> t.getType() == Transaction.TransactionTYPE.EXPENSE)
+                .filter(t -> t.getType() == 2)
                 .mapToDouble(Transaction::getSum)
                 .sum();
 
@@ -141,12 +141,12 @@ public class TransactionStatsService {
         List<Transaction> transactionList = repository.getTransactionsBetweenTimestamps(timestamp1, timestamp2);
 
         double totalIncome = transactionList.stream()
-                .filter(t -> t.getType() == Transaction.TransactionTYPE.INCOME)
+                .filter(t -> t.getType() == 1)
                 .mapToDouble(Transaction::getSum)
                 .sum();
 
         double totalExpense = transactionList.stream()
-                .filter(t -> t.getType() == Transaction.TransactionTYPE.EXPENSE)
+                .filter(t -> t.getType() == 2)
                 .mapToDouble(Transaction::getSum)
                 .sum();
 
@@ -174,11 +174,11 @@ public class TransactionStatsService {
                 String category = transaction.getCategory().trim().toLowerCase();
 
                 double income = 0.0;
-                if (transaction.getType() == Transaction.TransactionTYPE.INCOME) {
+                if (transaction.getType() == 1) {
                     income = transaction.getSum();
                 }
                 double expense = 0.0;
-                if (transaction.getType() == Transaction.TransactionTYPE.EXPENSE) {
+                if (transaction.getType() == 2) {
                     expense = transaction.getSum();
                 }
 
@@ -257,11 +257,11 @@ public class TransactionStatsService {
         }
 
         double income = transactionsList.stream()
-                .filter(t -> t.getType() == Transaction.TransactionTYPE.INCOME)
+                .filter(t -> t.getType() == 1)
                 .mapToDouble(Transaction::getSum)
                 .sum();
         double expense = transactionsList.stream()
-                .filter(t -> t.getType() == Transaction.TransactionTYPE.EXPENSE)
+                .filter(t -> t.getType() == 2)
                 .mapToDouble(Transaction::getSum)
                 .sum();
         double balance = income - expense;

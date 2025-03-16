@@ -82,11 +82,8 @@ public class TransactionService {
      * @param description описание транзакции
      * @return сообщение об успешном создании или ошибке
      */
-    public ParseResponseDTO createTransaction(Transaction.TransactionTYPE type, String sum, String category, String description) {
-        if (type == null) {
-            return new ParseResponseDTO(false, "Тип транзакции не должен быть пустым!");
-        }
-        if (type != Transaction.TransactionTYPE.INCOME && type != Transaction.TransactionTYPE.EXPENSE) {
+    public ParseResponseDTO createTransaction(int type, String sum, String category, String description) {
+        if (type != 1 && type != 2) {
             return new ParseResponseDTO(false, "Тип транзакции должен быть INCOME или EXPENSE!");
         }
         ParseResponseDTO sumCheck = checkSum(sum);
@@ -96,7 +93,7 @@ public class TransactionService {
 
         double parsedSum = Double.parseDouble(sum);
         repository.createTransaction(new Transaction(type, parsedSum, category, description));
-        if (type == Transaction.TransactionTYPE.EXPENSE && getMonthlyBudget() != 0) {
+        if (type == 2 && getMonthlyBudget() != 0) {
             checkExpenseLimitReminder();
         }
         return new ParseResponseDTO(true, "Транзакция успешно сохранена!");
@@ -109,12 +106,9 @@ public class TransactionService {
      * @param transaction объект транзакции для обновления
      * @return сообщение о результате обновления типа
      */
-    public ParseResponseDTO updateTransactionType(Transaction.TransactionTYPE newType, Transaction transaction) {
-        if (newType == null) {
-            return new ParseResponseDTO(false, "Тип транзакции не может быть пустым!");
-        }
+    public ParseResponseDTO updateTransactionType(int newType, Transaction transaction) {
         repository.updateTransactionType(newType, transaction);
-        if (newType == Transaction.TransactionTYPE.EXPENSE && getMonthlyBudget() != 0) {
+        if (newType == 2 && getMonthlyBudget() != 0) {
             checkExpenseLimitReminder();
         }
         return new ParseResponseDTO(true, "Успешно обновлено!");
@@ -133,7 +127,7 @@ public class TransactionService {
         double parsedSum = Double.parseDouble(newSum);
 
         repository.updateTransactionSum(parsedSum, transaction);
-        if (transaction.getType() == Transaction.TransactionTYPE.EXPENSE && getMonthlyBudget() != 0) {
+        if (transaction.getType() == 2 && getMonthlyBudget() != 0) {
             checkExpenseLimitReminder();
         }
         return new ParseResponseDTO(true, "Сумма обновлена!");
@@ -190,7 +184,7 @@ public class TransactionService {
      * @return список транзакций
      */
     public List<Transaction> getTransactionsBeforeTimestamp(LocalDateTime timestamp) {
-        return repository.getTransactionsBeforeTimestamp(timestamp);
+        return transactionsFilterUpperCase(repository.getTransactionsBeforeTimestamp(timestamp));
     }
 
     /**
@@ -200,7 +194,7 @@ public class TransactionService {
      * @return список транзакций
      */
     public List<Transaction> getTransactionsAfterTimestamp(LocalDateTime timestamp) {
-        return repository.getTransactionsAfterTimestamp(timestamp);
+        return transactionsFilterUpperCase(repository.getTransactionsAfterTimestamp(timestamp));
     }
 
     /**
@@ -240,7 +234,7 @@ public class TransactionService {
      * @return список транзакций
      */
     public List<Transaction> getTransactionsByCategory(String category) {
-        return repository.getTransactionsByCategory(category);
+        return transactionsFilterUpperCase(repository.getTransactionsByCategory(category));
     }
 
     /**
@@ -249,8 +243,8 @@ public class TransactionService {
      * @param type тип транзакции для фильтрации
      * @return список транзакций
      */
-    public List<Transaction> getTransactionsByType(Transaction.TransactionTYPE type) {
-        return repository.getTransactionsByType(type);
+    public List<Transaction> getTransactionsByType(int type) {
+        return transactionsFilterUpperCase(repository.getTransactionsByType(type));
     }
 
     /**
@@ -259,7 +253,23 @@ public class TransactionService {
      * @return список всех транзакций
      */
     public List<Transaction> getAllTransactions() {
-        return repository.getAllTransactions();
+        return transactionsFilterUpperCase(repository.getAllTransactions());
+    }
+
+    /**
+     * Форматирует список транзакций - выводит категории с большой буквы.
+     * @param transactions список транзакций
+     * @return отформатированный список транзакций
+     */
+    private List<Transaction> transactionsFilterUpperCase(List<Transaction> transactions){
+        transactions.forEach(transaction -> {
+            String category = transaction.getCategory();
+            if (category != null && !category.isEmpty()) {
+                String capitalizedCategory = category.substring(0, 1).toUpperCase() + category.substring(1);
+                transaction.setCategory(capitalizedCategory);
+            }
+        });
+        return transactions;
     }
 
     /**

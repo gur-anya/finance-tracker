@@ -78,11 +78,26 @@ public class TransactionController {
         statsCommands.put("6", this::showGeneralReport);
         statsCommands.put("7", this::showMainMenu);
 
-        filterCommands.put("1", () -> showTransactionList(getTransactionsBeforeTimestamp()));
-        filterCommands.put("2", () -> showTransactionList(getTransactionsAfterTimestamp()));
-        filterCommands.put("3", () -> showTransactionList(getTransactionsByCategory()));
-        filterCommands.put("4", () -> showTransactionList(service.getTransactionsByType(getTransactionTypeInput())));
-        filterCommands.put("5", () -> showTransactionList(service.getAllTransactions()));
+        filterCommands.put("1", () -> {
+            showTransactionList(getTransactionsBeforeTimestamp());
+            showTransactionManagement();
+        });
+        filterCommands.put("2", () -> {
+            showTransactionList(getTransactionsAfterTimestamp());
+            showTransactionManagement();
+        });
+        filterCommands.put("3", () -> {
+            showTransactionList(getTransactionsByCategory());
+            showTransactionManagement();
+        });
+        filterCommands.put("4", () -> {
+            showTransactionList(service.getTransactionsByType(getTransactionTypeInput()));
+            showTransactionManagement();
+        });
+        filterCommands.put("5", () -> {
+            showTransactionList(service.getAllTransactions());
+            showTransactionManagement();
+        });
         filterCommands.put("6", this::showTransactionManagement);
 
         updateCommands.put("1", new UpdateTypeCommand());
@@ -141,7 +156,7 @@ public class TransactionController {
      * Создаёт новую транзакцию на основе введённых пользователем данных.
      */
     public void createTransaction() {
-        Transaction.TransactionTYPE type = getTransactionTypeInput();
+        int type = getTransactionTypeInput();
         String sum = getValidInput("Введите сумму:", service::checkSum);
         String category = getValidInput("Введите категорию:", service::checkCategory);
         System.out.println("Введите описание (опционально):");
@@ -266,7 +281,7 @@ public class TransactionController {
 
         @Override
         public void execute() {
-            Transaction.TransactionTYPE newType = getTransactionTypeInput();
+            int newType = getTransactionTypeInput();
             System.out.println(service.updateTransactionType(newType, transaction).content);
         }
     }
@@ -355,7 +370,7 @@ public class TransactionController {
         for (int i = 0; i < transactions.size(); i++) {
             Transaction trans = transactions.get(i);
             double sum = trans.getSum();
-            if (trans.getType() == Transaction.TransactionTYPE.EXPENSE) sum = -sum;
+            if (trans.getType() == 2) sum = -sum;
             System.out.printf("%d. %.2f руб., %s, %s, %s%n",
                     i + 1, sum, trans.getCategory(), trans.getTimestamp().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")), trans.getDescription());
         }
@@ -366,13 +381,13 @@ public class TransactionController {
      *
      * @return выбранный тип транзакции (INCOME или EXPENSE)
      */
-    private Transaction.TransactionTYPE getTransactionTypeInput() {
+    private int getTransactionTypeInput() {
         while (true) {
             System.out.println("Выберите тип транзакции (1 - доход, 2 - расход):");
             String input = scanner.nextLine().toLowerCase().trim();
             switch (input) {
-                case "1": return Transaction.TransactionTYPE.INCOME;
-                case "2": return Transaction.TransactionTYPE.EXPENSE;
+                case "1": return 1;
+                case "2": return 2;
                 default: System.out.println("Пожалуйста, введите 1 или 2:");
             }
         }

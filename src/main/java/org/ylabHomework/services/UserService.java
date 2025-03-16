@@ -5,7 +5,10 @@ import lombok.Setter;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.UserRepository;
 
-import java.security.SecureRandom;
+import org.mindrot.jbcrypt.BCrypt;
+
+
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -22,7 +25,6 @@ import java.util.regex.Pattern;
 @Setter
 public class UserService {
     private final UserRepository repository;
-    private final byte[] salt = generateSalt();
 
     /**
      * Конструктор для создания сервиса с заданным репозиторием для работы с пользователями.
@@ -40,11 +42,26 @@ public class UserService {
      * @param email    электронная почта пользователя
      * @param password пароль пользователя; шифруется в методе
      */
+
     public void createUser(String name, String email, String password) {
-        String normalizedEmail = email.toLowerCase().trim();
         String encryptedPass = encrypt(password);
-        User user = new User(name, normalizedEmail, encryptedPass, 1);
-        repository.addUser(user);
+        try {
+            repository.addUser(new User(name, email, encryptedPass, 1));
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            if ("23505".equals(sqlState)) {
+                throw new IllegalArgumentException("Пользователь с email " + email + " уже существует!");
+            }else if ("22001".equals(sqlState)) {
+                throw new IllegalArgumentException("Слишком длинное имя, email или пароль: " + message);
+            } else if ("23502".equals(sqlState)) {
+                throw new IllegalArgumentException("Поля не могут быть пустыми: " + message);
+            } else if (sqlState != null && sqlState.startsWith("08")) {
+                throw new RuntimeException("Ошибка подключения к базе данных: " + message);
+            } else {
+                throw new RuntimeException("Ошибка базы данных: " + message, e);
+            }
+        }
     }
 
     /**
@@ -56,61 +73,22 @@ public class UserService {
      */
     public LoginResult loginUser(String email, String password) {
         String normalizedEmail = email.toLowerCase().trim();
-        User foundUser = repository.readUserByEmail(normalizedEmail);
+        User foundUser;
+        try {
+            foundUser = repository.readUserByEmail(normalizedEmail);
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            if (sqlState != null && sqlState.startsWith("08")) {
+                throw new RuntimeException("Ошибка подключения к базе данных: " + message);
+            } else {
+                throw new RuntimeException("Пользователь с таким email не найден!");
+            }
+        }
         if (foundUser != null && comparePass(password, normalizedEmail)) {
             return new LoginResult(true, foundUser);
         }
         return new LoginResult(false, null);
-    }
-
-    private byte[] generateSalt() {
-        byte[] salt = new byte[16];
-        SecureRandom random = new SecureRandom();
-        random.nextBytes(salt);
-        return salt;
-    }
-
-    /**
-     * Шифрует пароль с использованием соли.
-     *
-     * @param data пароль в незашифрованном виде
-     * @return зашифрованный пароль
-     */
-    public String encrypt(String data) {
-        StringBuilder encrypted = new StringBuilder();
-        for (int i = 0; i < data.length(); i++) {
-            char c = data.charAt(i);
-            char encryptedChar = (char) (c + salt[0]);
-            encrypted.append(encryptedChar);
-        }
-        return encrypted.toString();
-    }
-
-    private String decrypt(String encryptedData) {
-        StringBuilder decrypted = new StringBuilder();
-        for (int i = 0; i < encryptedData.length(); i++) {
-            char c = encryptedData.charAt(i);
-            char decryptedChar = (char) (c - salt[0]);
-            decrypted.append(decryptedChar);
-        }
-        return decrypted.toString();
-    }
-
-    /**
-     * Сравнивает незашифрованный пароль с зашифрованным паролем пользователя.
-     *
-     * @param passToCheck введенный пароль
-     * @param userEmail   электронная почта пользователя
-     * @return true, если пароли совпадают; иначе false
-     */
-    public boolean comparePass(String passToCheck, String userEmail) {
-        String normalizedEmail = userEmail.toLowerCase().trim();
-        User foundUser = repository.readUserByEmail(normalizedEmail);
-        if (foundUser == null) {
-            return false;
-        }
-        String userPass = decrypt(foundUser.getPassword());
-        return userPass.equals(passToCheck);
     }
 
     /**
@@ -138,8 +116,18 @@ public class UserService {
         if (!isEmailValid(normalizedEmail)) {
             return "INVALID";
         }
-        if (repository.getEmails().contains(normalizedEmail)) {
-            return "FOUND";
+        try {
+            if (repository.getEmails().contains(normalizedEmail)) {
+                return "FOUND";
+            }
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            if (sqlState != null && sqlState.startsWith("08")) {
+                throw new RuntimeException("Ошибка подключения к базе данных: " + message);
+            } else {
+                throw new RuntimeException("Ошибка базы данных при проверке email: " + message, e);
+            }
         }
         return "OK";
     }
@@ -330,6 +318,28 @@ public class UserService {
         return "Успешно";
     }
 
+    /**
+     * Шифрует пароль с использованием алгоритма BCrypt.
+     *
+     * @param password пароль в незашифрованном виде
+     * @return зашифрованный пароль
+     */
+    private String encrypt(String password) {
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+
+    /**
+     * Сравнивает незашифрованный пароль с зашифрованным паролем пользователя.
+     *
+     * @param password  введенный пароль
+     * @param userEmail электронная почта пользователя
+     * @return true, если пароли совпадают; иначе false
+     */
+    private boolean comparePass(String password, String userEmail) {
+        String hashed = repository.readUserByEmail(userEmail).getPassword();
+        return BCrypt.checkpw(password, hashed);
+    }
     /**
      * Результат логина.
      *

@@ -52,14 +52,6 @@ public class UserController {
     public UserController(UserService service) {
         this.service = service;
         initializeCommands();
-
-        service.createUser("admin", "admin@ya.ru", "imcooladmin");
-        service.readUserByEmail("admin@ya.ru").setRole(0);
-        service.createUser("anya", "anya@ya.ru", "1234");
-        service.readUserByEmail("anya@ya.ru").getTransactions()
-                .add(new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "Стипендия", "ура!"));
-        service.readUserByEmail("anya@ya.ru").getTransactions()
-                .add(new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "Карамельный макиато", "необходимость"));
     }
 
     /**
@@ -280,8 +272,10 @@ public class UserController {
         enterPasswordInLogin(email);
         if (service.isUserActive(email)) {
             loggedUser = service.readUserByEmail(email);
-            System.out.println("Здравствуйте, " + loggedUser.getName() + "!");
-            if (loggedUser.getRole() == 1) showMainPageUser();
+            if (loggedUser.getRole() == 1) {
+                System.out.println("Здравствуйте, " + loggedUser.getName() + "!");
+                showMainPageUser();
+            }
             else showMainPageAdmin();
         } else {
             System.out.println("К сожалению, ваш аккаунт заблокирован! Обратитесь к администратору.");

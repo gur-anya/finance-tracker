@@ -246,7 +246,7 @@
 //        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 //        System.setOut(new PrintStream(outContent));
 //
-//        service.createTransaction(Transaction.TransactionTYPE.INCOME, 100000.0, "Зарплата", "-");
+//        service.createTransaction(1, 100000.0, "Зарплата", "-");
 //        TransactionController controller = spy(new TransactionController(service, statsService, userController, user));
 //        doNothing().when(controller).showMainMenu();
 //        controller.showTransactionManagement();
@@ -300,7 +300,7 @@
 //
 //        String output = outContent.toString();
 //        assertThat(output).contains("Успешно обновлено!");
-//        assertThat(service.getTransactionsByType(Transaction.TransactionTYPE.INCOME)).isEmpty();
+//        assertThat(service.getTransactionsByType(1)).isEmpty();
 //
 //        System.setOut(System.out);
 //        System.setIn(System.in);
@@ -495,7 +495,7 @@
 //        user.setMonthlyBudget(20000.0);
 //
 //        user.setGoal(3000.0);
-//        user.getTransactions().add(new Transaction(Transaction.TransactionTYPE.INCOME, 2250.0, "Цель", ""));
+//        user.getTransactions().add(new Transaction(1, 2250.0, "Цель", ""));
 //
 //        String input = "6\n01.03.2025 00:00\n31.03.2025 23:59\n7\n";
 //        InputStream in = new ByteArrayInputStream(input.getBytes());
@@ -533,7 +533,7 @@
 //
 //        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 //        System.setOut(new PrintStream(outContent));
-//        user.getTransactions().add(new Transaction(Transaction.TransactionTYPE.EXPENSE, 22500.0, "Еда", ""));
+//        user.getTransactions().add(new Transaction(2, 22500.0, "Еда", ""));
 //
 //        TransactionController controller = spy(new TransactionController(service, statsService, userController, user));
 //        doNothing().when(controller).showStatsAndAnalysisMenu();
@@ -550,7 +550,7 @@
 //    @DisplayName("Проверка остатка бюджета при нулевом остатке")
 //    public void checkMonthlyBudgetLimitWhenZero() {
 //        user.setMonthlyBudget(2250.0);
-//        user.getTransactions().add(new Transaction(Transaction.TransactionTYPE.EXPENSE, 4500.0, "Еда", ""));
+//        user.getTransactions().add(new Transaction(2, 4500.0, "Еда", ""));
 //        String input = "2\n3\n";
 //        InputStream in = new ByteArrayInputStream(input.getBytes());
 //        System.setIn(in);
@@ -573,7 +573,7 @@
 //    @DisplayName("Проверка остатка бюджета при положительном остатке")
 //    public void checkMonthlyBudgetLimitWhenPositive() {
 //        user.setMonthlyBudget(3000.0);
-//        user.getTransactions().add(new Transaction(Transaction.TransactionTYPE.EXPENSE, 4500, "Еда", "10 ведер рафа"));
+//        user.getTransactions().add(new Transaction(2, 4500, "Еда", "10 ведер рафа"));
 //        String input = "2\n3\n";
 //        InputStream in = new ByteArrayInputStream(input.getBytes());
 //        System.setIn(in);
@@ -619,7 +619,7 @@
 //    @DisplayName("Управление целью: проверка прогресса по цели")
 //    public void manageGoalCheckProgress() {
 //        user.setGoal(3000.0);
-//        user.getTransactions().add(new Transaction(Transaction.TransactionTYPE.INCOME, 2250.0, "Цель", ""));
+//        user.getTransactions().add(new Transaction(1, 2250.0, "Цель", ""));
 //
 //
 //        String input = "2\n3\n";
@@ -668,7 +668,7 @@
 //    @DisplayName("Проверка прогресса по цели: цель превышена")
 //    public void getGoalProgressWhenExceeded() {
 //        user.setGoal(2000.0);
-//        user.getTransactions().add(new Transaction(Transaction.TransactionTYPE.INCOME, 2250.0, "Цель", ""));
+//        user.getTransactions().add(new Transaction(1, 2250.0, "Цель", ""));
 //        String input = "2\n3\n";
 //        InputStream in = new ByteArrayInputStream(input.getBytes());
 //        System.setIn(in);
@@ -691,7 +691,7 @@
 //    @DisplayName("Проверка прогресса по цели: цель достигнута")
 //    public void getGoalProgressWhenAchieved() {
 //        user.setGoal(2250.0);
-//        user.getTransactions().add(new Transaction(Transaction.TransactionTYPE.INCOME, 2250.0, "Цель", ""));
+//        user.getTransactions().add(new Transaction(1, 2250.0, "Цель", ""));
 //
 //
 //        String input = "2\n3\n";
@@ -716,7 +716,7 @@
 //    @DisplayName("Проверка прогресса по цели: цель не достигнута")
 //    public void getGoalProgressWhenNotAchieved() {
 //        user.setGoal(3000.0);
-//        user.getTransactions().add(new Transaction(Transaction.TransactionTYPE.INCOME, 2250.0, "Цель", ""));
+//        user.getTransactions().add(new Transaction(1, 2250.0, "Цель", ""));
 //
 //
 //        String input = "2\n3\n";

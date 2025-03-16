@@ -18,10 +18,24 @@
         <mockito.ver>1.1.0</mockito.ver>
         <surefire.ver>3.2.5</surefire.ver>
         <liquibase.ver>4.31.1</liquibase.ver>
+        <postgres.ver>42.7.3</postgres.ver>
+        <bcrypt.ver>0.4</bcrypt.ver>
     </properties>
 
 
     <dependencies>
+        <dependency>
+            <groupId>org.mindrot</groupId>
+            <artifactId>jbcrypt</artifactId>
+            <version>${bcrypt.ver}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${postgres.ver}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

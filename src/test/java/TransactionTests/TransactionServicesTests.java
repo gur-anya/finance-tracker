@@ -35,7 +35,7 @@
 //    @Test
 //    @DisplayName("Создание новой транзакции")
 //    public void createTransaction() {
-//        String result = service.createTransaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура! стипендия");
+//        String result = service.createTransaction(1, 2500.0, "стипендия", "ура! стипендия");
 //        assertThat(result).isEqualTo("Транзакция успешно сохранена!");
 //        List<Transaction> transactions = service.getAllTransactions();
 //        assertThat(transactions).hasSize(1);
@@ -45,17 +45,17 @@
 //    @Test
 //    @DisplayName("Обновление типа транзакции с корректным типом")
 //    public void updateTransactionTypeValid() {
-//        Transaction transaction = new Transaction(Transaction.TransactionTYPE.INCOME, 40.0, "проезд", "до вуза");
+//        Transaction transaction = new Transaction(1, 40.0, "проезд", "до вуза");
 //        service.repository.createTransaction(transaction);
-//        String result = service.updateTransactionType(Transaction.TransactionTYPE.EXPENSE, transaction);
+//        String result = service.updateTransactionType(2, transaction);
 //        assertThat(result).isEqualTo("Успешно обновлено!");
-//        assertThat(transaction.getType()).isEqualTo(Transaction.TransactionTYPE.EXPENSE);
+//        assertThat(transaction.getType()).isEqualTo(2);
 //    }
 //
 //    @Test
 //    @DisplayName("Обновление типа транзакции с null")
 //    public void updateTransactionTypeNull() {
-//        Transaction transaction = new Transaction(Transaction.TransactionTYPE.INCOME, 40.0, "проезд", "из вуза");
+//        Transaction transaction = new Transaction(1, 40.0, "проезд", "из вуза");
 //        String result = service.updateTransactionType(null, transaction);
 //        assertThat(result).isEqualTo("Тип транзакции не может быть пустым!");
 //    }
@@ -63,7 +63,7 @@
 //    @Test
 //    @DisplayName("Обновление суммы транзакции")
 //    public void updateTransactionSum() {
-//        Transaction transaction = new Transaction(Transaction.TransactionTYPE.EXPENSE, 20.0, "карамельный макиато", "необходимость");
+//        Transaction transaction = new Transaction(2, 20.0, "карамельный макиато", "необходимость");
 //        service.repository.createTransaction(transaction);
 //        String result = service.updateTransactionSum(250.0, transaction);
 //        assertThat(result).isEqualTo("Сумма обновлена!");
@@ -73,7 +73,7 @@
 //    @Test
 //    @DisplayName("Обновление категории транзакции с корректной категорией")
 //    public void updateTransactionCategoryValid() {
-//        Transaction transaction = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+//        Transaction transaction = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 //        service.repository.createTransaction(transaction);
 //        String result = service.updateTransactionCategory("Раф", transaction);
 //        assertThat(result).isEqualTo("Категория обновлена!");
@@ -83,7 +83,7 @@
 //    @Test
 //    @DisplayName("Обновление категории транзакции с пустой категорией")
 //    public void updateTransactionCategoryEmpty() {
-//        Transaction transaction = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+//        Transaction transaction = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 //        String result = service.updateTransactionCategory("", transaction);
 //        assertThat(result).isEqualTo("Категория не может быть пустой!");
 //    }
@@ -91,7 +91,7 @@
 //    @Test
 //    @DisplayName("Обновление описания транзакции с корректным описанием")
 //    public void updateTransactionDescriptionValid() {
-//        Transaction transaction = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction transaction = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        service.repository.createTransaction(transaction);
 //        String result = service.updateTransactionDescription("ЗП моя", transaction);
 //        assertThat(result).isEqualTo("Описание обновлено!");
@@ -101,7 +101,7 @@
 //    @Test
 //    @DisplayName("Обновление описания транзакции с длинным описанием")
 //    public void updateTransactionDescriptionTooLong() {
-//        Transaction transaction = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction transaction = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        String longDescription = "a".repeat(201);
 //        String result = service.updateTransactionDescription(longDescription, transaction);
 //        assertThat(result).isEqualTo("Описание не должно превышать 200 символов!");
@@ -111,10 +111,10 @@
 //    @DisplayName("Получение транзакций до указанной даты")
 //    public void getTransactionsBeforeTimestamp() {
 //        LocalDateTime now = LocalDateTime.now();
-//        Transaction t1 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction t1 = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        t1.setTimestamp(now.minusDays(1));
 //        service.repository.createTransaction(t1);
-//        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+//        Transaction t2 = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 //        t2.setTimestamp(now.plusDays(1));
 //        service.repository.createTransaction(t2);
 //
@@ -127,10 +127,10 @@
 //    @DisplayName("Получение транзакций после указанной даты")
 //    public void getTransactionsAfterTimestamp() {
 //        LocalDateTime now = LocalDateTime.now();
-//        Transaction t1 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction t1 = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        t1.setTimestamp(now.minusDays(1));
 //        service.repository.createTransaction(t1);
-//        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+//        Transaction t2 = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 //        t2.setTimestamp(now.plusDays(1));
 //        service.repository.createTransaction(t2);
 //
@@ -143,13 +143,13 @@
 //    @DisplayName("Получение транзакций между датами")
 //    public void getTransactionsBetweenTimestamps() {
 //        LocalDateTime now = LocalDateTime.now();
-//        Transaction t1 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction t1 = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        t1.setTimestamp(now.minusDays(2));
 //        service.repository.createTransaction(t1);
-//        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+//        Transaction t2 = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 //        t2.setTimestamp(now);
 //        service.repository.createTransaction(t2);
-//        Transaction t3 = new Transaction(Transaction.TransactionTYPE.INCOME, 5000.0, "матпомощь", "деньги от вуза");
+//        Transaction t3 = new Transaction(1, 5000.0, "матпомощь", "деньги от вуза");
 //        t3.setTimestamp(now.plusDays(2));
 //        service.repository.createTransaction(t3);
 //
@@ -161,9 +161,9 @@
 //    @Test
 //    @DisplayName("Получение транзакций по категории")
 //    public void getTransactionsByCategory() {
-//        Transaction t1 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction t1 = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        service.repository.createTransaction(t1);
-//        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+//        Transaction t2 = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 //        service.repository.createTransaction(t2);
 //
 //        List<Transaction> result = service.getTransactionsByCategory("стипендия");
@@ -174,12 +174,12 @@
 //    @Test
 //    @DisplayName("Получение транзакций по типу")
 //    public void getTransactionsByType() {
-//        Transaction t1 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction t1 = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        service.repository.createTransaction(t1);
-//        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+//        Transaction t2 = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 //        service.repository.createTransaction(t2);
 //
-//        List<Transaction> result = service.getTransactionsByType(Transaction.TransactionTYPE.EXPENSE);
+//        List<Transaction> result = service.getTransactionsByType(2);
 //        assertThat(result).hasSize(1);
 //        assertThat(result.getFirst().getSum()).isEqualTo(250.0);
 //    }
@@ -187,9 +187,9 @@
 //    @Test
 //    @DisplayName("Получение всех транзакций")
 //    public void getAllTransactions() {
-//        Transaction t1 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction t1 = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        service.repository.createTransaction(t1);
-//        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+//        Transaction t2 = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 //        service.repository.createTransaction(t2);
 //
 //        List<Transaction> result = service.getAllTransactions();
@@ -200,7 +200,7 @@
 //    @Test
 //    @DisplayName("Удаление существующей транзакции")
 //    public void deleteTransactionExists() {
-//        Transaction transaction = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction transaction = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        service.repository.createTransaction(transaction);
 //        String result = service.deleteTransaction(transaction);
 //        assertThat(result).isEqualTo("Удаление прошло успешно");
@@ -210,7 +210,7 @@
 //    @Test
 //    @DisplayName("Удаление несуществующей транзакции")
 //    public void deleteTransactionNotExists() {
-//        Transaction transaction = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction transaction = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        String result = service.deleteTransaction(transaction);
 //        assertThat(result).isEqualTo("Транзакция не найдена!");
 //    }
@@ -228,10 +228,10 @@
 //    public void checkMonthlyBudgetLimitWithTransactions() {
 //        service.setMonthlyBudget(1000.0); // Изменено: используем метод сервиса вместо прямого доступа
 //        LocalDateTime startOfMonth = LocalDateTime.of(LocalDate.now().withDayOfMonth(1), LocalTime.MIN);
-//        Transaction t1 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction t1 = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        t1.setTimestamp(startOfMonth.plusDays(1));
 //        repo.createTransaction(t1);
-//        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+//        Transaction t2 = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 //        t2.setTimestamp(startOfMonth.plusDays(2));
 //        repo.createTransaction(t2);
 //
@@ -251,9 +251,9 @@
 //    @DisplayName("Проверка прогресса цели с транзакциями")
 //    public void checkGoalProgressWithTransactions() {
 //        service.setGoal(1000.0); // Изменено: используем метод сервиса вместо прямого доступа
-//        Transaction t1 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "Цель", "стипендия");
+//        Transaction t1 = new Transaction(1, 2500.0, "Цель", "стипендия");
 //        repo.createTransaction(t1);
-//        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "Цель", "хочу карамельный макиато");
+//        Transaction t2 = new Transaction(2, 250.0, "Цель", "хочу карамельный макиато");
 //        repo.createTransaction(t2);
 //
 //        double result = statService.checkGoalProgress();
@@ -270,11 +270,11 @@
 //    @Test
 //    @DisplayName("Анализ расходов по категориям с транзакциями")
 //    public void analyzeExpenseByCategoriesWithTransactions() {
-//        Transaction t1 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+//        Transaction t1 = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 //        repo.createTransaction(t1);
-//        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 50.0, "булочка", "с сосиской");
+//        Transaction t2 = new Transaction(2, 50.0, "булочка", "с сосиской");
 //        repo.createTransaction(t2);
-//        Transaction t3 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction t3 = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        repo.createTransaction(t3);
 //
 //        Map<String, Double> result = statService.analyzeExpenseByCategories();
@@ -293,9 +293,9 @@
 ////    @Test
 ////    @DisplayName("Подсчёт баланса с транзакциями")
 ////    public void calculateBalanceWithTransactions() {
-////        Transaction t1 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+////        Transaction t1 = new Transaction(1, 2500.0, "стипендия", "ура!");
 ////        repo.createTransaction(t1);
-////        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+////        Transaction t2 = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 ////        repo.createTransaction(t2);
 ////
 ////        double result = statService.calculateBalance();
@@ -316,10 +316,10 @@
 //    public void getIncomeExpenseForPeriodWithTransactions() {
 //        LocalDateTime start = LocalDateTime.now().minusDays(1);
 //        LocalDateTime end = LocalDateTime.now().plusDays(1);
-//        Transaction t1 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction t1 = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        t1.setTimestamp(start.plusHours(1));
 //        repo.createTransaction(t1);
-//        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+//        Transaction t2 = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 //        t2.setTimestamp(start.plusHours(2));
 //        repo.createTransaction(t2);
 //
@@ -337,11 +337,11 @@
 //    @Test
 //    @DisplayName("Генерация финансового отчёта за полный период")
 //    public void generateGeneralReportFullPeriod() {
-//        Transaction t1 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction t1 = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        repo.createTransaction(t1);
-//        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "необходимость");
+//        Transaction t2 = new Transaction(2, 250.0, "карамельный макиато", "необходимость");
 //        repo.createTransaction(t2);
-//        Transaction t3 = new Transaction(Transaction.TransactionTYPE.INCOME, 5000.0, "цель", "на десять карамельных макиато и пятнадцать булочек с сосиской");
+//        Transaction t3 = new Transaction(1, 5000.0, "цель", "на десять карамельных макиато и пятнадцать булочек с сосиской");
 //        repo.createTransaction(t3);
 //        service.setGoal(200.0); // Изменено: используем метод сервиса вместо прямого доступа
 //
@@ -360,10 +360,10 @@
 //    public void generateGeneralReportSpecificPeriod() {
 //        LocalDateTime start = LocalDateTime.now().minusDays(1);
 //        LocalDateTime end = LocalDateTime.now().plusDays(1);
-//        Transaction t1 = new Transaction(Transaction.TransactionTYPE.INCOME, 2500.0, "стипендия", "ура!");
+//        Transaction t1 = new Transaction(1, 2500.0, "стипендия", "ура!");
 //        t1.setTimestamp(start.plusHours(1));
 //        repo.createTransaction(t1);
-//        Transaction t2 = new Transaction(Transaction.TransactionTYPE.EXPENSE, 250.0, "карамельный макиато", "единственная причина ходить в вуз");
+//        Transaction t2 = new Transaction(2, 250.0, "карамельный макиато", "единственная причина ходить в вуз");
 //        t2.setTimestamp(end.plusHours(1));
 //        repo.createTransaction(t2);
 //
