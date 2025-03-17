@@ -158,7 +158,7 @@ public class TransactionController {
     public void createTransaction() {
         int type = getTransactionTypeInput();
         String sum = getValidInput("Введите сумму:", service::checkSum);
-        String category = getValidInput("Введите категорию:", service::checkCategory);
+        String category = getValidInput("Введите категорию (введите Цель для транзакции по финансовой цели):", service::checkCategory);
         System.out.println("Введите описание (опционально):");
         String description = scanner.nextLine();
 
@@ -258,10 +258,17 @@ public class TransactionController {
      * Отображает меню для формирования финансового отчёта.
      */
     public void showGeneralReport() {
-        System.out.println("Введите дату начала периода (dd.MM.yyyy HH:mm, пусто для начала):");
+        System.out.println("Введите дату начала периода (dd.MM.yyyy HH:mm, оставьте пустым для отчета с начала отслеживания в приложении):");
         LocalDateTime startTime = periodInput();
-        System.out.println("Введите дату конца периода (dd.MM.yyyy HH:mm, пусто для конца):");
+        System.out.println("Введите дату конца периода (dd.MM.yyyy HH:mm, оставьте пустым для отчета с конца отслеживания в приложении):");
         LocalDateTime endTime = periodInput();
+        if (startTime!=null && endTime != null) {
+            if (startTime.isAfter(endTime)) {
+                LocalDateTime aux = startTime;
+                startTime = endTime;
+                endTime = aux;
+            }
+        }
         System.out.println(statsService.generateGeneralReportFormatted(startTime, endTime));
         showStatsAndAnalysisMenu();
     }

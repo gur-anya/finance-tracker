@@ -54,6 +54,14 @@
                     remarks="Статус аккаунта пользователя (активен/не активен)">
                 <constraints nullable="false"/>
             </column>
+            <column name="monthly_budget" type="DOUBLE" defaultValue="0"
+                    remarks="Месячный бюджет пользователя">
+                <constraints nullable="false"/>
+            </column>
+            <column name="goal" type="DOUBLE" defaultValue="0"
+                    remarks="Финансовая цель пользователя">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 

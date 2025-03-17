@@ -4,13 +4,11 @@ import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Сервис для работы с со статистикой сущности Transaction.
@@ -43,24 +41,44 @@ public class TransactionStatsService {
      * @return остаток бюджета (положительное значение — есть запас, отрицательное — превышение)
      */
     public double checkMonthlyBudgetLimit() {
-        List<Transaction> incomes = repository.getTransactionsByType(1);
-        List<Transaction> expenses = repository.getTransactionsByType(2);
+        List<Transaction> incomes;
+        List<Transaction> expenses;
+        try {
+            incomes = repository.getTransactionsByType(1);
+            expenses = repository.getTransactionsByType(2);
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            if (sqlState != null && sqlState.startsWith("08")) {
+                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
+            } else {
+                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
+            }
+            return 0;
+        }
 
         LocalDateTime startOfMonth = LocalDateTime.of(
                 LocalDate.of(LocalDateTime.now().getYear(), LocalDateTime.now().getMonth(), 1),
                 LocalTime.of(0, 0, 0, 0)
         );
-        List<Transaction> sortedIncomes = repository.getSortedTransactionsAfterTimestamp(startOfMonth, incomes);
-        List<Transaction> sortedExpenses = repository.getSortedTransactionsAfterTimestamp(startOfMonth, expenses);
 
-        double totalIncome = sortedIncomes.stream()
-                .mapToDouble(Transaction::getSum)
-                .sum();
-        double totalExpense = sortedExpenses.stream()
-                .mapToDouble(Transaction::getSum)
-                .sum();
+        try {
+            List<Transaction> sortedIncomes = repository.getSortedTransactionsAfterTimestamp(startOfMonth, incomes);
+            List<Transaction>   sortedExpenses = repository.getSortedTransactionsAfterTimestamp(startOfMonth, expenses);
+            double totalIncome = sortedIncomes.stream().mapToDouble(Transaction::getSum).sum();
+            double totalExpense = sortedExpenses.stream().mapToDouble(Transaction::getSum).sum();
 
-        return user.getMonthlyBudget() + totalIncome - totalExpense;
+            return repository.getMonthlyBudget() + totalIncome - totalExpense;
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            if (sqlState != null && sqlState.startsWith("08")) {
+                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
+            } else {
+                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
+            }
+            return 0;
+        }
     }
 
     /**
@@ -71,21 +89,40 @@ public class TransactionStatsService {
      */
     public double checkGoalProgress() {
         String goalCategory = "цель";
+        List<Transaction> incomes;
+        List<Transaction> expenses;
+        try {
+            incomes = repository.getTransactionsByType(1);
+            expenses = repository.getTransactionsByType(2);
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            if (sqlState != null && sqlState.startsWith("08")) {
+                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
+            } else {
+                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
+            }
+            return 0;
+        }
 
-        List<Transaction> incomes = repository.getTransactionsByType(1);
-        List<Transaction> expenses = repository.getTransactionsByType(2);
+        try {
+            List<Transaction>   sortedIncomes = repository.getSortedTransactionsByCategory(goalCategory, incomes);
+            List<Transaction>  sortedExpenses = repository.getSortedTransactionsByCategory(goalCategory, expenses);
 
-        List<Transaction> sortedIncomes = repository.getSortedTransactionsByCategory(goalCategory, incomes);
-        List<Transaction> sortedExpenses = repository.getSortedTransactionsByCategory(goalCategory, expenses);
+            double totalIncome = sortedIncomes.stream().mapToDouble(Transaction::getSum).sum();
+            double totalExpense = sortedExpenses.stream().mapToDouble(Transaction::getSum).sum();
 
-        double totalIncome = sortedIncomes.stream()
-                .mapToDouble(Transaction::getSum)
-                .sum();
-        double totalExpense = sortedExpenses.stream()
-                .mapToDouble(Transaction::getSum)
-                .sum();
-
-        return user.getGoal() - totalIncome + totalExpense;
+            return repository.getGoal() - totalIncome + totalExpense;
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            if (sqlState != null && sqlState.startsWith("08")) {
+                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
+            } else {
+                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
+            }
+            return 0;
+        }
     }
 
     /**
@@ -95,13 +132,25 @@ public class TransactionStatsService {
      * @return карта категорий и соответствующих расходов
      */
     public Map<String, Double> analyzeExpenseByCategories() {
-        List<Transaction> transactionList = repository.getAllTransactions();
+        List<Transaction> transactionList;
+        try {
+            transactionList = repository.getAllTransactions();
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            if (sqlState != null && sqlState.startsWith("08")) {
+                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
+            } else {
+                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
+            }
+            return new LinkedHashMap<>();
+        }
         Map<String, Double> result = new LinkedHashMap<>();
         for (Transaction transaction : transactionList) {
             String category = transaction.getCategory().toLowerCase().trim();
             double currTrans = transaction.getSum();
             if (transaction.getType() == 2) {
-                result.put(category, result.getOrDefault(category, 0.0) - currTrans);
+                result.put(category, result.getOrDefault(category, 0.0) + currTrans);
             }
         }
         return result;
@@ -113,23 +162,30 @@ public class TransactionStatsService {
      * @return уведомление текущем балансе (доходы минус расходы)
      */
     public String calculateBalance() {
-        List<Transaction> transactionList = repository.getAllTransactions();
+        List<Transaction> transactionList;
+        try {
+            transactionList = repository.getAllTransactions();
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            if (sqlState != null && sqlState.startsWith("08")) {
+                return "Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!";
+            }
+            return "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
+        }
 
         double totalIncome = transactionList.stream()
                 .filter(t -> t.getType() == 1)
                 .mapToDouble(Transaction::getSum)
                 .sum();
-
         double totalExpense = transactionList.stream()
                 .filter(t -> t.getType() == 2)
                 .mapToDouble(Transaction::getSum)
                 .sum();
-
         double balance = totalIncome - totalExpense;
 
-        return String.format("Ваш баланс: %15.2f руб.", balance);
+        return String.format("Ваш баланс: %.2f руб.", balance);
     }
-
     /**
      * Возвращает статистику доходов и расходов за указанный период.
      *
@@ -138,19 +194,30 @@ public class TransactionStatsService {
      * @return массив: [доходы, расходы, баланс]
      */
     public double[] getIncomeExpenseForPeriod(LocalDateTime timestamp1, LocalDateTime timestamp2) {
-        List<Transaction> transactionList = repository.getTransactionsBetweenTimestamps(timestamp1, timestamp2);
+        List<Transaction> transactionList;
+        try {
+            transactionList = repository.getTransactionsBetweenTimestamps(timestamp1, timestamp2);
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            if (sqlState != null && sqlState.startsWith("08")) {
+                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
+            } else {
+                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
+            }
+            return new double[]{0, 0, 0};
+        }
 
         double totalIncome = transactionList.stream()
                 .filter(t -> t.getType() == 1)
                 .mapToDouble(Transaction::getSum)
                 .sum();
-
         double totalExpense = transactionList.stream()
                 .filter(t -> t.getType() == 2)
                 .mapToDouble(Transaction::getSum)
                 .sum();
 
-        return new double[]{totalIncome, Math.abs(totalExpense), totalIncome - totalExpense};
+        return new double[]{totalIncome, totalExpense, totalIncome - totalExpense};
     }
 
     /**
@@ -209,16 +276,27 @@ public class TransactionStatsService {
      * @return список транзакций за период или все транзакции, если период не задан
      */
     private List<Transaction> getTransactionsForPeriod(LocalDateTime startTime, LocalDateTime endTime) {
-        if (startTime == null && endTime == null) {
-            return repository.getAllTransactions();
+        try {
+            if (startTime == null && endTime == null) {
+                return repository.getAllTransactions();
+            }
+            if (startTime != null && endTime != null) {
+                return repository.getTransactionsBetweenTimestamps(startTime, endTime);
+            }
+            if (startTime != null) {
+                return repository.getTransactionsAfterTimestamp(startTime);
+            }
+            return repository.getTransactionsBeforeTimestamp(endTime);
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            if (sqlState != null && sqlState.startsWith("08")) {
+                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
+            } else {
+                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
+            }
+            return new ArrayList<>();
         }
-        if (startTime != null && endTime != null) {
-            return repository.getTransactionsBetweenTimestamps(startTime, endTime);
-        }
-        if (startTime != null) {
-            return repository.getTransactionsAfterTimestamp(startTime);
-        }
-        return repository.getTransactionsBeforeTimestamp(endTime);
     }
 
     /**
@@ -227,17 +305,42 @@ public class TransactionStatsService {
      * @return массив: [цель, доходы по цели, расходы по цели, накоплено, осталось], или null, если нет транзакций
      */
     private double[] calculateGoalData() {
-        List<Transaction> goalTransactions = repository.getTransactionsByCategory("цель");
+        List<Transaction> goalTransactions;
+        try {
+            goalTransactions = repository.getTransactionsByCategory("цель");
+        } catch (SQLException e) {
+            String sqlState = e.getSQLState();
+            String message = e.getMessage();
+            if ("22001".equals(sqlState)) {
+                System.out.println("Слишком длинная категория: " + message + " Попробуйте ещё раз!");
+            } else if (sqlState != null && sqlState.startsWith("08")) {
+                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
+            } else {
+                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
+            }
+            return null;
+        }
 
         if (!goalTransactions.isEmpty()) {
             double[] basicStats = getBasicStats(goalTransactions);
-
-            assert basicStats != null;
+            if (basicStats == null) return null;
             double goalIncome = basicStats[0];
             double goalExpense = basicStats[1];
             double saved = basicStats[2];
 
-            double goalAmount = repository.getGoal();
+            double goalAmount;
+            try {
+                goalAmount = repository.getGoal();
+            } catch (SQLException e) {
+                String sqlState = e.getSQLState();
+                String message = e.getMessage();
+                if (sqlState != null && sqlState.startsWith("08")) {
+                    System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
+                } else {
+                    System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
+                }
+                return null;
+            }
             double leftToSave = goalAmount - saved;
 
             return new double[]{goalAmount, goalIncome, goalExpense, saved, leftToSave};
@@ -275,17 +378,23 @@ public class TransactionStatsService {
      * @return сообщение о прогрессе цели
      */
     public String getGoalProgress() {
-        if (user.getGoal() == 0){
-            return "";
+        try {
+            if (repository.getGoal() == 0){
+                return "";
+            } else {
+                double leftToGoal = checkGoalProgress();
+                if (leftToGoal < 0) {
+                    return "Поздравляем! Вы превысили цель на " + String.format("%.2f", Math.abs(leftToGoal)) + " руб.!";
+                }
+                if (leftToGoal == 0) {
+                    return "Поздравляем! Вы достигли своей цели!";
+                }
+                return "До цели осталось накопить " + String.format("%.2f", leftToGoal) + " руб. Отличный результат!";
+            }
+        } catch (SQLException e) {
+            System.out.println("Ошибка! " + e.getMessage());
         }
-        double leftToGoal = checkGoalProgress();
-        if (leftToGoal < 0) {
-            return "Поздравляем! Вы превысили цель на " + String.format("%.2f", Math.abs(leftToGoal)) + " руб.!";
-        }
-        if (leftToGoal == 0) {
-            return "Поздравляем! Вы достигли своей цели!";
-        }
-        return "До цели осталось накопить " + String.format("%.2f", leftToGoal) + " руб. Отличный результат!";
+        return "";
     }
 
     /**

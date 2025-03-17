@@ -432,29 +432,12 @@ public class TransactionRepository {
      * @param timestamp временная метка, начиная с которой нужно отфильтровать транзакции
      * @param sorted    исходный список транзакций для фильтрации
      * @return список транзакций, произошедших после или в момент указанной временной метки
-     * @throws SQLException если произошла ошибка при работе с базой данных
      */
-    public List<Transaction> getSortedTransactionsAfterTimestamp(LocalDateTime timestamp, List<Transaction> sorted) throws SQLException {
-        Config config = new Config();
+    public List<Transaction> getSortedTransactionsAfterTimestamp(LocalDateTime timestamp, List<Transaction> sorted) {
         List<Transaction> transactions = new ArrayList<>();
-        String sql = Constants.FIND_TRANSACTIONS_AFTER_TIMESTAMP;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setTimestamp(1, Timestamp.valueOf(timestamp));
-            statement.setInt(2, userRepository.findUserIdByEmail(user.getEmail()));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    Transaction currTrans = new Transaction(
-                            resultSet.getInt("type"),
-                            resultSet.getDouble("sum"),
-                            resultSet.getString("category"),
-                            resultSet.getString("description"));
-                    currTrans.setTimestamp(resultSet.getTimestamp("timestamp").toLocalDateTime());
-                    if (sorted.contains(currTrans)) {
-                        transactions.add(currTrans);
-                    }
-                }
+        for (Transaction t : sorted) {
+            if (t.getTimestamp().isAfter(timestamp) || t.getTimestamp().equals(timestamp)){
+                transactions.add(t);
             }
         }
         return transactions;
@@ -467,30 +450,12 @@ public class TransactionRepository {
      * @param category категория транзакций для фильтрации (в нижнем регистре, без лишних пробелов)
      * @param sorted   исходный список транзакций для фильтрации
      * @return список транзакций, соответствующих указанной категории
-     * @throws SQLException если произошла ошибка при работе с базой данных
      */
-    public List<Transaction> getSortedTransactionsByCategory(String category, List<Transaction> sorted) throws SQLException {
-        Config config = new Config();
+    public List<Transaction> getSortedTransactionsByCategory(String category, List<Transaction> sorted) {
         List<Transaction> transactions = new ArrayList<>();
-        String normalizedCategory = category.toLowerCase().trim();
-        String sql = Constants.FIND_TRANSACTIONS_BY_CATEGORY;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, normalizedCategory);
-            statement.setInt(2, userRepository.findUserIdByEmail(user.getEmail()));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
-                    Transaction currTrans = new Transaction(
-                            resultSet.getInt("type"),
-                            resultSet.getDouble("sum"),
-                            resultSet.getString("category"),
-                            resultSet.getString("description"));
-                    currTrans.setTimestamp(resultSet.getTimestamp("timestamp").toLocalDateTime());
-                    if (sorted.contains(currTrans)) {
-                        transactions.add(currTrans);
-                    }
-                }
+        for (Transaction t : sorted) {
+            if (t.getCategory().equalsIgnoreCase(category)) {
+                transactions.add(t);
             }
         }
         return transactions;

@@ -2,7 +2,6 @@ package org.ylabHomework.controllers;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
 import org.ylabHomework.serviceClasses.Constants;
@@ -131,12 +130,8 @@ public class UserController {
         String name = enterNameInRegistration();
         String email = enterEmailInRegistration();
         String password = enterPasswordInRegistration();
-        try {
-            service.createUser(name, email, password);
-            System.out.println("Регистрация прошла успешно!");
-        } catch (Exception e) {
-            System.out.println("Ошибка при регистрации! " + e.getMessage());
-        }
+        String res = service.createUser(name, email, password);
+        System.out.println(res);
         showGreetingScreen();
     }
 

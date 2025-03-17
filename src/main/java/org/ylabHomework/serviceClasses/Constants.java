@@ -143,9 +143,9 @@ public class Constants {
 
     /**
      * Запрос для добавления новой транзакции в таблицу transactions.
-     * Ожидает параметры: type, sum, category, description, created_at, user_id.
+     * Ожидает параметры: type, sum, category, description, timestamp, user_id.
      */
-    public static final String ADD_TRANSACTION = "INSERT INTO main.transactions (type, sum, category, description, created_at, user_id) " +
+    public static final String ADD_TRANSACTION = "INSERT INTO main.transactions (type, sum, category, description, timestamp, user_id) " +
             "VALUES (?, ?, ?, ?, ?, ?)";
 
     /**
@@ -168,51 +168,51 @@ public class Constants {
 
     /**
      * Запрос для поиска транзакций пользователя, совершенных до указанного времени, в таблице transactions.
-     * Ожидает параметры: created_at, user_id.
+     * Ожидает параметры: timestamp, user_id.
      */
-    public static final String FIND_TRANSACTIONS_BEFORE_TIMESTAMP = "SELECT * FROM main.transactions WHERE created_at <= ? AND user_id = ?";
+    public static final String FIND_TRANSACTIONS_BEFORE_TIMESTAMP = "SELECT * FROM main.transactions WHERE timestamp <= ? AND user_id = ?";
 
     /**
      * Запрос для поиска транзакций пользователя, совершенных после указанного времени, в таблице transactions.
-     * Ожидает параметры: created_at, user_id.
+     * Ожидает параметры: timestamp, user_id.
      */
-    public static final String FIND_TRANSACTIONS_AFTER_TIMESTAMP = "SELECT * FROM main.transactions WHERE created_at >= ? AND user_id = ?";
+    public static final String FIND_TRANSACTIONS_AFTER_TIMESTAMP = "SELECT * FROM main.transactions WHERE timestamp >= ? AND user_id = ?";
 
     /**
      * Запрос для поиска транзакций пользователя в заданном временном диапазоне в таблице transactions.
-     * Ожидает параметры: created_at_start, created_at_end, user_id.
+     * Ожидает параметры: timestamp_start, timestamp_end, user_id.
      */
-    public static final String FIND_TRANSACTIONS_BETWEEN_TIMESTAMPS = "SELECT * FROM main.transactions WHERE created_at >= ? AND created_at <= ? AND user_id = ?";
+    public static final String FIND_TRANSACTIONS_BETWEEN_TIMESTAMPS = "SELECT * FROM main.transactions WHERE timestamp >= ? AND timestamp <= ? AND user_id = ?";
 
     /**
      * Запрос для обновления типа транзакции в таблице transactions.
-     * Ожидает параметры: type, created_at, user_id.
+     * Ожидает параметры: type, timestamp, user_id.
      */
-    public static final String UPDATE_TRANSACTION_TYPE = "UPDATE main.transactions SET type = ? WHERE created_at = ? AND user_id = ?";
+    public static final String UPDATE_TRANSACTION_TYPE = "UPDATE main.transactions SET type = ? WHERE timestamp = ? AND user_id = ?";
 
     /**
      * Запрос для обновления суммы транзакции в таблице transactions.
-     * Ожидает параметры: sum, created_at, user_id.
+     * Ожидает параметры: sum, timestamp, user_id.
      */
-    public static final String UPDATE_TRANSACTION_SUM = "UPDATE main.transactions SET sum = ? WHERE created_at = ? AND user_id = ?";
+    public static final String UPDATE_TRANSACTION_SUM = "UPDATE main.transactions SET sum = ? WHERE timestamp = ? AND user_id = ?";
 
     /**
      * Запрос для обновления категории транзакции в таблице transactions.
-     * Ожидает параметры: category, created_at, user_id.
+     * Ожидает параметры: category, timestamp, user_id.
      */
-    public static final String UPDATE_TRANSACTION_CATEGORY = "UPDATE main.transactions SET category = ? WHERE created_at = ? AND user_id = ?";
+    public static final String UPDATE_TRANSACTION_CATEGORY = "UPDATE main.transactions SET category = ? WHERE timestamp = ? AND user_id = ?";
 
     /**
      * Запрос для обновления описания транзакции в таблице transactions.
-     * Ожидает параметры: description, created_at, user_id.
+     * Ожидает параметры: description, timestamp, user_id.
      */
-    public static final String UPDATE_TRANSACTION_DESCRIPTION = "UPDATE main.transactions SET description = ? WHERE created_at = ? AND user_id = ?";
+    public static final String UPDATE_TRANSACTION_DESCRIPTION = "UPDATE main.transactions SET description = ? WHERE timestamp = ? AND user_id = ?";
 
     /**
      * Запрос для удаления транзакции из таблицы transactions.
-     * Ожидает параметры: created_at, user_id.
+     * Ожидает параметры: timestamp, user_id.
      */
-    public static final String DELETE_TRANSACTION = "DELETE FROM main.transactions WHERE created_at = ? AND user_id = ?";
+    public static final String DELETE_TRANSACTION = "DELETE FROM main.transactions WHERE timestamp = ? AND user_id = ?";
 
     /**
      * Запрос для получения месячного бюджета пользователя из таблицы users.
