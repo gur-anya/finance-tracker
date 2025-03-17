@@ -11,7 +11,7 @@ public class Main {
         Config.init();
 
 
-        UserRepository userRepository = new UserRepository();
+       UserRepository userRepository = new UserRepository();
         UserService userService = new UserService(userRepository);
         UserController userController = new UserController(userService);
 

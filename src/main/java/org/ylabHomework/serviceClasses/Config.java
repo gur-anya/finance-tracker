@@ -72,11 +72,14 @@ public class Config {
      */
     public Connection establishConnection() throws SQLException {
 
+
         String username = property.getProperty("username");
         String password = property.getProperty("password");
         String url = property.getProperty("url");
 
-        return DriverManager.getConnection(url, username, password);
+        Connection con = DriverManager.getConnection(url, username, password);
+        con.setAutoCommit(false);
+        return con;
 
     }
 }

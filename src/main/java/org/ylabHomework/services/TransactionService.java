@@ -105,16 +105,21 @@ public class TransactionService {
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             String message = e.getMessage();
-            return switch (sqlState) {
-                case "23503" ->
-                        new ParseResponseDTO(false, "Неверный тип транзакции или пользователь не найден: " + message + " Попробуйте ещё раз!");
-                case "22001" ->
-                        new ParseResponseDTO(false, "Слишком длинная категория или описание: " + message + " Попробуйте ещё раз!");
-                case "23502" ->
-                        new ParseResponseDTO(false, "Поля не могут быть пустыми: " + message + " Попробуйте ещё раз!");
-                case null, default ->
-                        new ParseResponseDTO(false, "Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            };
+            String errorMessage;
+            switch (sqlState) {
+                case "23503":
+                    errorMessage = "Неверный тип транзакции или пользователь не найден: " + message + " Попробуйте ещё раз!";
+                    return new ParseResponseDTO(false, errorMessage);
+                case "22001":
+                    errorMessage = "Слишком длинная категория или описание: " + message + " Попробуйте ещё раз!";
+                    return new ParseResponseDTO(false, errorMessage);
+                case "23502":
+                    errorMessage = "Поля не могут быть пустыми: " + message + " Попробуйте ещё раз!";
+                    return new ParseResponseDTO(false, errorMessage);
+                default:
+                    errorMessage = "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
+                    return new ParseResponseDTO(false, errorMessage);
+            }
         }
     }
 

@@ -10,6 +10,7 @@ import org.ylabHomework.services.TransactionStatsService;
 import org.ylabHomework.services.UserService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -29,17 +30,17 @@ public class UserController {
     private final UserService service;
     private User loggedUser = null;
     private boolean mainPageShown = false;
-    private final Map<String, Command> greetingCommands = new HashMap<>();
+    public final Map<String, Command> greetingCommands = new HashMap<>();
     private final Map<String, Command> mainPageUserCommands = new HashMap<>();
     private final Map<String, Command> personalAccountCommands = new HashMap<>();
     private final Map<String, Command> updateUserCommands = new HashMap<>();
-    private final Map<String, Command> adminCommands = new HashMap<>();
+    public final Map<String, Command> adminCommands = new HashMap<>();
     private final Map<String, Command> deleteCommands = new HashMap<>();
 
     /**
      * Интерфейс команды для паттерна "Команда".
      */
-    private interface Command {
+    public interface Command {
         void execute();
     }
 
@@ -60,7 +61,7 @@ public class UserController {
      * @param commands команды для выполнения
      * @param errorMessage сообщение об ошибке при неверном вводе
      */
-    private void executeMenu(String menuText, Map<String, Command> commands, String errorMessage) {
+    public void executeMenu(String menuText, Map<String, Command> commands, String errorMessage) {
         while (true) {
             System.out.println(menuText);
             String input = scanner.nextLine();
@@ -80,12 +81,12 @@ public class UserController {
     private void initializeCommands() {
         greetingCommands.put("1", this::registerNewUser);
         greetingCommands.put("2", this::loginUser);
-        greetingCommands.put("3", this::exitApp);
+        greetingCommands.put("3", this::goToExit);
 
 
         mainPageUserCommands.put("1", this::goToTransactionsController);
         mainPageUserCommands.put("2", this::showPersonalAccountSettings);
-        mainPageUserCommands.put("3", this::exitApp);
+        mainPageUserCommands.put("3", this::goToExit);
 
 
         personalAccountCommands.put("1", this::updateUser);
@@ -99,7 +100,7 @@ public class UserController {
         updateUserCommands.put("3", this::updatePass);
 
 
-        adminCommands.put("1", () -> service.getAllUsers().forEach(System.out::println));
+        adminCommands.put("1", this::showUsers);
         adminCommands.put("2", this::blockUser);
         adminCommands.put("3", this::unblockUser);
         adminCommands.put("4", this::deleteUserByEmail);
@@ -352,35 +353,50 @@ public class UserController {
             showGreetingScreen();
         }
     }
+    public void showUsers () {
+        List<User> users = service.getAllUsers();
+        users.remove(service.readUserByEmail("admin@ya.ru"));
+        if (!users.isEmpty()) {
+            for (int i = 0; i < users.size(); i++) {
+                System.out.println(i + 1 + ". " + users.get(i).getEmail() + ", " + users.get(i).getName());
+            }
+        } else {
+            System.out.println("Пользователи не найдены!");
+        }
+        showMainPageAdmin();
+    }
 
     /**
      * Блокирует пользователя по email (для админа).
      */
-    private void blockUser() {
+    public void blockUser() {
         System.out.println("Введите email пользователя для блокировки:");
         String email = scanner.nextLine();
         String result = service.blockUser(email);
         System.out.println(result);
+        showMainPageAdmin();
     }
 
     /**
      * Разблокирует пользователя по email (для админа).
      */
-    private void unblockUser() {
+    public void unblockUser() {
         System.out.println("Введите email пользователя для разблокировки:");
         String email = scanner.nextLine();
         String result = service.unblockUser(email);
         System.out.println(result);
+        showMainPageAdmin();
     }
 
     /**
      * Удаляет пользователя по email (для админа).
      */
-    private void deleteUserByEmail() {
+    public void deleteUserByEmail() {
         System.out.println("Введите email пользователя для удаления:");
         String email = scanner.nextLine();
         String result = service.deleteUserByEmail(email);
         System.out.println(result);
+        showMainPageAdmin();
     }
 
     /**
@@ -391,6 +407,9 @@ public class UserController {
         showGreetingScreen();
     }
 
+    public void goToExit(){
+        exitApp();
+    }
     /**
      * Завершает выполнение программы.
      */
