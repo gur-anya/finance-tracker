@@ -37,7 +37,7 @@ public class TransactionController {
     /**
      * Интерфейс паттерна Команда.
      */
-    private interface Command {
+    public interface Command {
         void execute();
     }
 
@@ -80,23 +80,23 @@ public class TransactionController {
 
         filterCommands.put("1", () -> {
             showTransactionList(getTransactionsBeforeTimestamp());
-            showTransactionManagement();
+            showTransactionsFilter();
         });
         filterCommands.put("2", () -> {
             showTransactionList(getTransactionsAfterTimestamp());
-            showTransactionManagement();
+            showTransactionsFilter();
         });
         filterCommands.put("3", () -> {
             showTransactionList(getTransactionsByCategory());
-            showTransactionManagement();
+            showTransactionsFilter();
         });
         filterCommands.put("4", () -> {
             showTransactionList(service.getTransactionsByType(getTransactionTypeInput()));
-            showTransactionManagement();
+            showTransactionsFilter();
         });
         filterCommands.put("5", () -> {
             showTransactionList(service.getAllTransactions());
-            showTransactionManagement();
+            showTransactionsFilter();
         });
         filterCommands.put("6", this::showTransactionManagement);
 
@@ -175,6 +175,7 @@ public class TransactionController {
         if (transaction != null) {
             executeTransactionMenu(Constants.UPDATE_TRANSACTIONS_MENU, updateCommands, transaction, "Пожалуйста, введите 1, 2, 3, 4 или 5.");
         }
+        showTransactionManagement();
     }
 
     /**
@@ -185,6 +186,7 @@ public class TransactionController {
         if (transaction != null) {
             executeTransactionMenu("Вы действительно хотите удалить эту транзакцию? да/нет", deleteCommands, transaction, "Пожалуйста, введите да или нет.");
         }
+        showTransactionManagement();
     }
 
     /**

@@ -42,6 +42,8 @@
             <column name="password" value="$2a$10$Lz/N/PPqZTdHgRQC6Wf6EeU/SZb/KxAEGm.H/MDvW315ygMq3wEwm"/>
             <column name="role_id" valueNumeric="1"/>
             <column name="is_active" valueBoolean="true"/>
+            <column name="monthly_budget" valueNumeric="1000.0"/>
+            <column name="goal" valueNumeric="1000.0"/>
         </insert>
     </changeSet>
 
