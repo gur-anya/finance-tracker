@@ -134,7 +134,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>Main</mainClass>
+                            <mainClass>org.ylabHomework.Main</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

@@ -1,7 +1,6 @@
 services:
   app:
     build: .
-    restart: always
     depends_on:
       - tracker_app_database
     stdin_open: true
