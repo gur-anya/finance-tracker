@@ -68,9 +68,9 @@ public class UserService {
             } else if ("23502".equals(sqlState)) {
                 return "Поля не могут быть пустыми: " + message + " Попробуйте ещё раз!";
             } else {
-                return "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
+                return databaseError(e);
             }
-          
+
         }
     }
 
@@ -90,13 +90,8 @@ public class UserService {
             }
             return new LoginResult(false, null);
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
             String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+            System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
             return new LoginResult(false, null);
         }
     }
@@ -131,12 +126,7 @@ public class UserService {
             }
             return "OK";
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                return "Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!";
-            }
-            return "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
+            return databaseError(e);
         }
     }
 
@@ -172,9 +162,9 @@ public class UserService {
             if ("22001".equals(sqlState)) {
                 return "Слишком длинное имя: " + message + " Попробуйте ещё раз!";
             } else {
-                return "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
+                return databaseError(e);
             }
-          
+
         }
     }
 
@@ -212,9 +202,9 @@ public class UserService {
             } else if ("22001".equals(sqlState)) {
                 return "Слишком длинный email: " + message + " Попробуйте ещё раз!";
             } else {
-                return "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
+                return databaseError(e);
             }
-          
+
         }
     }
 
@@ -244,9 +234,9 @@ public class UserService {
             if ("22001".equals(sqlState)) {
                 return "Слишком длинный пароль: " + message + " Попробуйте ещё раз!";
             } else {
-                return "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
+               return databaseError(e);
             }
-          
+
         }
     }
 
@@ -288,12 +278,7 @@ public class UserService {
             }
             return "Не удалось удалить пользователя! Попробуйте ещё раз!";
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                return "Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!";
-            }
-            return "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
+           return databaseError(e);
         }
     }
 
@@ -308,13 +293,7 @@ public class UserService {
         try {
             return repository.readUserByEmail(normalizedEmail);
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+            System.out.println(databaseError(e));
             return null;
         }
     }
@@ -328,13 +307,7 @@ public class UserService {
         try {
             return new ArrayList<>(repository.getUsers());
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+            System.out.println(databaseError(e));
             return new ArrayList<>();
         }
     }
@@ -381,12 +354,7 @@ public class UserService {
             user.setActive(false);
             return "Пользователь " + normalizedEmail + " успешно заблокирован!";
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                return "Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!";
-            }
-            return "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
+            return databaseError(e);
         }
     }
 
@@ -410,12 +378,7 @@ public class UserService {
             user.setActive(true);
             return "Пользователь " + normalizedEmail + " успешно разблокирован!";
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                return "Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!";
-            }
-            return "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
+            return databaseError(e);
         }
     }
 
@@ -443,11 +406,16 @@ public class UserService {
         return BCrypt.checkpw(password, user.getPassword());
     }
 
+    public String databaseError(Exception e) {
+        return "Ошибка базы данных: " + e.getMessage() + " Попробуйте ещё раз!";
+    }
+
     /**
      * Результат логина.
      *
      * @param success успешность логина
      * @param user    пользователь, если логин успешен
      */
-    public record LoginResult(boolean success, User user) {}
+    public record LoginResult(boolean success, User user) {
+    }
 }

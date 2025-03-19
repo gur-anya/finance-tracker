@@ -184,4 +184,49 @@ public class UserServiceTests {
         String result = service.createUser("newAnya", "newanya@ya.ru", "5678");
         assertThat(result).isEqualTo("Регистрация прошла успешно!");
     }
+
+    @Test
+    @DisplayName("Попытка создать пользователя с уже существующим email")
+    public void createUserWithExistingEmail() {
+        String result = service.createUser("anya", "anya@ya.ru", "1234");
+        assertThat(result).isEqualTo("Пользователь с таким email уже существует! Попробуйте ещё раз!");
+    }
+
+    @Test
+    @DisplayName("Попытка создать пользователя с некорректным email")
+    public void createUserWithInvalidEmail() {
+        String result = service.createUser("anya", "newanya", "1234");
+        assertThat(result).isEqualTo("Пожалуйста, введите корректный email! Попробуйте ещё раз!");
+    }
+
+    @Test
+    @DisplayName("Попытка создать пользователя с пустым паролем")
+    public void createUserWithEmptyPassword() {
+        String result = service.createUser("anya", "newanya@ya.ru", "   ");
+        assertThat(result).isEqualTo("Пароль не может быть пустым! Попробуйте ещё раз!");
+    }
+
+    @Test
+    @DisplayName("Попытка создать пользователя с null паролем")
+    public void createUserWithNullPassword() {
+        String result = service.createUser("anya", "newanya@ya.ru", null);
+        assertThat(result).isEqualTo("Пароль не может быть пустым! Попробуйте ещё раз!");
+    }
+
+    @Test
+    @DisplayName("Попытка создать пользователя с некорректным именем")
+    public void createUserWithInvalidName() {
+        String result = service.createUser("", "newanya@ya.ru", "1234");
+        assertThat(result).endsWith("Попробуйте ещё раз!");
+        assertThat(result).isNotEqualTo("Регистрация прошла успешно!");
+    }
+
+    @Test
+    @DisplayName("Попытка взимодействия с закрытой базой данных")
+    public void checkDatabaseErrorCreateUser() throws SQLException {
+        connection.close();
+        postgres.close();
+        String result = service.createUser("", "newanya@ya.ru", "1234");
+        assertThat(result).startsWith("Ошибка!");
+    }
 }
