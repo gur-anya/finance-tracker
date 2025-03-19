@@ -25,6 +25,7 @@
         <testcontainers.ver>1.19.8</testcontainers.ver>
         <maven.compiler.plugin.ver>3.13.0</maven.compiler.plugin.ver>
         <assembly.plugin.ver>3.3.0</assembly.plugin.ver>
+        <slf4j.ver>2.0.13</slf4j.ver>
     </properties>
 
 
@@ -85,6 +86,12 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase.ver}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>${slf4j.ver}</version>
         </dependency>
 
     </dependencies>

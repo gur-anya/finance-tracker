@@ -47,13 +47,7 @@ public class TransactionStatsService {
             incomes = repository.getTransactionsByType(1);
             expenses = repository.getTransactionsByType(2);
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+             System.out.println(databaseError(e));
             return 0;
         }
 
@@ -70,13 +64,7 @@ public class TransactionStatsService {
 
             return repository.getMonthlyBudget() + totalIncome - totalExpense;
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+             System.out.println(databaseError(e));
             return 0;
         }
     }
@@ -95,13 +83,7 @@ public class TransactionStatsService {
             incomes = repository.getTransactionsByType(1);
             expenses = repository.getTransactionsByType(2);
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+             System.out.println(databaseError(e));
             return 0;
         }
 
@@ -114,13 +96,7 @@ public class TransactionStatsService {
 
             return repository.getGoal() - totalIncome + totalExpense;
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+             System.out.println(databaseError(e));
             return 0;
         }
     }
@@ -136,13 +112,7 @@ public class TransactionStatsService {
         try {
             transactionList = repository.getAllTransactions();
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+             System.out.println(databaseError(e));
             return new LinkedHashMap<>();
         }
         Map<String, Double> result = new LinkedHashMap<>();
@@ -166,12 +136,7 @@ public class TransactionStatsService {
         try {
             transactionList = repository.getAllTransactions();
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                return "Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!";
-            }
-            return "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
+           return databaseError(e);
         }
 
         double totalIncome = transactionList.stream()
@@ -198,13 +163,7 @@ public class TransactionStatsService {
         try {
             transactionList = repository.getTransactionsBetweenTimestamps(timestamp1, timestamp2);
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+             System.out.println(databaseError(e));
             return new double[]{0, 0, 0};
         }
 
@@ -288,13 +247,7 @@ public class TransactionStatsService {
             }
             return repository.getTransactionsBeforeTimestamp(endTime);
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+             System.out.println(databaseError(e));
             return new ArrayList<>();
         }
     }
@@ -304,7 +257,7 @@ public class TransactionStatsService {
      *
      * @return массив: [цель, доходы по цели, расходы по цели, накоплено, осталось], или null, если нет транзакций
      */
-    private double[] calculateGoalData() {
+    public double[] calculateGoalData() {
         List<Transaction> goalTransactions;
         try {
             goalTransactions = repository.getTransactionsByCategory("цель");
@@ -313,11 +266,7 @@ public class TransactionStatsService {
             String message = e.getMessage();
             if ("22001".equals(sqlState)) {
                 System.out.println("Слишком длинная категория: " + message + " Попробуйте ещё раз!");
-            } else if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+            } else  System.out.println(databaseError(e));
             return null;
         }
 
@@ -332,13 +281,7 @@ public class TransactionStatsService {
             try {
                 goalAmount = repository.getGoal();
             } catch (SQLException e) {
-                String sqlState = e.getSQLState();
-                String message = e.getMessage();
-                if (sqlState != null && sqlState.startsWith("08")) {
-                    System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-                } else {
-                    System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-                }
+                System.out.println(databaseError(e));
                 return null;
             }
             double leftToSave = goalAmount - saved;
@@ -479,6 +422,10 @@ public class TransactionStatsService {
         }
 
         return sb.toString();
+    }
+
+    public String databaseError(Exception e) {
+        return "Ошибка базы данных: " + e.getMessage() + " Попробуйте ещё раз!";
     }
 
     /**

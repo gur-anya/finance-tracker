@@ -411,11 +411,12 @@ public class TransactionController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         String input = scanner.nextLine();
         if (input.isEmpty()) return null;
-        try {
-            return LocalDateTime.parse(input, formatter);
-        } catch (Exception e) {
-            System.out.println("Неверный формат! Используйте dd.MM.yyyy HH:mm");
-            return periodInput();
+        while (true) {
+            try {
+                return LocalDateTime.parse(input, formatter);
+            } catch (Exception e) {
+                System.out.println("Неверный формат! Используйте dd.MM.yyyy HH:mm");
+            }
         }
     }
 

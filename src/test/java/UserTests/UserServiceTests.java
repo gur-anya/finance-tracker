@@ -7,11 +7,13 @@ import org.ylabHomework.repositories.UserRepository;
 import org.ylabHomework.serviceClasses.Config;
 import org.ylabHomework.services.UserService;
 
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @DisplayName("Тесты для сервиса, работающего с пользователем")
 public class UserServiceTests {
@@ -220,13 +222,78 @@ public class UserServiceTests {
         assertThat(result).endsWith("Попробуйте ещё раз!");
         assertThat(result).isNotEqualTo("Регистрация прошла успешно!");
     }
+    @Test
+    @DisplayName("Попытка обновить пароль для ненайденного пользователя")
+    public void updatePasswordNullUser() throws SQLException {
+        UserRepository repositoryMock = mock(UserRepository.class);
+        UserService service = new UserService(repositoryMock);
 
+        when(repositoryMock.readUserByEmail(anyString())).thenReturn(null);
+        String result = service.updatePassword("1234", "5678", "anya@ya.ru");
+        assertThat(result).isEqualTo("Пользователь не найден! Попробуйте ещё раз!");
+    }
+
+    @Test
+    @DisplayName("Попытка обновить пароль, неверный повторный ввод пароля")
+    public void updatePasswordWrongSecondInput() throws SQLException {
+        UserRepository repositoryMock = mock(UserRepository.class);
+        UserService service = spy(new UserService(repositoryMock));
+
+        User mockUser = new User("anya", "anya@ya.ru", "$2a$10$Lz/N/PPqZTdHgRQC6Wf6EeU/SZb/KxAEGm.H/MDvW315ygMq3wEwm", 1);
+        when(repositoryMock.readUserByEmail("anya@ya.ru")).thenReturn(mockUser);
+
+        when(service.comparePass(anyString(),eq(mockUser))).thenReturn(false);
+        String result = service.updatePassword("1234", "1234", "anya@ya.ru");
+        assertThat(result).isEqualTo("Неправильный старый пароль! Попробуйте ещё раз!");
+    }
+    @Test
+    @DisplayName("Успешное обновление пароля")
+    public void updatePasswordSuccess() throws SQLException {
+        UserRepository repositoryMock = mock(UserRepository.class);
+        UserService service = spy(new UserService(repositoryMock));
+
+
+        User mockUser = new User("anya", "anya@ya.ru", "$2a$10$Lz/N/PPqZTdHgRQC6Wf6EeU/SZb/KxAEGm.H/MDvW315ygMq3wEwm", 1);
+        when(repositoryMock.readUserByEmail("anya@ya.ru")).thenReturn(mockUser);
+        when(service.comparePass(anyString(), eq(mockUser))).thenReturn(true);
+
+        String result = service.updatePassword("1234", "5678", "anya@ya.ru");
+
+        assertThat(result).isEqualTo("Пароль успешно обновлён!");
+    }
+
+
+    @Test
+    @DisplayName("Попытка разблокировать незаблокированного пользователя")
+    public void unblockUnblockedUser() throws SQLException {
+        UserRepository repositoryMock = mock(UserRepository.class);
+        UserService service = new UserService(repositoryMock);
+        User user = new User("anya", "anya@ya.ru", "1234", 1);
+        user.setActive(true);
+
+        when(repositoryMock.readUserByEmail(anyString())).thenReturn(user);
+        String result = service.unblockUser("anya@ya.ru");
+        assertThat(result).isEqualTo("Пользователь не заблокирован!");
+    }
+    @Test
+    @DisplayName("Успешная разблокировка")
+    public void unblockUser() throws SQLException {
+        UserRepository repositoryMock = mock(UserRepository.class);
+        UserService service = new UserService(repositoryMock);
+        User user = new User("anya", "anya@ya.ru", "1234", 1);
+        user.setActive(false);
+
+        when(repositoryMock.readUserByEmail(anyString())).thenReturn(user);
+        String result = service.unblockUser("anya@ya.ru");
+        assertThat(result).isEqualTo("Пользователь anya@ya.ru успешно разблокирован!");
+    }
     @Test
     @DisplayName("Попытка взимодействия с закрытой базой данных")
     public void checkDatabaseErrorCreateUser() throws SQLException {
-        connection.close();
-        postgres.close();
-        String result = service.createUser("", "newanya@ya.ru", "1234");
-        assertThat(result).startsWith("Ошибка!");
+        UserRepository repositoryMock = mock(UserRepository.class);
+        UserService service = new UserService(repositoryMock);
+        doThrow(new SQLException("Database connection closed")).when(repositoryMock).addUser(any());
+        String result = service.createUser("anya", "newanya@ya.ru", "1234");
+        assertThat(result).startsWith("Ошибка базы данных");
     }
 }

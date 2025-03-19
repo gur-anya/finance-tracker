@@ -1,6 +1,9 @@
 package TransactionTests;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
@@ -9,17 +12,19 @@ import org.ylabHomework.repositories.UserRepository;
 import org.ylabHomework.serviceClasses.Config;
 import org.ylabHomework.services.TransactionService;
 import org.ylabHomework.services.TransactionStatsService;
-import org.ylabHomework.services.UserService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 @DisplayName("Тесты для сервиса, работающего с транзакциями")
 public class TransactionServicesTests {
@@ -29,11 +34,11 @@ public class TransactionServicesTests {
     private TransactionRepository repo;
     private TransactionService service;
     private TransactionStatsService statService;
-   private final UserRepository userRepo = new UserRepository();
+    private final UserRepository userRepo = new UserRepository();
 
     private User user;
 
-    public TransactionServicesTests() throws SQLException {
+    public TransactionServicesTests() {
     }
 
     @BeforeEach
@@ -42,7 +47,7 @@ public class TransactionServicesTests {
         user = userRepo.readUserByEmail("anya@ya.ru");
         Config config = new Config();
         connection = config.establishConnection();
-       repo = new TransactionRepository(user);
+        repo = new TransactionRepository(user);
         service = new TransactionService(repo, user);
         statService = new TransactionStatsService(repo, user);
     }
@@ -56,7 +61,7 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Создание новой транзакции")
-    public void createTransaction() throws SQLException {
+    public void createTransaction() {
         TransactionService.ParseResponseDTO result = service.createTransaction(1, "2500.0", "стипендия", "ура!");
         assertThat(result.success).isTrue();
         assertThat(result.content).isEqualTo("Транзакция успешно сохранена!");
@@ -72,10 +77,9 @@ public class TransactionServicesTests {
     }
 
     @Test
-    @DisplayName("Обновление типа транзакции с null")
+    @DisplayName("Обновление типа транзакции с null-транзакцией")
     public void updateTransactionTypeNull() {
-        Transaction transaction = null;
-        TransactionService.ParseResponseDTO result = service.updateTransactionType(1, transaction);
+        TransactionService.ParseResponseDTO result = service.updateTransactionType(1, null);
         assertThat(result.success).isFalse();
         assertThat(result.content).isEqualTo("Транзакция не найдена! Попробуйте ещё раз!");
     }
@@ -125,7 +129,7 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Получение транзакций до указанной даты")
-    public void getTransactionsBeforeTimestamp() throws SQLException {
+    public void getTransactionsBeforeTimestamp() {
         LocalDateTime now = LocalDateTime.now();
 
         List<Transaction> result = service.getTransactionsBeforeTimestamp(now);
@@ -134,15 +138,15 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Получение транзакций после указанной даты")
-    public void getTransactionsAfterTimestamp() throws SQLException {
-        List<Transaction> result = service.getTransactionsAfterTimestamp(LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.of(0,0,0,0)));
+    public void getTransactionsAfterTimestamp() {
+        List<Transaction> result = service.getTransactionsAfterTimestamp(LocalDateTime.of(LocalDate.of(2000, 1, 1), LocalTime.of(0, 0, 0, 0)));
         assertThat(result).hasSize(3);
         assertThat(result.get(0).getSum()).isEqualTo(250.0);
     }
 
     @Test
     @DisplayName("Получение транзакций по категории")
-    public void getTransactionsByCategory() throws SQLException {
+    public void getTransactionsByCategory() {
         List<Transaction> result = service.getTransactionsByCategory("стипендия");
         assertThat(result).hasSize(1);
         assertThat(result.get(0).getSum()).isEqualTo(2500.0);
@@ -150,7 +154,7 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Получение транзакций по типу")
-    public void getTransactionsByType() throws SQLException {
+    public void getTransactionsByType() {
         List<Transaction> result = service.getTransactionsByType(2);
         assertThat(result).hasSize(2);
         assertThat(result.get(0).getSum()).isEqualTo(250.0);
@@ -158,15 +162,15 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Получение всех транзакций")
-    public void getAllTransactions() throws SQLException {
-       List<Transaction> result = service.getAllTransactions();
+    public void getAllTransactions() {
+        List<Transaction> result = service.getAllTransactions();
         assertThat(result).hasSize(3);
         assertThat(result).extracting(Transaction::getSum).containsExactlyInAnyOrder(2500.0, 50.0, 250.0);
     }
 
     @Test
     @DisplayName("Удаление существующей транзакции")
-    public void deleteTransactionExists() throws SQLException {
+    public void deleteTransactionExists() {
         Transaction transaction = service.getAllTransactions().get(0);
         TransactionService.ParseResponseDTO result = service.deleteTransaction(transaction);
         assertThat(result.content).isEqualTo("Транзакция успешно удалена!");
@@ -183,14 +187,14 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Проверка остатка месячного бюджета с транзакциями")
-    public void checkMonthlyBudgetLimitWithTransactions() throws SQLException {
+    public void checkMonthlyBudgetLimitWithTransactions() {
         double result = statService.checkMonthlyBudgetLimit();
         assertThat(result).isEqualTo(3200.0);
     }
 
     @Test
     @DisplayName("Проверка прогресса цели без транзакций")
-    public void checkGoalProgressNoTransactions() throws SQLException {
+    public void checkGoalProgressNoTransactions() {
         service.setGoal("1000.0");
         double result = statService.checkGoalProgress();
         assertThat(result).isEqualTo(1000.0);
@@ -199,8 +203,8 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Анализ расходов по категориям с транзакциями")
-    public void analyzeExpenseByCategoriesWithTransactions() throws SQLException {
-       Map<String, Double> result = statService.analyzeExpenseByCategories();
+    public void analyzeExpenseByCategoriesWithTransactions() {
+        Map<String, Double> result = statService.analyzeExpenseByCategories();
         assertThat(result).hasSize(2);
         assertThat(result).containsEntry("карамельный макиато", 250.0);
         assertThat(result).containsEntry("булочка с сосиской", 50.0);
@@ -209,7 +213,7 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Подсчёт баланса с транзакциями")
-    public void calculateBalanceWithTransactions() throws SQLException {
+    public void calculateBalanceWithTransactions() {
         String result = statService.calculateBalance();
         assertThat(result).isEqualTo("Ваш баланс: 2200,00 руб.");
     }
@@ -225,7 +229,7 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Получение доходов и расходов за период с транзакциями")
-    public void getIncomeExpenseForPeriodWithTransactions() throws SQLException {
+    public void getIncomeExpenseForPeriodWithTransactions() {
         LocalDateTime start = (LocalDateTime.of(2000, 1, 1, 0, 0));
         LocalDateTime end = (LocalDateTime.of(2050, 1, 1, 0, 0));
 
@@ -235,7 +239,7 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Генерация финансового отчёта за полный период")
-    public void generateGeneralReportFullPeriod() throws SQLException {
+    public void generateGeneralReportFullPeriod() {
         TransactionStatsService.FinancialReport result = statService.generateGeneralReport(null, null);
         assertThat(result.totalIncome()).isEqualTo(2500.0);
         assertThat(result.totalExpense()).isEqualTo(300.0);
@@ -243,5 +247,189 @@ public class TransactionServicesTests {
         assertThat(result.categoryReport()).hasSize(3);
         assertThat(result.categoryReport().get("стипендия")[0]).isEqualTo(2500.0);
         assertThat(result.categoryReport().get("карамельный макиато")[1]).isEqualTo(250.0);
+    }
+
+    @Test
+    @DisplayName("Попытка создать транзакцию с описанием длиннее 200 символов")
+    public void createTransactionWithTooLongDescription() throws SQLException {
+        TransactionRepository repositoryMock = mock(TransactionRepository.class);
+        TransactionService service = new TransactionService(repositoryMock, user);
+
+        String longDescription = "a".repeat(201);
+
+        doThrow(new SQLException("String data right truncation", "22001"))
+                .when(repositoryMock).createTransaction(any(Transaction.class));
+
+        TransactionService.ParseResponseDTO result = service.createTransaction(1, "1000", "подарок", longDescription);
+        assertThat(result.success).isFalse();
+        assertThat(result.content).startsWith("Слишком длинная категория или описание: ");
+        assertThat(result.content).endsWith("Попробуйте ещё раз!");
+    }
+
+    @Test
+    @DisplayName("Попытка обновить транзакцию с описанием длиннее 200 символов")
+    public void updateTransactionWithTooLongDescription() throws SQLException {
+        TransactionRepository repositoryMock = mock(TransactionRepository.class);
+        TransactionService service = new TransactionService(repositoryMock, user);
+
+        String longDescription = "a".repeat(201);
+
+        doThrow(new SQLException("String data right truncation", "22001"))
+                .when(repositoryMock).updateTransactionDescription(any(String.class), any(Transaction.class));
+        when(repositoryMock.getAllTransactions()).thenReturn(new ArrayList<>(List.of(new Transaction(2, 300.0, "placeholderCateg", ""))));
+
+        TransactionService.ParseResponseDTO result = service.updateTransactionDescription(longDescription, service.getAllTransactions().get(0));
+        assertThat(result.success).isFalse();
+        assertThat(result.content).isEqualTo("Описание не должно превышать 200 символов! Попробуйте ещё раз!");
+    }
+
+    @Test
+    @DisplayName("Проверка месячного остатка с отрицательным остатком")
+    public void checkMonthlyBudgetBelow0() throws SQLException {
+        TransactionRepository repositoryMock = mock(TransactionRepository.class);
+        TransactionStatsService statsServiceMock = mock(TransactionStatsService.class);
+        TransactionService service = new TransactionService(repositoryMock, user);
+
+
+        doReturn(-200.0).when(statsServiceMock).checkMonthlyBudgetLimit();
+
+        when(repositoryMock.getMonthlyBudget()).thenReturn(100.0);
+        when(repositoryMock.getTransactionsByType(2)).thenReturn(new ArrayList<>(List.of(new Transaction(2, 300.0, "placeholderCateg", ""))));
+        when(repositoryMock.getTransactionsByType(1)).thenReturn(new ArrayList<>(List.of()));
+
+        service.setStatsService(statsServiceMock);
+        String result = service.checkMonthlyBudgetLimit();
+
+        assertThat(result).isEqualTo("Вы превысили лимит на месяц на 200,00 руб.!");
+    }
+
+    @Test
+    @DisplayName("Проверка месячного остатка с нулевым остатком")
+    public void checkMonthlyBudget0() throws SQLException {
+        TransactionRepository repositoryMock = mock(TransactionRepository.class);
+        TransactionStatsService statsServiceMock = mock(TransactionStatsService.class);
+        TransactionService service = new TransactionService(repositoryMock, user);
+
+
+        doReturn(0.0).when(statsServiceMock).checkMonthlyBudgetLimit();
+
+        when(repositoryMock.getMonthlyBudget()).thenReturn(1000.0);
+        when(repositoryMock.getTransactionsByType(2)).thenReturn(new ArrayList<>(List.of(new Transaction(2, 1000.0, "placeholderCateg", ""))));
+        when(repositoryMock.getTransactionsByType(1)).thenReturn(new ArrayList<>(List.of()));
+
+        service.setStatsService(statsServiceMock);
+        String result = service.checkMonthlyBudgetLimit();
+
+        assertThat(result).isEqualTo("Ваш остаток: 0,00 руб.");
+    }
+
+    @Test
+    @DisplayName("Проверка месячного остатка с ненулевым остатком")
+    public void checkMonthlyBudgetPositive() throws SQLException {
+        TransactionRepository repositoryMock = mock(TransactionRepository.class);
+        TransactionStatsService statsServiceMock = mock(TransactionStatsService.class);
+        TransactionService service = new TransactionService(repositoryMock, user);
+
+
+        doReturn(200.0).when(statsServiceMock).checkMonthlyBudgetLimit();
+
+        when(repositoryMock.getMonthlyBudget()).thenReturn(1200.0);
+        when(repositoryMock.getTransactionsByType(2)).thenReturn(new ArrayList<>(List.of(new Transaction(2, 1000.0, "placeholderCateg", ""))));
+        when(repositoryMock.getTransactionsByType(1)).thenReturn(new ArrayList<>(List.of()));
+
+        service.setStatsService(statsServiceMock);
+        String result = service.checkMonthlyBudgetLimit();
+        assertThat(result).isEqualTo("Ваш остаток: 200,00 руб. Продолжайте в том же духе!");
+    }
+
+    @Test
+    @DisplayName("Пустой список транзакций по цели")
+    void calculateGoalDataEmptyTransactions() throws SQLException {
+        TransactionRepository repositoryMock = mock(TransactionRepository.class);
+
+        when(repositoryMock.getTransactionsByCategory("цель")).thenReturn(new ArrayList<>(List.of()));
+        double[] result = statService.calculateGoalData();
+        assertThat(result).isNull();
+    }
+
+    @Test
+    @DisplayName("Непустой список транзакций по цели")
+    void calculateGoalDataSuccess() throws SQLException {
+        TransactionRepository repositoryMock = mock(TransactionRepository.class);
+        TransactionStatsService statsServiceMock = new TransactionStatsService(repositoryMock, user);
+        when(repositoryMock.getGoal()).thenReturn(1200.0);
+        when(repositoryMock.getTransactionsByCategory("цель")).thenReturn(new ArrayList<>(List.of(new Transaction(1, 1000.0, "цель", ""),
+                new Transaction(2, 200.0, "цель", ""))));
+        double[] result = statsServiceMock.calculateGoalData();
+
+        assertThat(result).hasSize(5);
+        assertThat(result[0]).isEqualTo(1200.0);
+        assertThat(result[1]).isEqualTo(1000.0);
+        assertThat(result[2]).isEqualTo(200.0);
+        assertThat(result[3]).isEqualTo(800.0);
+        assertThat(result[4]).isEqualTo(400.0);
+    }
+
+    @Test
+    @DisplayName("Прогресс по неустановленной цели")
+    void getGoalProgressNoGoal() throws SQLException {
+        TransactionRepository repositoryMock = mock(TransactionRepository.class);
+        TransactionStatsService statsServiceMock = new TransactionStatsService(repositoryMock, user);
+
+
+        when(repositoryMock.getGoal()).thenReturn(0.0);
+
+        String result = statsServiceMock.getGoalProgress();
+        assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("Достижение цели")
+    @SuppressWarnings("unchecked")
+    void getGoalProgressGoalReached() throws SQLException {
+        TransactionRepository repositoryMock = mock(TransactionRepository.class);
+        TransactionStatsService statsServiceMock = new TransactionStatsService(repositoryMock, user);
+
+        when(repositoryMock.getGoal()).thenReturn(500.0);
+        when(repositoryMock.getSortedTransactionsByCategory(anyString(), anyList())).thenReturn(new ArrayList<>(List.of(new Transaction(1, 500.0, "цель", ""))));
+
+        String result = statsServiceMock.getGoalProgress();
+        assertThat(result).isEqualTo("Поздравляем! Вы достигли своей цели!");
+    }
+
+    @Test
+    @DisplayName("Превышение цели")
+    @SuppressWarnings("unchecked")
+    void getGoalProgressGoalExceeded() throws SQLException {
+        TransactionRepository repositoryMock = mock(TransactionRepository.class);
+        TransactionStatsService statsServiceMock = new TransactionStatsService(repositoryMock, user);
+
+        when(repositoryMock.getGoal()).thenReturn(500.0);
+        when(repositoryMock.getSortedTransactionsByCategory(anyString(), anyList())).thenReturn(new ArrayList<>(List.of(new Transaction(1, 700.0, "цель", ""))));
+
+        String result = statsServiceMock.getGoalProgress();
+        assertThat(result).isEqualTo("Поздравляем! Вы превысили цель на 200,00 руб.!");
+    }
+
+    @Test
+    @DisplayName("Получение остатка до цели")
+    @SuppressWarnings("unchecked")
+    void getGoalProgressLeftToSave() throws SQLException {
+        TransactionRepository repositoryMock = mock(TransactionRepository.class);
+        TransactionStatsService statsServiceMock = new TransactionStatsService(repositoryMock, user);
+
+        when(repositoryMock.getGoal()).thenReturn(500.0);
+        when(repositoryMock.getSortedTransactionsByCategory(anyString(), anyList())).thenReturn(new ArrayList<>(List.of(new Transaction(1, 300.0, "цель", ""))));
+
+        String result = statsServiceMock.getGoalProgress();
+        assertThat(result).isEqualTo("До цели осталось накопить 300,00 руб. Отличный результат!");
+    }
+
+    @Test
+    @DisplayName("Превышение остатка на месяц")
+    void overgoMonthlyBudget() {
+        String result = service.notifyAboutMonthlyLimit(500.0);
+        assertThat(result).contains("Внимание! Вы превысили установленный месячный бюджет на 500,00 руб.");
+        assertThat(result).contains("Подробности отправлены по адресу anya@ya.ru");
     }
 }

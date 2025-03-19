@@ -59,14 +59,8 @@ public class UserService {
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             String message = e.getMessage();
-            if ("23505".equals(sqlState)) {
-                return "Пользователь с таким email уже существует! Попробуйте ещё раз!";
-            } else if ("23503".equals(sqlState)) {
-                return "Роль пользователя недоступна: " + message + " Попробуйте ещё раз!";
-            } else if ("22001".equals(sqlState)) {
+            if ("22001".equals(sqlState)) {
                 return "Слишком длинное имя, email или пароль: " + message + " Попробуйте ещё раз!";
-            } else if ("23502".equals(sqlState)) {
-                return "Поля не могут быть пустыми: " + message + " Попробуйте ещё раз!";
             } else {
                 return databaseError(e);
             }
@@ -90,8 +84,7 @@ public class UserService {
             }
             return new LoginResult(false, null);
         } catch (SQLException e) {
-            String message = e.getMessage();
-            System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
+            System.out.println(databaseError(e));
             return new LoginResult(false, null);
         }
     }
@@ -195,17 +188,8 @@ public class UserService {
             repository.updateEmail(normalizedNewEmail, user);
             return "Адрес электронной почты обновлён на " + normalizedNewEmail + "!";
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if ("23505".equals(sqlState)) {
-                return "Email уже занят! Попробуйте ещё раз!";
-            } else if ("22001".equals(sqlState)) {
-                return "Слишком длинный email: " + message + " Попробуйте ещё раз!";
-            } else {
                 return databaseError(e);
             }
-
-        }
     }
 
     /**
@@ -371,7 +355,7 @@ public class UserService {
             return "Пользователь с email " + normalizedEmail + " не найден! Попробуйте ещё раз!";
         }
         if (user.isActive()) {
-            return "Пользователь не заблокирован! Попробуйте ещё раз!";
+            return "Пользователь не заблокирован!";
         }
         try {
             repository.updateActive(true, user);
@@ -399,7 +383,7 @@ public class UserService {
      * @param user     пользователь с зашифрованным паролем
      * @return true, если пароли совпадают; false иначе
      */
-    private boolean comparePass(String password, User user) {
+    public boolean comparePass(String password, User user) {
         if (user == null || password == null || user.getPassword() == null) {
             return false;
         }

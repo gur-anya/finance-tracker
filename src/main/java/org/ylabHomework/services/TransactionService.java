@@ -1,6 +1,7 @@
 package org.ylabHomework.services;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
@@ -35,7 +36,8 @@ public class TransactionService {
 
     public final TransactionRepository repository;
     @Getter
-    public final TransactionStatsService statsService;
+    @Setter
+    public TransactionStatsService statsService;
     public final User user;
 
     /**
@@ -99,26 +101,19 @@ public class TransactionService {
         try {
             repository.createTransaction(new Transaction(type, parsedSum, category, description));
             if (type == 2 && getMonthlyBudget() != 0) {
-                checkExpenseLimitReminder();
+                System.out.println(checkExpenseLimitReminder());
             }
             return new ParseResponseDTO(true, "Транзакция успешно сохранена!");
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             String message = e.getMessage();
             String errorMessage;
-            switch (sqlState) {
-                case "23503":
-                    errorMessage = "Неверный тип транзакции или пользователь не найден: " + message + " Попробуйте ещё раз!";
-                    return new ParseResponseDTO(false, errorMessage);
-                case "22001":
-                    errorMessage = "Слишком длинная категория или описание: " + message + " Попробуйте ещё раз!";
-                    return new ParseResponseDTO(false, errorMessage);
-                case "23502":
-                    errorMessage = "Поля не могут быть пустыми: " + message + " Попробуйте ещё раз!";
-                    return new ParseResponseDTO(false, errorMessage);
-                default:
-                    errorMessage = "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
-                    return new ParseResponseDTO(false, errorMessage);
+            if (sqlState.equals("22001")) {
+                errorMessage = "Слишком длинная категория или описание: " + message + " Попробуйте ещё раз!";
+                return new ParseResponseDTO(false, errorMessage);
+            } else {
+                errorMessage = "Ошибка базы данных: " + message + " Попробуйте ещё раз!";
+                return new ParseResponseDTO(false, errorMessage);
             }
         }
     }
@@ -140,18 +135,11 @@ public class TransactionService {
         try {
             repository.updateTransactionType(newType, transaction);
             if (newType == 2 && getMonthlyBudget() != 0) {
-                checkExpenseLimitReminder();
+                System.out.println(checkExpenseLimitReminder());
             }
             return new ParseResponseDTO(true, "Тип транзакции успешно обновлён!");
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if ("23503".equals(sqlState)) {
-                return new ParseResponseDTO(false, "Неверный тип транзакции: " + message + " Попробуйте ещё раз!");
-            } else {
                 return new ParseResponseDTO(false, "Ошибка!  " + e.getMessage());
-            }
-          
         }
     }
 
@@ -172,15 +160,14 @@ public class TransactionService {
         try {
             repository.updateTransactionSum(parsedSum, transaction);
             if (transaction.getType() == 2 && getMonthlyBudget() != 0) {
-                checkExpenseLimitReminder();
+                System.out.println(checkExpenseLimitReminder());
             }
             return new ParseResponseDTO(true, "Сумма транзакции успешно обновлена!");
-        }catch (SQLException e) {
-                return new ParseResponseDTO(false, "Ошибка! " + e.getMessage());
-            }
-          
-          
-          
+        } catch (SQLException e) {
+            return new ParseResponseDTO(false, "Ошибка! " + e.getMessage());
+        }
+
+
     }
 
     /**
@@ -207,7 +194,7 @@ public class TransactionService {
             } else {
                 return new ParseResponseDTO(false, "Ошибка!  " + e.getMessage());
             }
-          
+
         }
     }
 
@@ -229,14 +216,7 @@ public class TransactionService {
             repository.updateTransactionDescription(newDescription, transaction);
             return new ParseResponseDTO(true, "Описание транзакции успешно обновлено!");
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if ("22001".equals(sqlState)) {
-                return new ParseResponseDTO(false, "Слишком длинное описание: " + message + " Попробуйте ещё раз!");
-            } else {
-                return new ParseResponseDTO(false, "Ошибка!  " + e.getMessage());
-            }
-          
+            return new ParseResponseDTO(false, "Ошибка!  " + e.getMessage());
         }
     }
 
@@ -254,12 +234,11 @@ public class TransactionService {
         try {
             repository.setMonthlyBudget(budget);
             return new ParseResponseDTO(true, String.format("Новый месячный бюджет %.2f руб. успешно установлен!", budget));
-        }catch (SQLException e) {
-                return new ParseResponseDTO(false, "Ошибка! " + e.getMessage());
-            }
-          
-          
-          
+        } catch (SQLException e) {
+            return new ParseResponseDTO(false, "Ошибка! " + e.getMessage());
+        }
+
+
     }
 
     /**
@@ -326,10 +305,8 @@ public class TransactionService {
             String message = e.getMessage();
             if ("22001".equals(sqlState)) {
                 System.out.println("Слишком длинная категория: " + message + " Попробуйте ещё раз!");
-            } else if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
             } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
+                System.out.println(databaseError(e));
             }
             return new ArrayList<>();
         }
@@ -345,13 +322,7 @@ public class TransactionService {
         try {
             return transactionsFilterUpperCase(repository.getTransactionsByType(type));
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+            System.out.println(databaseError(e));
             return new ArrayList<>();
         }
     }
@@ -365,13 +336,7 @@ public class TransactionService {
         try {
             return transactionsFilterUpperCase(repository.getAllTransactions());
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+            System.out.println(databaseError(e));
             return new ArrayList<>();
         }
     }
@@ -408,12 +373,11 @@ public class TransactionService {
                 return new ParseResponseDTO(true, "Транзакция успешно удалена!");
             }
             return new ParseResponseDTO(false, "Транзакция не найдена! Попробуйте ещё раз!");
-        }catch (SQLException e) {
-                return new ParseResponseDTO(false, "Ошибка! " + e.getMessage());
-            }
-          
-          
-          
+        } catch (SQLException e) {
+            return new ParseResponseDTO(false, "Ошибка! " + e.getMessage());
+        }
+
+
     }
 
     /**
@@ -425,13 +389,7 @@ public class TransactionService {
         try {
             return repository.getMonthlyBudget();
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+            System.out.println(databaseError(e));
             return 0;
         }
     }
@@ -445,13 +403,7 @@ public class TransactionService {
         try {
             return repository.getGoal();
         } catch (SQLException e) {
-            String sqlState = e.getSQLState();
-            String message = e.getMessage();
-            if (sqlState != null && sqlState.startsWith("08")) {
-                System.out.println("Ошибка подключения к базе данных: " + message + " Попробуйте ещё раз позже!");
-            } else {
-                System.out.println("Ошибка базы данных: " + message + " Попробуйте ещё раз!");
-            }
+            System.out.println(databaseError(e));
             return 0;
         }
     }
@@ -470,7 +422,7 @@ public class TransactionService {
             try {
                 repository.setGoal(Double.parseDouble(goalInput));
                 return "Новая цель " + String.format("%.2f", Double.parseDouble(goalInput)) + " руб. успешно установлена!";
-            } catch (SQLException e){
+            } catch (SQLException e) {
                 return "Ошибка! " + e.getMessage();
             }
         }
@@ -499,7 +451,7 @@ public class TransactionService {
             if (repository.getMonthlyBudget() == 0) {
                 return "";
             }
-        } catch (SQLException e){
+        } catch (SQLException e) {
             System.out.println("Ошибка! " + e);
         }
         double balance = statsService.checkMonthlyBudgetLimit();
@@ -515,36 +467,32 @@ public class TransactionService {
     /**
      * Проверяет лимит расходов и выводит уведомление, если он близок к исчерпанию.
      */
-    public void checkExpenseLimitReminder() {
-        if (getMonthlyBudget() == 0) return;
+    public String checkExpenseLimitReminder() {
+        if (getMonthlyBudget() == 0) {
+            return "";
+        }
         double remainingBudget = statsService.checkMonthlyBudgetLimit();
         if (remainingBudget <= 0) {
-            notifyAboutMonthlyLimit(Math.abs(remainingBudget));
+            return notifyAboutMonthlyLimit(Math.abs(remainingBudget));
         } else if (remainingBudget <= getMonthlyBudget() * 0.1) {
-            System.out.println("Осторожно! Остаток бюджета составляет " + String.format("%.2f", remainingBudget) +
-                    " руб. (менее 10% от лимита).");
+            return  "Осторожно! Остаток бюджета составляет " + String.format("%.2f", remainingBudget) +
+                    " руб. (менее 10% от лимита).";
         }
+        return "";
     }
 
     /**
      * Уведомляет о превышении месячного бюджета.
      *
      * @param overgo сумма превышения
+     * @return
      */
-    public void notifyAboutMonthlyLimit(double overgo) {
-        String message = "Внимание! Вы превысили установленный месячный бюджет на " + String.format("%.2f", overgo) +
-                " руб. " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
-        sendEmailNotification(message);
+    public String notifyAboutMonthlyLimit(double overgo) {
+        return "Внимание! Вы превысили установленный месячный бюджет на " + String.format("%.2f", overgo) +
+                " руб. " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) + ". Подробности отправлены" +
+                "по адресу " + user.getEmail();
     }
 
-    /**
-     * Имитирует отправку email-уведомления о превышении бюджета.
-     *
-     * @param message текст уведомления
-     */
-    public void sendEmailNotification(String message) {
-        System.out.println("Отправлено письмо на почту " + user.getEmail() + " с содержанием: " + message);
-    }
 
     /**
      * Возвращает информацию о финансовой цели пользователя.
@@ -557,6 +505,10 @@ public class TransactionService {
             return "Ваша установленная цель: " + String.format("%.2f", goal) + " руб.";
         }
         return "Вы пока не установили цель. Сделайте это прямо сейчас!";
+    }
+
+    public String databaseError(Exception e) {
+        return "Ошибка базы данных: " + e.getMessage() + " Попробуйте ещё раз!";
     }
 
     public static class ParseResponseDTO {
