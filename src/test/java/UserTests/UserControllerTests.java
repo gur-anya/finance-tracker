@@ -277,4 +277,106 @@ public class UserControllerTests {
         System.setOut(System.out);
         System.setIn(System.in);
     }
+
+    @Test
+    @DisplayName("Удаление аккаунта администратором")
+    void deleteAccountAdmin(){
+        String input = "anya@ya.ru\n";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        System.setIn(in);
+        UserService service = mock(UserService.class);
+        doReturn("Пользователь anya@ya.ru успешно удалён!").when(service).deleteUserByEmail(anyString());
+        UserController controller = spy(new UserController(service));
+
+        doNothing().when(controller).showMainPageAdmin();
+        controller.deleteUserByEmail();
+        verify(service).deleteUserByEmail(anyString());
+        System.setOut(System.out);
+        System.setIn(System.in);
+
+    }
+
+    @Test
+    @DisplayName("Разблокировка аккаунта администратором")
+    void unblockAccountAdmin(){
+        String input = "anya@ya.ru\n";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        System.setIn(in);
+        UserService service = mock(UserService.class);
+        doReturn("Пользователь anya@ya.ru успешно разблокирован!").when(service).unblockUser(anyString());
+        UserController controller = spy(new UserController(service));
+
+        doNothing().when(controller).showMainPageAdmin();
+        controller.unblockUser();
+        verify(service).unblockUser(anyString());
+        System.setOut(System.out);
+        System.setIn(System.in);
+
+    }
+
+    @Test
+    @DisplayName("Изменение пароля")
+    void updatePass(){
+        String input = "1234\n5678\n";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        System.setIn(in);
+        UserService service = mock(UserService.class);
+        doReturn("Пароль успешно обновлён!").when(service).updatePassword(anyString(), anyString(), anyString());
+        UserController controller = spy(new UserController(service));
+        controller.setLoggedUser(new User("anya", "anya@ya.ru", "1234", 1));
+
+        doNothing().when(controller).showPersonalAccountSettings();
+        controller.updatePass();
+        verify(service).updatePassword(anyString(), anyString(), anyString());
+        System.setOut(System.out);
+        System.setIn(System.in);
+
+    }
+    @Test
+    @DisplayName("Изменение почты")
+    void updateEmail(){
+        String input = "newanya@ya.ru\n";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        System.setIn(in);
+        UserService service = mock(UserService.class);
+        doReturn("Адрес электронной почты обновлён на newanya@ya.ru!").when(service).updateEmail(anyString(), anyString());
+        UserController controller = spy(new UserController(service));
+        controller.setLoggedUser(new User("anya", "anya@ya.ru", "1234", 1));
+
+        doNothing().when(controller).showPersonalAccountSettings();
+        controller.updateEmail();
+        verify(service).updateEmail(anyString(), anyString());
+        System.setOut(System.out);
+        System.setIn(System.in);
+
+    }
+
+    @Test
+    @DisplayName("Изменение имени")
+    void updateName(){
+        String input = "newname\n";
+        InputStream in = new ByteArrayInputStream(input.getBytes());
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        System.setIn(in);
+        UserService service = mock(UserService.class);
+        doReturn("Имя успешно изменено на newname!").when(service).updateName(anyString(), anyString());
+        UserController controller = spy(new UserController(service));
+        controller.setLoggedUser(new User("anya", "anya@ya.ru", "1234", 1));
+
+        doNothing().when(controller).showPersonalAccountSettings();
+        controller.updateName();
+        verify(service).updateName(anyString(), anyString());
+        System.setOut(System.out);
+        System.setIn(System.in);
+    }
+
 }

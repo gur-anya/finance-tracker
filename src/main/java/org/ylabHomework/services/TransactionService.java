@@ -489,7 +489,7 @@ public class TransactionService {
      */
     public String notifyAboutMonthlyLimit(double overgo) {
         return "Внимание! Вы превысили установленный месячный бюджет на " + String.format("%.2f", overgo) +
-                " руб. " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) + ". Подробности отправлены" +
+                " руб. " + LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) + ". Подробности отправлены " +
                 "по адресу " + user.getEmail();
     }
 

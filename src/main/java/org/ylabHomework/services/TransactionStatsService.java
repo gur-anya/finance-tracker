@@ -82,12 +82,6 @@ public class TransactionStatsService {
         try {
             incomes = repository.getTransactionsByType(1);
             expenses = repository.getTransactionsByType(2);
-        } catch (SQLException e) {
-             System.out.println(databaseError(e));
-            return 0;
-        }
-
-        try {
             List<Transaction>   sortedIncomes = repository.getSortedTransactionsByCategory(goalCategory, incomes);
             List<Transaction>  sortedExpenses = repository.getSortedTransactionsByCategory(goalCategory, expenses);
 
@@ -336,8 +330,8 @@ public class TransactionStatsService {
             }
         } catch (SQLException e) {
             System.out.println("Ошибка! " + e.getMessage());
+            return "";
         }
-        return "";
     }
 
     /**

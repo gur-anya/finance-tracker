@@ -385,13 +385,12 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Достижение цели")
-    @SuppressWarnings("unchecked")
     void getGoalProgressGoalReached() throws SQLException {
         TransactionRepository repositoryMock = mock(TransactionRepository.class);
-        TransactionStatsService statsServiceMock = new TransactionStatsService(repositoryMock, user);
+        TransactionStatsService statsServiceMock = spy(new TransactionStatsService(repositoryMock, user));
 
-        when(repositoryMock.getGoal()).thenReturn(500.0);
-        when(repositoryMock.getSortedTransactionsByCategory(anyString(), anyList())).thenReturn(new ArrayList<>(List.of(new Transaction(1, 500.0, "цель", ""))));
+        doReturn(500.0).when(repositoryMock).getGoal();
+        doReturn(0.0).when(statsServiceMock).checkGoalProgress();
 
         String result = statsServiceMock.getGoalProgress();
         assertThat(result).isEqualTo("Поздравляем! Вы достигли своей цели!");
@@ -399,13 +398,12 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Превышение цели")
-    @SuppressWarnings("unchecked")
     void getGoalProgressGoalExceeded() throws SQLException {
         TransactionRepository repositoryMock = mock(TransactionRepository.class);
-        TransactionStatsService statsServiceMock = new TransactionStatsService(repositoryMock, user);
+        TransactionStatsService statsServiceMock = spy(new TransactionStatsService(repositoryMock, user));
 
         when(repositoryMock.getGoal()).thenReturn(500.0);
-        when(repositoryMock.getSortedTransactionsByCategory(anyString(), anyList())).thenReturn(new ArrayList<>(List.of(new Transaction(1, 700.0, "цель", ""))));
+        when(statsServiceMock.checkGoalProgress()).thenReturn(-200.0);
 
         String result = statsServiceMock.getGoalProgress();
         assertThat(result).isEqualTo("Поздравляем! Вы превысили цель на 200,00 руб.!");
@@ -413,13 +411,12 @@ public class TransactionServicesTests {
 
     @Test
     @DisplayName("Получение остатка до цели")
-    @SuppressWarnings("unchecked")
     void getGoalProgressLeftToSave() throws SQLException {
         TransactionRepository repositoryMock = mock(TransactionRepository.class);
-        TransactionStatsService statsServiceMock = new TransactionStatsService(repositoryMock, user);
+        TransactionStatsService statsServiceMock = spy(new TransactionStatsService(repositoryMock, user));
 
         when(repositoryMock.getGoal()).thenReturn(500.0);
-        when(repositoryMock.getSortedTransactionsByCategory(anyString(), anyList())).thenReturn(new ArrayList<>(List.of(new Transaction(1, 300.0, "цель", ""))));
+        when(statsServiceMock.checkGoalProgress()).thenReturn(300.0);
 
         String result = statsServiceMock.getGoalProgress();
         assertThat(result).isEqualTo("До цели осталось накопить 300,00 руб. Отличный результат!");

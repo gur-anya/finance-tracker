@@ -204,28 +204,7 @@ public class UserRepository {
         }
     }
 
-    /**
-     * Возвращает все зарегистрированные адреса электронной почты.
-     *
-     * @return список зарегистрированных email
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public Set<String> getEmails() throws SQLException {
-        Config config = new Config();
-        Set<String> emails = new HashSet<>();
-        String sql = Constants.FIND_ALL_EMAILS;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-            while (resultSet.next()) {
-                emails.add(resultSet.getString("email").toLowerCase().trim());
-            }
-        }
-        return emails;
-    }
-
-    /**
+      /**
      * Находит id пользователя по заданному адресу электронной почты. В случае выброса SQLException выводится содержимое исключения.
      *
      * @param email адрес электронной почты пользователя; нормализуется в методе
