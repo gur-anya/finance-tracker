@@ -29,10 +29,8 @@ public class AuthFilter implements Filter {
         boolean nonAuthorisedPage = path.equals("/") || path.equals("/login") || path.equals("/registration");
 
         if (nonAuthorisedPage || (session != null && session.getAttribute("loggedUser") != null)) {
-            System.out.println("яппи");
             chain.doFilter(request, response);
         } else {
-            System.out.println("антияппи");
             httpResponse.sendRedirect("/login");
         }
     }
