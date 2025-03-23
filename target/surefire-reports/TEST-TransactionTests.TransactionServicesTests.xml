@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="TransactionTests.TransactionServicesTests" time="3.593" tests="34" errors="34" skipped="0" failures="0">
+  <properties>
+    <property name="java.specification.version" value="23"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+    <property name="sun.jnu.encoding" value="Cp1251"/>
+    <property name="java.class.path" value="C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\target\test-classes;C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\target\classes;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\glassfish\expressly\expressly\5.0.0\expressly-5.0.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\jakarta\el\jakarta.el-api\5.0.0\jakarta.el-api-5.0.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\jstl\jstl\1.2\jstl-1.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\mapstruct\mapstruct\1.6.2\mapstruct-1.6.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\hibernate\validator\hibernate-validator\8.0.1.Final\hibernate-validator-8.0.1.Final.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\jakarta\validation\jakarta.validation-api\3.0.2\jakarta.validation-api-3.0.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\jboss\logging\jboss-logging\3.4.3.Final\jboss-logging-3.4.3.Final.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\fasterxml\classmate\1.5.1\classmate-1.5.1.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.18.0\jackson-databind-2.18.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.18.0\jackson-annotations-2.18.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.18.0\jackson-core-2.18.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\javax\servlet\javax.servlet-api\3.1.0\javax.servlet-api-3.1.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\testcontainers\testcontainers\1.19.8\testcontainers-1.19.8.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\slf4j\slf4j-api\1.7.36\slf4j-api-1.7.36.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\apache\commons\commons-compress\1.24.0\commons-compress-1.24.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\rnorth\duct-tape\duct-tape\1.0.8\duct-tape-1.0.8.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\jetbrains\annotations\17.0.0\annotations-17.0.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\github\docker-java\docker-java-api\3.3.6\docker-java-api-3.3.6.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\github\docker-java\docker-java-transport-zerodep\3.3.6\docker-java-transport-zerodep-3.3.6.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\github\docker-java\docker-java-transport\3.3.6\docker-java-transport-3.3.6.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\net\java\dev\jna\jna\5.13.0\jna-5.13.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\testcontainers\postgresql\1.19.8\postgresql-1.19.8.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\testcontainers\jdbc\1.19.8\jdbc-1.19.8.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\testcontainers\database-commons\1.19.8\database-commons-1.19.8.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\postgresql\postgresql\42.7.3\postgresql-42.7.3.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\checkerframework\checker-qual\3.42.0\checker-qual-3.42.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\projectlombok\lombok\1.18.36\lombok-1.18.36.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\assertj\assertj-core\3.26.3\assertj-core-3.26.3.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\net\bytebuddy\byte-buddy\1.14.18\byte-buddy-1.14.18.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\bluecatcode\mockito\mockito-1.10.19-extended\1.1.0\mockito-1.10.19-extended-1.1.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\mockito\mockito-all\1.10.19\mockito-all-1.10.19.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\liquibase\liquibase-core\4.29.2\liquibase-core-4.29.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\opencsv\opencsv\5.9\opencsv-5.9.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\yaml\snakeyaml\2.2\snakeyaml-2.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\javax\xml\bind\jaxb-api\2.3.1\jaxb-api-2.3.1.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\commons-io\commons-io\2.16.1\commons-io-2.16.1.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\apache\commons\commons-collections4\4.4\commons-collections4-4.4.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\apache\commons\commons-text\1.12.0\commons-text-1.12.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\apache\commons\commons-lang3\3.15.0\commons-lang3-3.15.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\slf4j\slf4j-nop\2.0.13\slf4j-nop-2.0.13.jar;"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="user.variant" value=""/>
+    <property name="java.vendor.url" value="https://java.oracle.com/"/>
+    <property name="user.timezone" value="Europe/Moscow"/>
+    <property name="os.name" value="Windows 10"/>
+    <property name="java.vm.specification.version" value="23"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="user.country" value="RU"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk-23\bin"/>
+    <property name="sun.java.command" value="C:\Users\anya ananasss.HOME-PC\AppData\Local\Temp\surefire9657018016546348602\surefirebooter-20250323222707229_3.jar C:\Users\anya ananasss.HOME-PC\AppData\Local\Temp\surefire9657018016546348602 2025-03-23T22-27-06_638-jvmRun1 surefire-20250323222707229_1tmp surefire_0-20250323222707229_2tmp"/>
+    <property name="jdk.debug" value="release"/>
+    <property name="surefire.test.class.path" value="C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\target\test-classes;C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\target\classes;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\glassfish\expressly\expressly\5.0.0\expressly-5.0.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\jakarta\el\jakarta.el-api\5.0.0\jakarta.el-api-5.0.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\jstl\jstl\1.2\jstl-1.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\mapstruct\mapstruct\1.6.2\mapstruct-1.6.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\hibernate\validator\hibernate-validator\8.0.1.Final\hibernate-validator-8.0.1.Final.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\jakarta\validation\jakarta.validation-api\3.0.2\jakarta.validation-api-3.0.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\jboss\logging\jboss-logging\3.4.3.Final\jboss-logging-3.4.3.Final.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\fasterxml\classmate\1.5.1\classmate-1.5.1.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\fasterxml\jackson\core\jackson-databind\2.18.0\jackson-databind-2.18.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\fasterxml\jackson\core\jackson-annotations\2.18.0\jackson-annotations-2.18.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\fasterxml\jackson\core\jackson-core\2.18.0\jackson-core-2.18.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\javax\servlet\javax.servlet-api\3.1.0\javax.servlet-api-3.1.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\testcontainers\testcontainers\1.19.8\testcontainers-1.19.8.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\junit\junit\4.13.2\junit-4.13.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\hamcrest\hamcrest-core\1.3\hamcrest-core-1.3.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\slf4j\slf4j-api\1.7.36\slf4j-api-1.7.36.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\apache\commons\commons-compress\1.24.0\commons-compress-1.24.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\rnorth\duct-tape\duct-tape\1.0.8\duct-tape-1.0.8.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\jetbrains\annotations\17.0.0\annotations-17.0.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\github\docker-java\docker-java-api\3.3.6\docker-java-api-3.3.6.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\github\docker-java\docker-java-transport-zerodep\3.3.6\docker-java-transport-zerodep-3.3.6.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\github\docker-java\docker-java-transport\3.3.6\docker-java-transport-3.3.6.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\net\java\dev\jna\jna\5.13.0\jna-5.13.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\testcontainers\postgresql\1.19.8\postgresql-1.19.8.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\testcontainers\jdbc\1.19.8\jdbc-1.19.8.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\testcontainers\database-commons\1.19.8\database-commons-1.19.8.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\mindrot\jbcrypt\0.4\jbcrypt-0.4.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\postgresql\postgresql\42.7.3\postgresql-42.7.3.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\checkerframework\checker-qual\3.42.0\checker-qual-3.42.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\projectlombok\lombok\1.18.36\lombok-1.18.36.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\junit\jupiter\junit-jupiter\5.10.2\junit-jupiter-5.10.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\junit\jupiter\junit-jupiter-api\5.10.2\junit-jupiter-api-5.10.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\opentest4j\opentest4j\1.3.0\opentest4j-1.3.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\junit\platform\junit-platform-commons\1.10.2\junit-platform-commons-1.10.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\apiguardian\apiguardian-api\1.1.2\apiguardian-api-1.1.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\junit\jupiter\junit-jupiter-params\5.10.2\junit-jupiter-params-5.10.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\junit\jupiter\junit-jupiter-engine\5.10.2\junit-jupiter-engine-5.10.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\junit\platform\junit-platform-engine\1.10.2\junit-platform-engine-1.10.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\assertj\assertj-core\3.26.3\assertj-core-3.26.3.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\net\bytebuddy\byte-buddy\1.14.18\byte-buddy-1.14.18.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\bluecatcode\mockito\mockito-1.10.19-extended\1.1.0\mockito-1.10.19-extended-1.1.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\mockito\mockito-all\1.10.19\mockito-all-1.10.19.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\liquibase\liquibase-core\4.29.2\liquibase-core-4.29.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\com\opencsv\opencsv\5.9\opencsv-5.9.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\yaml\snakeyaml\2.2\snakeyaml-2.2.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\javax\xml\bind\jaxb-api\2.3.1\jaxb-api-2.3.1.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\commons-io\commons-io\2.16.1\commons-io-2.16.1.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\apache\commons\commons-collections4\4.4\commons-collections4-4.4.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\apache\commons\commons-text\1.12.0\commons-text-1.12.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\apache\commons\commons-lang3\3.15.0\commons-lang3-3.15.0.jar;C:\Users\anya ananasss.HOME-PC\.m2\repository\org\slf4j\slf4j-nop\2.0.13\slf4j-nop-2.0.13.jar;"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="user.home" value="C:\Users\anya ananasss.HOME-PC"/>
+    <property name="user.language" value="ru"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.version.date" value="2024-10-15"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk-23"/>
+    <property name="file.separator" value="\"/>
+    <property name="basedir" value="C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker"/>
+    <property name="java.vm.compressedOopsMode" value="32-bit"/>
+    <property name="line.separator" value="&#10;"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="surefire.real.class.path" value="C:\Users\anya ananasss.HOME-PC\AppData\Local\Temp\surefire9657018016546348602\surefirebooter-20250323222707229_3.jar"/>
+    <property name="user.script" value=""/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="java.runtime.version" value="23.0.1+11-39"/>
+    <property name="user.name" value="anya ananasss"/>
+    <property name="stdout.encoding" value="Cp1251"/>
+    <property name="path.separator" value=";"/>
+    <property name="os.version" value="10.0"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="localRepository" value="C:\Users\anya ananasss.HOME-PC\.m2\repository"/>
+    <property name="java.vendor.url.bug" value="https://bugreport.java.com/bugreport/"/>
+    <property name="java.io.tmpdir" value="C:\Users\ANYAAN~1.HOM\AppData\Local\Temp\"/>
+    <property name="java.version" value="23.0.1"/>
+    <property name="user.dir" value="C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="sun.os.patch.level" value=""/>
+    <property name="native.encoding" value="Cp1251"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk-23\bin;C:\WINDOWS\Sun\Java\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files (x86)\Common Files\Acronis\SnapAPI\;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;D:\matlabfolder\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\Program Files\Docker\Docker\resources\bin;C:\WINDOWS\System32\OpenSSH\;C:\Users\anya ananasss.HOME-PC\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Program Files\Java\jdk-23\bin;C:\Users\anya ananasss.HOME-PC\gcc\bin;C:\Users\anya ananasss.HOME-PC\gcc\libexec\gcc\x86_64-w64-mingw32\12.3.0;C:\Users\anya ananasss.HOME-PC\AppData\Local\Programs\Python\Python312\Scripts\;C:\Users\anya ananasss.HOME-PC\AppData\Local\Programs\Python\Python312\;C:\Users\anya ananasss.HOME-PC\AppData\Local\Programs\Python\Python35\Scripts\;C:\Users\anya ananasss.HOME-PC\AppData\Local\Programs\Python\Python35\;C:\Python35;C:\Program Files\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\ProgramData\Oracle\Java\javapath;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\;C:\Program Files (x86)\Common Files\Acronis\SnapAPI\;C:\Program Files\dotnet\;C:\Program Files\Git\cmd;C:\Program Files\Microsoft SQL Server\150\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;D:\matlabfolder\bin;C:\Users\anya ananasss.HOME-PC\AppData\Local\Microsoft\WindowsApps;C:\Users\anya ananasss.HOME-PC\.dotnet\tools;C:\Users\anya ananasss.HOME-PC\apache-maven-3.9.6\bin;C:\Users\anya ananasss.HOME-PC\AppData\Local\Programs\Python\Python312\Scripts;C:\Users\anya ananasss.HOME-PC\AppData\Local\JetBrains\PyCharm 2024.1\bin;;C:\Users\anya ananasss.HOME-PC\AppData\Local\Microsoft\WindowsApps;C:\Users\anya ananasss.HOME-PC\yandex-cloud\bin;C:\Users\anya ananasss.HOME-PC\AppData\Roaming\nvm;C:\Program Files\nodejs;C:\Users\anya ananasss.HOME-PC\AppData\Local\GitHubDesktop\bin;C:\Program Files\Java\jdk-23bin;C:\Program Files\Java\jdk-23\bin;C:\Users\anya ananasss.HOME-PC\.dotnet\tools;."/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="stderr.encoding" value="Cp1251"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="java.vm.version" value="23.0.1+11-39"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="java.class.version" value="67.0"/>
+  </properties>
+  <testcase name="updateTransactionDescriptionValid" classname="TransactionTests.TransactionServicesTests" time="1.346">
+    <error message="Could not find a valid Docker environment. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Could not find a valid Docker environment. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.lambda$getFirstValidStrategy$7(DockerClientProviderStrategy.java:277)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:403)
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:268)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+    <system-err><![CDATA[SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".
+SLF4J: Defaulting to no-operation (NOP) logger implementation
+SLF4J: See http://www.slf4j.org/codes.html#StaticLoggerBinder for further details.
+]]></system-err>
+  </testcase>
+  <testcase name="getGoalProgressGoalReached" classname="TransactionTests.TransactionServicesTests" time="0.04">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="updateTransactionCategoryEmpty" classname="TransactionTests.TransactionServicesTests" time="0.039">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="updateTransactionCategoryValid" classname="TransactionTests.TransactionServicesTests" time="0.052">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="generateGeneralReportFullPeriod" classname="TransactionTests.TransactionServicesTests" time="0.022">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="updateTransactionDescriptionTooLong" classname="TransactionTests.TransactionServicesTests" time="0.024">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="createTransaction" classname="TransactionTests.TransactionServicesTests" time="0.048">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="checkMonthlyBudgetPositive" classname="TransactionTests.TransactionServicesTests" time="0.028">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="calculateBalanceWithTransactions" classname="TransactionTests.TransactionServicesTests" time="0.064">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="createTransactionWithTooLongDescription" classname="TransactionTests.TransactionServicesTests" time="0.041">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="getTransactionsByType" classname="TransactionTests.TransactionServicesTests" time="0.026">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="calculateGoalDataEmptyTransactions" classname="TransactionTests.TransactionServicesTests" time="0.017">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="getGoalProgressNoGoal" classname="TransactionTests.TransactionServicesTests" time="0.081">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="getGoalProgressLeftToSave" classname="TransactionTests.TransactionServicesTests" time="0.08">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="updateTransactionSum" classname="TransactionTests.TransactionServicesTests" time="0.04">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="deleteTransactionExists" classname="TransactionTests.TransactionServicesTests" time="0.018">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="calculateGoalDataSuccess" classname="TransactionTests.TransactionServicesTests" time="0.035">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="updateTransactionTypeValid" classname="TransactionTests.TransactionServicesTests" time="0.055">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="checkGoalProgressNoTransactions" classname="TransactionTests.TransactionServicesTests" time="0.041">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="checkMonthlyBudgetLimitWithTransactions" classname="TransactionTests.TransactionServicesTests" time="0.031">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="updateTransactionWithTooLongDescription" classname="TransactionTests.TransactionServicesTests" time="0.068">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="getIncomeExpenseForPeriodNoTransactions" classname="TransactionTests.TransactionServicesTests" time="0.029">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="getTransactionsAfterTimestamp" classname="TransactionTests.TransactionServicesTests" time="0.016">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="getTransactionsBeforeTimestamp" classname="TransactionTests.TransactionServicesTests" time="0.017">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="getTransactionsByCategory" classname="TransactionTests.TransactionServicesTests" time="0.041">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="deleteTransactionNotExists" classname="TransactionTests.TransactionServicesTests" time="0.017">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="getAllTransactions" classname="TransactionTests.TransactionServicesTests" time="0.032">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="analyzeExpenseByCategoriesWithTransactions" classname="TransactionTests.TransactionServicesTests" time="0.022">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="checkMonthlyBudgetBelow0" classname="TransactionTests.TransactionServicesTests" time="0.034">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="overgoMonthlyBudget" classname="TransactionTests.TransactionServicesTests" time="0.022">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="updateTransactionTypeNull" classname="TransactionTests.TransactionServicesTests" time="0.021">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="getIncomeExpenseForPeriodWithTransactions" classname="TransactionTests.TransactionServicesTests" time="0.055">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="checkMonthlyBudget0" classname="TransactionTests.TransactionServicesTests" time="0.027">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+  <testcase name="getGoalProgressGoalExceeded" classname="TransactionTests.TransactionServicesTests" time="0.03">
+    <error message="Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration" type="java.lang.IllegalStateException"><![CDATA[java.lang.IllegalStateException: Previous attempts to find a Docker environment failed. Will not retry. Please see logs and check configuration
+	at org.testcontainers.dockerclient.DockerClientProviderStrategy.getFirstValidStrategy(DockerClientProviderStrategy.java:232)
+	at org.testcontainers.DockerClientFactory.getOrInitializeStrategy(DockerClientFactory.java:152)
+	at org.testcontainers.DockerClientFactory.client(DockerClientFactory.java:194)
+	at org.testcontainers.DockerClientFactory$1.getDockerClient(DockerClientFactory.java:106)
+	at com.github.dockerjava.api.DockerClientDelegate.authConfig(DockerClientDelegate.java:109)
+	at org.testcontainers.containers.GenericContainer.start(GenericContainer.java:329)
+	at TransactionTests.TransactionServicesTests.setUp(TransactionServicesTests.java:46)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1597)
+	Suppressed: java.lang.NullPointerException: Cannot invoke "java.sql.Connection.rollback()" because "TransactionTests.TransactionServicesTests.connection" is null
+		at TransactionTests.TransactionServicesTests.clear(TransactionServicesTests.java:57)
+		... 3 more
+]]></error>
+  </testcase>
+</testsuite>
