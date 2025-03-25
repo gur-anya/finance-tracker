@@ -376,8 +376,6 @@ public class TransactionService {
         } catch (SQLException e) {
             return new ParseResponseDTO(false, "Ошибка! " + e.getMessage());
         }
-
-
     }
 
     /**

@@ -15,7 +15,7 @@
     <button onclick="window.location.href='/general_stats_page'" id = "stats">Перейти к статистике</button>
 </div>
 <div>
-    <button onclick="window.location.href='/main_user_page'" id = "goback">Выйти</button>
+    <button onclick="window.location.href='/main_user_page'" id = "goback">Назад</button>
 </div>
 </body>
 </html>

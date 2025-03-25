@@ -19,6 +19,8 @@ public class LogoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         HttpSession session = request.getSession(false);
+        getServletContext().setAttribute("user", null);
+        getServletContext().setAttribute("transactionRepository", null);
 
         if (session != null) {
             session.invalidate();

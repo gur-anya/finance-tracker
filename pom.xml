@@ -25,17 +25,45 @@
         <testcontainers.ver>1.19.8</testcontainers.ver>
         <maven.compiler.plugin.ver>3.13.0</maven.compiler.plugin.ver>
         <assembly.plugin.ver>3.3.0</assembly.plugin.ver>
-        <slf4j.ver>2.0.13</slf4j.ver>
+        <slf4j.ver>1.7.36</slf4j.ver>
         <servlets.ver>3.1.0</servlets.ver>
         <jackson.ver>2.18.0</jackson.ver>
         <validator.ver>8.0.1.Final</validator.ver>
         <mapstruct.ver>1.6.2</mapstruct.ver>
         <jstl.ver>1.2</jstl.ver>
         <el.ver>5.0.0</el.ver>
+        <logback.ver>1.2.11</logback.ver>
+        <aspectj.ver>1.9.21</aspectj.ver>
+        <aspectj.plugin.ver>1.14.0</aspectj.plugin.ver>
     </properties>
 
 
     <dependencies>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+            <version>${aspectj.ver}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.ver}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.ver}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.ver}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson.ver}</version>
+        </dependency>
         <dependency>
             <groupId>org.glassfish.expressly</groupId>
             <artifactId>expressly</artifactId>
@@ -125,11 +153,6 @@
             <version>${liquibase.ver}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-            <version>${slf4j.ver}</version>
-        </dependency>
 
     </dependencies>
     <build>
@@ -175,6 +198,26 @@
                 <configuration>
                     <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>aspectj-maven-plugin</artifactId>
+                <version>1.14.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <complianceLevel>1.8</complianceLevel>
+                    <showWeaveInfo>true</showWeaveInfo>
+                    <verbose>true</verbose>
+                    <Xlint>ignore</Xlint>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 <!--            <plugin>-->
 <!--                <groupId>org.apache.maven.plugins</groupId>-->

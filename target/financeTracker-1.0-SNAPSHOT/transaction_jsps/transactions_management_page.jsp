@@ -6,7 +6,7 @@
 </head>
 <body>
 <p>
-    <c:out value="${username}"/>, что хотите сделать?
+    <c:out value="${username}"/>, что хотите сделать с транзакциями?
 </p>
 <div>
     <button onclick="window.location.href='/show_transactions'" id="showTransactions">Просмотреть транзакции</button>
@@ -21,7 +21,7 @@
     <button onclick="window.location.href='/delete_transaction'" id="deleteTransaction">Удалить транзакцию</button>
 </div>
 <div>
-    <button onclick="window.location.href='/main_user_page'" id="goBack">Назад</button>
+    <button onclick="window.location.href='/main_transaction_page'" id="goBack">Назад</button>
 </div>
 </body>
 </html>

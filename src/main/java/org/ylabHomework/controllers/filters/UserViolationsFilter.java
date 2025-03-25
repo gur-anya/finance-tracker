@@ -49,7 +49,7 @@ public class UserViolationsFilter implements Filter {
         String data = sb.toString();
 
 
-        if (!data.isEmpty() && !httpRequest.getRequestURI().contains("habit")) {
+        if (!data.isEmpty() && !httpRequest.getRequestURI().contains("transaction")) {
             Set<ConstraintViolation<Object>> violations = initDTOUsage(httpRequest, data);
             if (!violations.isEmpty()) {
                 StringBuilder errorsSb = new StringBuilder();

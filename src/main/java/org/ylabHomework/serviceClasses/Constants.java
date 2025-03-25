@@ -16,9 +16,27 @@ public class Constants {
     public static final String TRANSACTIONS_MAIN_JSP = "transaction_jsps/main_transaction_page.jsp";
 
     /**
-     * Ссылка на страницу для управления транзакциями  transactions_management_page.jsp.
+     * Ссылка на страницу для управления транзакциями transactions_management_page.jsp.
      */
-    public static final String TRANSACTIONS_MANAGEMENT_JSP = "transaction_jsps/transaction_management_page.jsp";
+    public static final String TRANSACTIONS_MANAGEMENT_JSP = "transaction_jsps/transactions_management_page.jsp";
+    /**
+     * Ссылка на страницу для обновления транзакций update_transaction_page.jsp.
+     */
+    public static final String UPDATE_TRANSACTION_JSP = "transaction_jsps/update_transaction_page.jsp";
+
+    /**
+     * Ссылка на страницу для создания транзакций create_transactions_page.jsp.
+     */
+    public static final String CREATE_TRANSACTION_JSP = " transaction_jsps/create_transactions_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра транзакций с заданным фильтром show_transactions_page.jsp.
+     */
+    public static final String SHOW_TRANSACTIONS_JSP ="transaction_jsps/show_transactions_page.jsp";
+    /**
+     * Ссылка на страницу для удаления транзакций delete_transaction_page.jsp.
+     */
+    public static final String DELETE_TRANSACTION_JSP ="transaction_jsps/delete_transaction_page.jsp";
+
     /**
      * Ссылка на главную страницу index.jsp.
      */
@@ -176,9 +194,9 @@ public class Constants {
 
     /**
      * Запрос для удаления транзакции из таблицы transactions.
-     * Ожидает параметры: timestamp, user_id.
+     * Ожидает параметры: user_id, type, sum, category, description, timestamp.
      */
-    public static final String DELETE_TRANSACTION = "DELETE FROM main.transactions WHERE timestamp = ? AND user_id = ?";
+    public static final String DELETE_TRANSACTION = "DELETE FROM main.transactions WHERE user_id = ? AND type = ? AND sum = ? AND category = ? AND description = ? AND timestamp = ?";
 
     /**
      * Запрос для получения месячного бюджета пользователя из таблицы users.

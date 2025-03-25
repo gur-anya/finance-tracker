@@ -1,4 +1,7 @@
 package org.ylabHomework.controllers.servlets.transactionServlets.transactionStats;
 
-public class GeneralStatsManagement {
+import javax.servlet.annotation.WebServlet;
+
+
+public class GeneralStatsManagement  {
 }

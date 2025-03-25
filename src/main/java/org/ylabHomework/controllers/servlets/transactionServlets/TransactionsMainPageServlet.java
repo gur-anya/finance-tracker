@@ -1,6 +1,9 @@
 package org.ylabHomework.controllers.servlets.transactionServlets;
 
 
+import org.ylabHomework.models.User;
+import org.ylabHomework.repositories.TransactionRepository;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,8 +28,8 @@ public class TransactionsMainPageServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        HttpSession session = req.getSession(false);
-        req.setAttribute("id", session.getAttribute("id"));
+        TransactionRepository transactionRepository = new TransactionRepository((User) req.getAttribute("loggedUser"));
+        getServletContext().setAttribute("transactionRepository", transactionRepository);
         req.getRequestDispatcher(TRANSACTIONS_MAIN_JSP).forward(req, resp);
     }
 }

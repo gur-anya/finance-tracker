@@ -7,7 +7,9 @@ import org.ylabHomework.DTOs.ResponseMessageDTO;
 import org.ylabHomework.DTOs.UserDTOs.LoginDTO;
 import org.ylabHomework.mappers.LoginMapper;
 import org.mapstruct.factory.Mappers;
+import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
+import org.ylabHomework.repositories.TransactionRepository;
 import org.ylabHomework.repositories.UserRepository;
 import org.ylabHomework.services.UserService;
 
@@ -57,6 +59,8 @@ public class LoginServlet extends HttpServlet {
         if (loggedIn) {
             resp.setStatus(HttpServletResponse.SC_OK);
             HttpSession session = req.getSession(true);
+            getServletContext().setAttribute("user", userService.readUserByEmail(loginUser.getEmail()));
+            getServletContext().setAttribute("transactionRepository", new TransactionRepository(userService.readUserByEmail(loginUser.getEmail())));
             session.setAttribute("loggedUser", loginResult.user());
             session.setAttribute("username", loginResult.user().getName());
             session.setAttribute("useremail", loginUser.getEmail());

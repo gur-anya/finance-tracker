@@ -334,25 +334,7 @@ public class TransactionStatsService {
         }
     }
 
-    /**
-     * Возвращает анализ расходов по категориям в виде строки.
-     *
-     * @return отформатированный анализ категорий
-     */
-    public String getCategoryAnalysis() {
-        Map<String, Double> categoryAnalysis = analyzeExpenseByCategories();
-        if (categoryAnalysis.isEmpty()) {
-            return "Нет транзакций для анализа!";
-        }
-        StringBuilder sb = new StringBuilder("Анализ расходов по категориям:\n");
-        sb.append(String.format("%-20s %-15s%n", "Категория", "Расходы")).append("-".repeat(35)).append("\n");
-        for (Map.Entry<String, Double> entry : categoryAnalysis.entrySet()) {
-            String category = entry.getKey().substring(0, 1).toUpperCase() + entry.getKey().substring(1);
-            double expense = Math.abs(entry.getValue());
-            sb.append(String.format("%-20s %15.2f руб.%n", category, expense));
-        }
-        return sb.toString();
-    }
+
 
     /**
      * Возвращает сводку доходов и расходов за период в виде строки.

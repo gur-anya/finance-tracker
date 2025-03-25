@@ -1,5 +1,7 @@
 package org.ylabHomework.repositories;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.serviceClasses.Config;
@@ -23,7 +25,9 @@ import java.util.List;
  * </p>
  */
 public class TransactionRepository {
-    private final User user;
+    @Getter
+    @Setter
+    private User user;
     private final UserRepository userRepository;
 
     /**
@@ -56,6 +60,7 @@ public class TransactionRepository {
             statement.setTimestamp(5, Timestamp.valueOf(transaction.getTimestamp()));
             statement.setInt(6, userRepository.findUserIdByEmail(user.getEmail()));
             statement.executeUpdate();
+            connection.commit();
         }
     }
 
@@ -263,6 +268,7 @@ public class TransactionRepository {
             statement.setTimestamp(2, Timestamp.valueOf(transaction.getTimestamp()));
             statement.setInt(3, userRepository.findUserIdByEmail(user.getEmail()));
             statement.executeUpdate();
+            connection.commit();
         }
     }
 
@@ -283,6 +289,7 @@ public class TransactionRepository {
             statement.setTimestamp(2, Timestamp.valueOf(transaction.getTimestamp()));
             statement.setInt(3, userRepository.findUserIdByEmail(user.getEmail()));
             statement.executeUpdate();
+            connection.commit();
         }
     }
 
@@ -303,6 +310,7 @@ public class TransactionRepository {
             statement.setTimestamp(2, Timestamp.valueOf(transaction.getTimestamp()));
             statement.setInt(3, userRepository.findUserIdByEmail(user.getEmail()));
             statement.executeUpdate();
+            connection.commit();
         }
     }
 
@@ -323,6 +331,7 @@ public class TransactionRepository {
             statement.setTimestamp(2, Timestamp.valueOf(transaction.getTimestamp()));
             statement.setInt(3, userRepository.findUserIdByEmail(user.getEmail()));
             statement.executeUpdate();
+            connection.commit();
         }
     }
 
@@ -339,9 +348,16 @@ public class TransactionRepository {
 
         try (Connection connection = config.establishConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setTimestamp(1, Timestamp.valueOf(transaction.getTimestamp()));
-            statement.setInt(2, userRepository.findUserIdByEmail(user.getEmail()));
+            statement.setInt(1, userRepository.findUserIdByEmail(user.getEmail()));
+            statement.setInt(2, transaction.getType());
+            statement.setDouble(3, transaction.getSum());
+            statement.setString(4, transaction.getCategory());
+            statement.setString(5, transaction.getDescription());
+            statement.setTimestamp(6, Timestamp.valueOf(transaction.getTimestamp()));
+
             int rowsAffected = statement.executeUpdate();
+
+            connection.commit();
             return rowsAffected > 0;
         }
     }
