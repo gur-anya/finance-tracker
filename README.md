@@ -4,4 +4,4 @@ https://github.com/anya-ananasss/FinanceTracker/pull/1
 ## ДЗ №2
 https://github.com/anya-ananasss/FinanceTracker/pull/2
 ## ДЗ №3
-https://github.com/anya-ananasss/FinanceTracker/pull/3
+https://github.com/anya-ananasss/financeTracker/pull/3
