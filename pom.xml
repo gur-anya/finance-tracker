@@ -38,7 +38,6 @@
     </properties>
 
     <dependencies>
-        <!-- AspectJ -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
@@ -50,7 +49,7 @@
             <version>${aspectj.ver}</version>
         </dependency>
 
-        <!-- Логирование -->
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
@@ -62,7 +61,7 @@
             <version>${logback.ver}</version>
         </dependency>
 
-        <!-- Jackson -->
+
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
@@ -74,7 +73,7 @@
             <version>${jackson.ver}</version>
         </dependency>
 
-        <!-- JSP/EL -->
+
         <dependency>
             <groupId>org.glassfish.expressly</groupId>
             <artifactId>expressly</artifactId>
@@ -86,21 +85,21 @@
             <version>${jstl.ver}</version>
         </dependency>
 
-        <!-- MapStruct -->
+
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.ver}</version>
         </dependency>
 
-        <!-- Hibernate Validator -->
+
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${validator.ver}</version>
         </dependency>
 
-        <!-- Servlet API -->
+
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
@@ -108,7 +107,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Testcontainers -->
+
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
@@ -122,21 +121,21 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- BCrypt -->
+
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
             <version>${bcrypt.ver}</version>
         </dependency>
 
-        <!-- PostgreSQL -->
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgres.ver}</version>
         </dependency>
 
-        <!-- Тестирование -->
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -156,7 +155,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Liquibase -->
+
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
@@ -166,7 +165,6 @@
 
     <build>
         <plugins>
-            <!-- Компиляция с Lombok и MapStruct -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -193,7 +191,7 @@
                 </executions>
             </plugin>
 
-            <!-- Liquibase -->
+
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
@@ -203,7 +201,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Surefire для тестов -->
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -219,24 +217,23 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.15.0</version> <!-- Используйте актуальную версию -->
+                <version>1.15.0</version>
                 <configuration>
-                    <source>17</source> <!-- Укажите версию Java, например, 11 -->
+                    <source>17</source>
                     <target>17</target>
                     <complianceLevel>17</complianceLevel>
                     <showWeaveInfo>true</showWeaveInfo>
-                    <verbose>true</verbose><!-- Показывать информацию о ткачестве -->
+                    <verbose>true</verbose>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>compile</goal> <!-- Ткачество основного кода -->
-                            <goal>test-compile</goal> <!-- Ткачество тестов -->
+                            <goal>compile</goal>
+                            <goal>test-compile</goal>
                         </goals>
                     </execution>
                 </executions>
                 <dependencies>
-                    <!-- Укажите версию AspectJ Tools -->
                     <dependency>
                         <groupId>org.aspectj</groupId>
                         <artifactId>aspectjtools</artifactId>
