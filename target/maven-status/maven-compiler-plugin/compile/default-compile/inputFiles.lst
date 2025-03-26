@@ -20,6 +20,7 @@ C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHome
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\controllers\servlets\transactionServlets\transactionStats\GetExpensesByCategoryServlet.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\controllers\servlets\transactionServlets\transactionStats\GetGeneralReportServlet.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\controllers\servlets\transactionServlets\transactionStats\GoalManagementServlet.java
+C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\controllers\servlets\transactionServlets\transactionStats\IncomeExpensePeriodServlet.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\controllers\servlets\transactionServlets\transactionStats\MonthlyBudgetManagementServlet.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\controllers\servlets\transactionServlets\transactionStats\StatsManagementServlet.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\controllers\servlets\userServlets\DeleteAccountServlet.java
@@ -33,7 +34,6 @@ C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHome
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\DTOs\ResponseMessageDTO.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\DTOs\TransactionsDTOs\ActionsWithTransactionDTO.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\DTOs\TransactionsDTOs\BasicTransactionDTO.java
-C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\DTOs\TransactionsDTOs\PeriodDTO.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\DTOs\TransactionsDTOs\TransactionDTO.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\DTOs\UserDTOs\ActionsWithUserDTO.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\DTOs\UserDTOs\BasicUserDTO.java
@@ -41,6 +41,7 @@ C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHome
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\mappers\ActionsWithTransactionMapper.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\mappers\ActionWithUserMapper.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\mappers\LoginMapper.java
+C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\mappers\PeriodMapper.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\mappers\TransactionMapper.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\mappers\UserMapper.java
 C:\Users\anya ananasss.HOME-PC\Desktop\financeTracker\src\main\java\org\ylabHomework\models\Transaction.java

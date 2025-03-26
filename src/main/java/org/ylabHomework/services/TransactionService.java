@@ -1,7 +1,6 @@
 package org.ylabHomework.services;
 
-import lombok.Getter;
-import lombok.Setter;
+
 import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
@@ -21,6 +20,17 @@ import java.util.List;
  * </p>
  */
 public class TransactionService {
+    public TransactionRepository getRepository() {
+        return repository;
+    }
+
+    public TransactionStatsService getStatsService() {
+        return statsService;
+    }
+
+    public User getUser() {
+        return user;
+    }
 
     /**
      * Конструктор для создания сервиса с заданным репозиторием и пользователем.
@@ -35,8 +45,11 @@ public class TransactionService {
     }
 
     public final TransactionRepository repository;
-    @Getter
-    @Setter
+
+    public void setStatsService(TransactionStatsService statsService) {
+        this.statsService = statsService;
+    }
+
     public TransactionStatsService statsService;
     public final User user;
 

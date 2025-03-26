@@ -1,7 +1,6 @@
 package org.ylabHomework.services;
 
-import lombok.Getter;
-import lombok.Setter;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.UserRepository;
@@ -19,8 +18,6 @@ import java.util.regex.Pattern;
  * * @since 09.03.2025
  * </p>
  */
-@Getter
-@Setter
 public class UserService {
     private final UserRepository repository;
 
@@ -392,6 +389,10 @@ public class UserService {
 
     public String databaseError(Exception e) {
         return "Ошибка базы данных: " + e.getMessage() + " Попробуйте ещё раз!";
+    }
+
+    public UserRepository getRepository() {
+        return repository;
     }
 
     /**

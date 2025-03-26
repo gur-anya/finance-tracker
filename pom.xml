@@ -33,12 +33,12 @@
         <jstl.ver>1.2</jstl.ver>
         <el.ver>5.0.0</el.ver>
         <logback.ver>1.2.11</logback.ver>
-        <aspectj.ver>1.9.21</aspectj.ver>
-        <aspectj.plugin.ver>1.14.0</aspectj.plugin.ver>
+        <aspectj.ver>1.9.22</aspectj.ver>
+        <aspectj.plugin.ver>1.14</aspectj.plugin.ver>
     </properties>
 
-
     <dependencies>
+        <!-- AspectJ -->
         <dependency>
             <groupId>org.aspectj</groupId>
             <artifactId>aspectjrt</artifactId>
@@ -49,52 +49,66 @@
             <artifactId>aspectjweaver</artifactId>
             <version>${aspectj.ver}</version>
         </dependency>
+
+        <!-- Логирование -->
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j.ver}</version>
+            <artifactId>slf4j-simple</artifactId>
+            <version>2.0.9</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.ver}</version>
         </dependency>
+
+        <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>${jackson.ver}</version>
         </dependency>
         <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.ver}</version>
+        </dependency>
+
+        <!-- JSP/EL -->
+        <dependency>
             <groupId>org.glassfish.expressly</groupId>
             <artifactId>expressly</artifactId>
             <version>${el.ver}</version>
         </dependency>
         <dependency>
-        <groupId>jstl</groupId>
-        <artifactId>jstl</artifactId>
-        <version>${jstl.ver}</version>
+            <groupId>jstl</groupId>
+            <artifactId>jstl</artifactId>
+            <version>${jstl.ver}</version>
         </dependency>
+
+        <!-- MapStruct -->
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
             <version>${mapstruct.ver}</version>
         </dependency>
+
+        <!-- Hibernate Validator -->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>${validator.ver}</version>
         </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.ver}</version>
-        </dependency>
+
+        <!-- Servlet API -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${servlets.ver}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- Testcontainers -->
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
@@ -108,81 +122,78 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- BCrypt -->
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
             <version>${bcrypt.ver}</version>
         </dependency>
 
+        <!-- PostgreSQL -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgres.ver}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.ver}</version>
-            <scope>provided</scope>
-        </dependency>
-
+        <!-- Тестирование -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${jupiter.ver}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj.ver}</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>com.bluecatcode.mockito</groupId>
             <artifactId>mockito-1.10.19-extended</artifactId>
             <version>${mockito.ver}</version>
+            <scope>test</scope>
         </dependency>
 
+        <!-- Liquibase -->
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>${liquibase.ver}</version>
         </dependency>
-
-
     </dependencies>
+
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.projectlombok</groupId>
-                <artifactId>lombok</artifactId>
-                <version>${lombok.ver}</version>
-            </plugin>
+            <!-- Компиляция с Lombok и MapStruct -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.ver}</version>
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.ver}</version>
-                        </path>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.ver}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                        <configuration>
+                            <source>17</source>
+                            <target>17</target>
+                            <annotationProcessorPaths>
+                                <path>
+                                    <groupId>org.mapstruct</groupId>
+                                    <artifactId>mapstruct-processor</artifactId>
+                                    <version>${mapstruct.ver}</version>
+                                </path>
+                            </annotationProcessorPaths>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
+
+            <!-- Liquibase -->
             <plugin>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-maven-plugin</artifactId>
@@ -191,58 +202,58 @@
                     <propertyFile>liquibase.properties</propertyFile>
                 </configuration>
             </plugin>
+
+            <!-- Surefire для тестов -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.ver}</version>
                 <configuration>
                     <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <jvm>${java.home}/bin/java</jvm>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.14.0</version>
+                <version>1.15.0</version> <!-- Используйте актуальную версию -->
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <complianceLevel>1.8</complianceLevel>
+                    <source>17</source> <!-- Укажите версию Java, например, 11 -->
+                    <target>17</target>
+                    <complianceLevel>17</complianceLevel>
                     <showWeaveInfo>true</showWeaveInfo>
-                    <verbose>true</verbose>
-                    <Xlint>ignore</Xlint>
+                    <verbose>true</verbose><!-- Показывать информацию о ткачестве -->
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>compile</goal>
+                            <goal>compile</goal> <!-- Ткачество основного кода -->
+                            <goal>test-compile</goal> <!-- Ткачество тестов -->
                         </goals>
                     </execution>
                 </executions>
+                <dependencies>
+                    <!-- Укажите версию AspectJ Tools -->
+                    <dependency>
+                        <groupId>org.aspectj</groupId>
+                        <artifactId>aspectjtools</artifactId>
+                        <version>1.9.22</version>
+                    </dependency>
+                </dependencies>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-assembly-plugin</artifactId>-->
-<!--                <version>${assembly.plugin.ver}</version>-->
-<!--                <configuration>-->
-<!--                    <archive>-->
-<!--                        <manifest>-->
-<!--                            <mainClass>org.ylabHomework.Main</mainClass>-->
-<!--                        </manifest>-->
-<!--                    </archive>-->
-<!--                    <descriptorRefs>-->
-<!--                        <descriptorRef>jar-with-dependencies</descriptorRef>-->
-<!--                    </descriptorRefs>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>assemble-all</id>-->
-<!--                        <phase>package</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>single</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.4.0</version>
+                <configuration>
+                    <warSourceDirectory>src/main/webapp</warSourceDirectory>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

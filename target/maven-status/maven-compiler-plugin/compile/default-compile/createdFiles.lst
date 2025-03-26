@@ -1,5 +1,4 @@
 org\ylabHomework\controllers\filters\EncodingFilter.class
-org\ylabHomework\DTOs\TransactionsDTOs\PeriodDTO.class
 org\ylabHomework\services\TransactionStatsService$FinancialReport.class
 org\ylabHomework\aspects\ServletLoggingAspect.class
 org\ylabHomework\controllers\servlets\transactionServlets\TransactionsMainPageServlet.class
@@ -50,6 +49,7 @@ org\ylabHomework\services\UserService$LoginResult.class
 org\ylabHomework\models\Transaction.class
 org\ylabHomework\controllers\servlets\userServlets\PersonalAccountServlet.class
 org\ylabHomework\controllers\servlets\transactionServlets\transactionManagement\FilterTransactionsServlet.class
+org\ylabHomework\controllers\servlets\transactionServlets\transactionStats\IncomeExpensePeriodServlet.class
 org\ylabHomework\controllers\servlets\transactionServlets\transactionManagement\GetAllTransactionsServlet.class
 org\ylabHomework\mappers\ActionsWithTransactionMapperImpl.class
 org\ylabHomework\mappers\ActionWithUserMapperImpl.class

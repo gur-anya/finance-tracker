@@ -6,8 +6,8 @@ import org.ylabHomework.models.User;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-03-25T04:00:05+0300",
-    comments = "version: 1.6.2, compiler: javac, environment: Java 23.0.1 (Oracle Corporation)"
+    date = "2025-03-26T03:13:47+0300",
+    comments = "version: 1.6.2, compiler: javac, environment: Java 23 (Oracle Corporation)"
 )
 public class ActionWithUserMapperImpl implements ActionWithUserMapper {
 

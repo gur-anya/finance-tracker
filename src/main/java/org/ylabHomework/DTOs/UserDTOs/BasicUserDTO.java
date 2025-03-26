@@ -3,15 +3,10 @@ package org.ylabHomework.DTOs.UserDTOs;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import jakarta.validation.constraints.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 
-import lombok.NoArgsConstructor;
 import org.ylabHomework.serviceClasses.Unique;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 @JsonPropertyOrder({"name", "email", "password", "role"})
 public class BasicUserDTO {
     @NotEmpty (message = "Имя не должно быть пустым.")
@@ -30,5 +25,56 @@ public class BasicUserDTO {
     @AssertTrue(message = "Пароли должны совпадать.")
     public boolean isPasswordsMatch() {
         return password != null && password.equals(repeatedPassword);
+    }
+
+    public BasicUserDTO(String name, String email, String password, int role, String repeatedPassword) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.repeatedPassword = repeatedPassword;
+    }
+
+    public BasicUserDTO() {
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public int getRole() {
+        return role;
+    }
+
+    public void setRole(int role) {
+        this.role = role;
+    }
+
+    public String getRepeatedPassword() {
+        return repeatedPassword;
+    }
+
+    public void setRepeatedPassword(String repeatedPassword) {
+        this.repeatedPassword = repeatedPassword;
     }
 }

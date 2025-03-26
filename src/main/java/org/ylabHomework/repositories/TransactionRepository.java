@@ -1,7 +1,5 @@
 package org.ylabHomework.repositories;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.serviceClasses.Config;
@@ -25,8 +23,11 @@ import java.util.List;
  * </p>
  */
 public class TransactionRepository {
-    @Getter
-    @Setter
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     private User user;
     private final UserRepository userRepository;
 
