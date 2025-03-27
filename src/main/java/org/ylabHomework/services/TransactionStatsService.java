@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Сервис для работы с со статистикой сущности Transaction.
@@ -47,7 +48,7 @@ public class TransactionStatsService {
             incomes = repository.getTransactionsByType(1);
             expenses = repository.getTransactionsByType(2);
         } catch (SQLException e) {
-             System.out.println(databaseError(e));
+            System.out.println(databaseError(e));
             return 0;
         }
 
@@ -58,13 +59,13 @@ public class TransactionStatsService {
 
         try {
             List<Transaction> sortedIncomes = repository.getSortedTransactionsAfterTimestamp(startOfMonth, incomes);
-            List<Transaction>   sortedExpenses = repository.getSortedTransactionsAfterTimestamp(startOfMonth, expenses);
+            List<Transaction> sortedExpenses = repository.getSortedTransactionsAfterTimestamp(startOfMonth, expenses);
             double totalIncome = sortedIncomes.stream().mapToDouble(Transaction::getSum).sum();
             double totalExpense = sortedExpenses.stream().mapToDouble(Transaction::getSum).sum();
 
             return repository.getMonthlyBudget() + totalIncome - totalExpense;
         } catch (SQLException e) {
-             System.out.println(databaseError(e));
+            System.out.println(databaseError(e));
             return 0;
         }
     }
@@ -82,15 +83,15 @@ public class TransactionStatsService {
         try {
             incomes = repository.getTransactionsByType(1);
             expenses = repository.getTransactionsByType(2);
-            List<Transaction>   sortedIncomes = repository.getSortedTransactionsByCategory(goalCategory, incomes);
-            List<Transaction>  sortedExpenses = repository.getSortedTransactionsByCategory(goalCategory, expenses);
+            List<Transaction> sortedIncomes = repository.getSortedTransactionsByCategory(goalCategory, incomes);
+            List<Transaction> sortedExpenses = repository.getSortedTransactionsByCategory(goalCategory, expenses);
 
             double totalIncome = sortedIncomes.stream().mapToDouble(Transaction::getSum).sum();
             double totalExpense = sortedExpenses.stream().mapToDouble(Transaction::getSum).sum();
 
             return repository.getGoal() - totalIncome + totalExpense;
         } catch (SQLException e) {
-             System.out.println(databaseError(e));
+            System.out.println(databaseError(e));
             return 0;
         }
     }
@@ -106,7 +107,7 @@ public class TransactionStatsService {
         try {
             transactionList = repository.getAllTransactions();
         } catch (SQLException e) {
-             System.out.println(databaseError(e));
+            System.out.println(databaseError(e));
             return new LinkedHashMap<>();
         }
         Map<String, Double> result = new LinkedHashMap<>();
@@ -130,7 +131,7 @@ public class TransactionStatsService {
         try {
             transactionList = repository.getAllTransactions();
         } catch (SQLException e) {
-           return databaseError(e);
+            return databaseError(e);
         }
 
         double totalIncome = transactionList.stream()
@@ -145,6 +146,7 @@ public class TransactionStatsService {
 
         return String.format("Ваш баланс: %.2f руб.", balance);
     }
+
     /**
      * Возвращает статистику доходов и расходов за указанный период.
      *
@@ -157,7 +159,7 @@ public class TransactionStatsService {
         try {
             transactionList = repository.getTransactionsBetweenTimestamps(timestamp1, timestamp2);
         } catch (SQLException e) {
-             System.out.println(databaseError(e));
+            System.out.println(databaseError(e));
             return new double[]{0, 0, 0};
         }
 
@@ -214,7 +216,7 @@ public class TransactionStatsService {
                 categoryReport.put(category, stats);
             }
 
-            double[] goalData = calculateGoalData();
+            double[] goalData = calculateGoalData(startTime, endTime);
 
             return new FinancialReport(totalIncome, totalExpense, totalBalance, categoryReport, goalData);
         }
@@ -241,7 +243,7 @@ public class TransactionStatsService {
             }
             return repository.getTransactionsBeforeTimestamp(endTime);
         } catch (SQLException e) {
-             System.out.println(databaseError(e));
+            System.out.println(databaseError(e));
             return new ArrayList<>();
         }
     }
@@ -251,19 +253,42 @@ public class TransactionStatsService {
      *
      * @return массив: [цель, доходы по цели, расходы по цели, накоплено, осталось], или null, если нет транзакций
      */
-    public double[] calculateGoalData() {
+    public double[] calculateGoalData(LocalDateTime start, LocalDateTime end) {
         List<Transaction> goalTransactions;
         try {
-            goalTransactions = repository.getTransactionsByCategory("цель");
+            if (start == null && end != null) {
+                goalTransactions = repository.getTransactionsBeforeTimestamp(end)
+                        .stream()
+                        .filter(t -> "цель".equalsIgnoreCase(t.getCategory()))
+                        .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+                        .collect(Collectors.toList());
+            } else if (start != null && end == null) {
+                goalTransactions = repository.getTransactionsAfterTimestamp(start)
+                        .stream()
+                        .filter(t -> "цель".equalsIgnoreCase(t.getCategory()))
+                        .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+                        .collect(Collectors.toList());
+            } else if (start == null & end == null) {
+                goalTransactions = repository.getAllTransactions()
+                        .stream()
+                        .filter(t -> "цель".equalsIgnoreCase(t.getCategory()))
+                        .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+                        .collect(Collectors.toList());
+            } else {
+                goalTransactions = repository.getTransactionsBetweenTimestamps(start, end)
+                        .stream()
+                        .filter(t -> "цель".equalsIgnoreCase(t.getCategory()))
+                        .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
+                        .collect(Collectors.toList());
+            }
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             String message = e.getMessage();
             if ("22001".equals(sqlState)) {
                 System.out.println("Слишком длинная категория: " + message + " Попробуйте ещё раз!");
-            } else  System.out.println(databaseError(e));
+            } else System.out.println(databaseError(e));
             return null;
         }
-
         if (!goalTransactions.isEmpty()) {
             double[] basicStats = getBasicStats(goalTransactions);
             if (basicStats == null) return null;
@@ -271,16 +296,16 @@ public class TransactionStatsService {
             double goalExpense = basicStats[1];
             double saved = basicStats[2];
 
-            double goalAmount;
+            double goalSum;
             try {
-                goalAmount = repository.getGoal();
+                goalSum = repository.getGoal();
             } catch (SQLException e) {
                 System.out.println(databaseError(e));
                 return null;
             }
-            double leftToSave = goalAmount - saved;
+            double leftToSave = goalSum - saved;
 
-            return new double[]{goalAmount, goalIncome, goalExpense, saved, leftToSave};
+            return new double[]{goalSum, goalIncome, goalExpense, saved, leftToSave};
         }
         return null;
     }
@@ -316,7 +341,7 @@ public class TransactionStatsService {
      */
     public String getGoalProgress() {
         try {
-            if (repository.getGoal() == 0){
+            if (repository.getGoal() == 0) {
                 return "";
             } else {
                 double leftToGoal = checkGoalProgress();
@@ -333,7 +358,6 @@ public class TransactionStatsService {
             return "";
         }
     }
-
 
 
     /**
@@ -404,14 +428,48 @@ public class TransactionStatsService {
         return "Ошибка базы данных: " + e.getMessage() + " Попробуйте ещё раз!";
     }
 
+    public double getGoal() {
+        try {
+            return repository.getGoal();
+        } catch (SQLException e) {
+            System.out.println("Ошибка! " + e.getMessage());
+            return 0;
+        }
+    }
+
+    public void setGoal(double newGoal) {
+        try {
+            repository.setGoal(newGoal);
+        } catch (SQLException e) {
+            System.out.println("Ошибка! " + e.getMessage());
+        }
+    }
+
+    public double getMonthlyBudget() {
+        try {
+            return repository.getMonthlyBudget();
+        } catch (SQLException e) {
+            System.out.println("Ошибка! " + e.getMessage());
+            return 0;
+        }
+    }
+
+    public void setMonthlyBudget(double newBudget) {
+        try {
+            repository.setMonthlyBudget(newBudget);
+        } catch (SQLException e) {
+            System.out.println("Ошибка! " + e.getMessage());
+        }
+    }
+
     /**
      * Финансовый отчёт пользователя.
      *
-     * @param totalIncome   общий доход за период
-     * @param totalExpense  общий расход за период
-     * @param totalBalance  итоговый баланс за период
+     * @param totalIncome    общий доход за период
+     * @param totalExpense   общий расход за период
+     * @param totalBalance   итоговый баланс за период
      * @param categoryReport статистика по категориям (доходы, расходы, баланс)
-     * @param goalData      данные по финансовой цели (цель, доходы, расходы, накоплено, осталось)
+     * @param goalData       данные по финансовой цели (цель, доходы, расходы, накоплено, осталось)
      */
     public record FinancialReport(
             double totalIncome,

@@ -1,7 +1,4 @@
-package org.ylabHomework.controllers.servlets.transactionServlets.transactionStats;
-
-import org.ylabHomework.models.User;
-import org.ylabHomework.repositories.TransactionRepository;
+package org.ylabHomework.controllers.servlets.transactionServlets.transactionStats.genericStatsServlets;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

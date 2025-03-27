@@ -9,10 +9,10 @@
     <c:out value="${username}"/>, какую статистику хотите просмотреть?
 </p>
 <div>
-    <button onclick="window.location.href='/monthly_budget'" id="monthlyBudget">Месячный бюджет</button>
+    <button onclick="window.location.href='/monthly_budget_management'" id="monthlyBudget">Месячный бюджет</button>
 </div>
 <div>
-    <button onclick="window.location.href='/goal'" id="goal">Цель</button>
+    <button onclick="window.location.href='/goal_management'" id="goal">Цель</button>
 </div>
 <div>
     <button onclick="window.location.href='/current_balance'" id="currentBalance">Текущий баланс с учетом всех транзакций</button>

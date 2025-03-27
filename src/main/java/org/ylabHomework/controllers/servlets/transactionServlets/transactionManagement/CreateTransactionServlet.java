@@ -10,6 +10,7 @@ import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
 import org.ylabHomework.services.TransactionService;
+import org.ylabHomework.services.TransactionStatsService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -32,7 +33,7 @@ public class CreateTransactionServlet extends HttpServlet {
 
     private TransactionService transactionService;
     private TransactionMapper transactionMapper;
-
+    private TransactionStatsService transactionStatsService;
     @Override
     public void init() throws ServletException {
         TransactionRepository transRepo = (TransactionRepository) getServletContext().getAttribute("transactionRepository");
@@ -40,6 +41,7 @@ public class CreateTransactionServlet extends HttpServlet {
         transRepo.setUser(user);
         this.transactionService = new TransactionService(transRepo, user);
         this.transactionMapper = Mappers.getMapper(TransactionMapper.class);
+        this.transactionStatsService = new TransactionStatsService(transRepo, user);
     }
 
     @Override
@@ -52,9 +54,19 @@ public class CreateTransactionServlet extends HttpServlet {
         BasicTransactionDTO transactionDTO = (BasicTransactionDTO) req.getAttribute("DTO");
         req.removeAttribute("DTO");
         Transaction transaction = this.transactionMapper.toModel(transactionDTO);
+
         this.transactionService.createTransaction(transaction.getType(), String.valueOf(transaction.getSum()), transaction.getCategory(), transaction.getDescription());
         resp.setStatus(HttpServletResponse.SC_OK);
-        resp.getWriter().write(parseJsonResponse(resp));
+        String response = parseJsonResponse(resp);
+
+        if (transaction.getType() == 2) {
+            if (this.transactionStatsService.getMonthlyBudget() > 0) {
+                if (this.transactionStatsService.checkMonthlyBudgetLimit() < 0) {
+                    response += " " + this.transactionService.notifyAboutMonthlyLimit(this.transactionStatsService.checkMonthlyBudgetLimit());
+                }
+            }
+        }
+        resp.getWriter().write(response);
 
     }
 

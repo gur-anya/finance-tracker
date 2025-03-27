@@ -6,8 +6,8 @@ import org.ylabHomework.models.User;
 
 @Generated(
     value = "org.mapstruct.ap.MappingProcessor",
-    date = "2025-03-26T03:13:46+0300",
-    comments = "version: 1.6.2, compiler: javac, environment: Java 23 (Oracle Corporation)"
+    date = "2025-03-27T02:42:17+0300",
+    comments = "version: 1.6.2, compiler: javac, environment: Java 23.0.2 (Oracle Corporation)"
 )
 public class LoginMapperImpl implements LoginMapper {
 

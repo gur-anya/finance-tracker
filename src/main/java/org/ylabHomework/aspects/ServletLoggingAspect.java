@@ -1,13 +1,14 @@
 package org.ylabHomework.aspects;
 
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.time.LocalTime;
 
 @Aspect
 public class ServletLoggingAspect {
@@ -22,7 +23,7 @@ public class ServletLoggingAspect {
     }
 
     @Around("servletExecution(request, response)")
-    public Object logServletAccess(ProceedingJoinPoint joinPoint,
+    public Object ogServletAccess(ProceedingJoinPoint joinPoint,
                                    HttpServletRequest request,
                                    HttpServletResponse response) throws Throwable {
         String servletName = joinPoint.getTarget().getClass().getSimpleName();

@@ -1,4 +1,4 @@
-package org.ylabHomework.controllers.servlets.transactionServlets.transactionStats;
+package org.ylabHomework.controllers.servlets.transactionServlets.transactionStats.genericStatsServlets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.mapstruct.factory.Mappers;
@@ -13,11 +13,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
-
-@WebServlet(name = "GetBalanceServlet", urlPatterns = "/get_balance")
-public class GetBalanceServlet extends HttpServlet {
+@WebServlet(name = "GetExpensesByCategoryServlet", urlPatterns = "/get_expenses_by_category")
+public class GetExpensesByCategoryServlet extends HttpServlet {
     TransactionStatsService transactionStatsService;
     TransactionMapper transactionMapper;
 
@@ -34,9 +32,7 @@ public class GetBalanceServlet extends HttpServlet {
             throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
-        Map<String, String> responseData = new HashMap<>();
-        String balance = transactionStatsService.calculateBalance();
-        responseData.put("balance", balance);
+        Map<String, Double> responseData = transactionStatsService.analyzeExpenseByCategories();
 
         ObjectMapper mapper = new ObjectMapper();
         String jsonResponse = mapper.writeValueAsString(responseData);
@@ -50,5 +46,4 @@ public class GetBalanceServlet extends HttpServlet {
         this.transactionStatsService = null;
         this.transactionMapper = null;
     }
-
 }

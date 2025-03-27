@@ -10,6 +10,7 @@ import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
 import org.ylabHomework.services.TransactionService;
+import org.ylabHomework.services.TransactionStatsService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -22,16 +23,19 @@ import static org.ylabHomework.serviceClasses.Constants.UPDATE_TRANSACTION_JSP;
 
 @WebServlet(name = "UpdateTransactionServlet", urlPatterns = "/update_transaction")
 public class UpdateTransactionServlet extends HttpServlet {
-    TransactionService transactionService;
-    ActionsWithTransactionMapper actionsMapper;
+    private TransactionService transactionService;
+    private TransactionStatsService transactionStatsService;
+    private ActionsWithTransactionMapper actionsMapper;
+
 
     @Override
-    public void init() {
-        this.actionsMapper = Mappers.getMapper(ActionsWithTransactionMapper.class);
+    public void init() throws ServletException {
         TransactionRepository transRepo = (TransactionRepository) getServletContext().getAttribute("transactionRepository");
         User user = (User) getServletContext().getAttribute("user");
         transRepo.setUser(user);
         this.transactionService = new TransactionService(transRepo, user);
+        this.actionsMapper = Mappers.getMapper(ActionsWithTransactionMapper.class);
+        this.transactionStatsService = new TransactionStatsService(transRepo, user);
     }
 
     @Override
@@ -62,9 +66,19 @@ public class UpdateTransactionServlet extends HttpServlet {
         if (updatedValues.contains("description")) {
             this.transactionService.updateTransactionDescription(transactionDTO.getDescription(), updatedTransaction);
         }
+        String response = parseJsonResponse(resp);
+        if (updatedValues.contains("type")) {
+            if (transactionDTO.getType() == 2) {
+                if (this.transactionStatsService.getMonthlyBudget() > 0) {
+                    if (this.transactionStatsService.checkMonthlyBudgetLimit() < 0) {
+                        response += " " + this.transactionService.notifyAboutMonthlyLimit(this.transactionStatsService.checkMonthlyBudgetLimit());
+                    }
+                }
+            }
+        }
 
         resp.setStatus(HttpServletResponse.SC_OK);
-        resp.getWriter().write(parseJsonResponse(resp));
+        resp.getWriter().write(response);
 
     }
 
@@ -79,7 +93,7 @@ public class UpdateTransactionServlet extends HttpServlet {
         switch (resp.getStatus()) {
             case (HttpServletResponse.SC_OK) -> responseMessageDTO.setMessage("Успешно!");
             case (HttpServletResponse.SC_BAD_REQUEST) ->
-                    responseMessageDTO.setMessage("Произошла ошибка при удалении транзакции! Попробуйте еще раз.");
+                    responseMessageDTO.setMessage("Произошла ошибка при обновлении транзакции! Попробуйте еще раз.");
         }
         return new ObjectMapper().writeValueAsString(responseMessageDTO);
     }
