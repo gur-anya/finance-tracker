@@ -18,6 +18,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Вспомогательный сервлет, передающий все транзакции.
+ *
+ * @author Gureva Anna
+ * @version 1.0
+ * @since 21.03.2025
+ */
 @WebServlet(name = "GetAllTransactionsServlet", urlPatterns = "/get_all")
 public class GetAllTransactionsServlet extends HttpServlet {
     TransactionService transactionService;
@@ -32,7 +39,7 @@ public class GetAllTransactionsServlet extends HttpServlet {
         this.transactionService = new TransactionService(transRepo, user);
     }
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");

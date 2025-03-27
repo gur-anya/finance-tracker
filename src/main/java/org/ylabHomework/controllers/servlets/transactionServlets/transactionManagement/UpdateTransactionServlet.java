@@ -2,10 +2,8 @@ package org.ylabHomework.controllers.servlets.transactionServlets.transactionMan
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.mapstruct.factory.Mappers;
 import org.ylabHomework.DTOs.ResponseMessageDTO;
 import org.ylabHomework.DTOs.TransactionsDTOs.ActionsWithTransactionDTO;
-import org.ylabHomework.mappers.ActionsWithTransactionMapper;
 import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
@@ -21,12 +19,17 @@ import java.io.IOException;
 
 import static org.ylabHomework.serviceClasses.Constants.UPDATE_TRANSACTION_JSP;
 
+/**
+ * Сервлет, демонстрирующий пользователю страницу, на которой он может обновить транзакцию.
+ *
+ * @author Gureva Anna
+ * @version 1.0
+ * @since 21.03.2025
+ */
 @WebServlet(name = "UpdateTransactionServlet", urlPatterns = "/update_transaction")
 public class UpdateTransactionServlet extends HttpServlet {
     private TransactionService transactionService;
     private TransactionStatsService transactionStatsService;
-    private ActionsWithTransactionMapper actionsMapper;
-
 
     @Override
     public void init() throws ServletException {
@@ -34,18 +37,17 @@ public class UpdateTransactionServlet extends HttpServlet {
         User user = (User) getServletContext().getAttribute("user");
         transRepo.setUser(user);
         this.transactionService = new TransactionService(transRepo, user);
-        this.actionsMapper = Mappers.getMapper(ActionsWithTransactionMapper.class);
         this.transactionStatsService = new TransactionStatsService(transRepo, user);
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         req.getRequestDispatcher(UPDATE_TRANSACTION_JSP).forward(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         ActionsWithTransactionDTO transactionDTO = (ActionsWithTransactionDTO) req.getAttribute("DTO");
         req.removeAttribute("DTO");
         Transaction updatedTransaction = new Transaction(transactionDTO.getOriginalType(),
@@ -85,7 +87,6 @@ public class UpdateTransactionServlet extends HttpServlet {
     @Override
     public void destroy() {
         this.transactionService = null;
-        this.actionsMapper = null;
     }
 
     private String parseJsonResponse(HttpServletResponse resp) throws JsonProcessingException {

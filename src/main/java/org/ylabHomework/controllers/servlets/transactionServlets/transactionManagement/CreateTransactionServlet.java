@@ -45,12 +45,12 @@ public class CreateTransactionServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher(CREATE_TRANSACTION_JSP).forward(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         BasicTransactionDTO transactionDTO = (BasicTransactionDTO) req.getAttribute("DTO");
         req.removeAttribute("DTO");
         Transaction transaction = this.transactionMapper.toModel(transactionDTO);
@@ -85,6 +85,4 @@ public class CreateTransactionServlet extends HttpServlet {
         }
         return new ObjectMapper().writeValueAsString(responseMessageDTO);
     }
-
-
 }

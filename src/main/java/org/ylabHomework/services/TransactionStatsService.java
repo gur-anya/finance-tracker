@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Сервис для работы с со статистикой сущности Transaction.
+ * Сервис для работы со статистикой сущности Transaction.
  * <p>
  * * @author Gureva Anna
  * * @version 1.0
@@ -124,7 +124,7 @@ public class TransactionStatsService {
     /**
      * Подсчитывает текущий баланс пользователя на основе всех транзакций.
      *
-     * @return уведомление текущем балансе (доходы минус расходы)
+     * @return уведомление текущем о балансе (доходы минус расходы)
      */
     public String calculateBalance() {
         List<Transaction> transactionList;
@@ -334,96 +334,6 @@ public class TransactionStatsService {
         return new double[]{income, expense, balance};
     }
 
-    /**
-     * Возвращает прогресс достижения финансовой цели в виде строки.
-     *
-     * @return сообщение о прогрессе цели
-     */
-    public String getGoalProgress() {
-        try {
-            if (repository.getGoal() == 0) {
-                return "";
-            } else {
-                double leftToGoal = checkGoalProgress();
-                if (leftToGoal < 0) {
-                    return "Поздравляем! Вы превысили цель на " + String.format("%.2f", Math.abs(leftToGoal)) + " руб.!";
-                }
-                if (leftToGoal == 0) {
-                    return "Поздравляем! Вы достигли своей цели!";
-                }
-                return "До цели осталось накопить " + String.format("%.2f", leftToGoal) + " руб. Отличный результат!";
-            }
-        } catch (SQLException e) {
-            System.out.println("Ошибка! " + e.getMessage());
-            return "";
-        }
-    }
-
-
-    /**
-     * Возвращает сводку доходов и расходов за период в виде строки.
-     *
-     * @param timestamp1 начальная дата периода
-     * @param timestamp2 конечная дата периода
-     * @return отформатированная сводка
-     */
-    public String getSummary(LocalDateTime timestamp1, LocalDateTime timestamp2) {
-        if (timestamp1.isAfter(timestamp2)) {
-            LocalDateTime aux = timestamp1;
-            timestamp1 = timestamp2;
-            timestamp2 = aux;
-        }
-        double[] stats = getIncomeExpenseForPeriod(timestamp1, timestamp2);
-        return String.format("Период: %s - %s%nДоходы: %15.2f руб.%nРасходы: %15.2f руб.%nИтоговый баланс: %15.2f руб.",
-                timestamp1.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")),
-                timestamp2.format(java.time.format.DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")),
-                stats[0], stats[1], stats[2]);
-    }
-
-    /**
-     * Генерирует отформатированный финансовый отчёт за указанный период.
-     *
-     * @param startTime начальная дата периода (может быть null)
-     * @param endTime   конечная дата периода (может быть null)
-     * @return строка с отчётом или сообщение об отсутствии данных
-     */
-    public String generateGeneralReportFormatted(LocalDateTime startTime, LocalDateTime endTime) {
-        FinancialReport report = generateGeneralReport(startTime, endTime);
-        if (report == null) {
-            return "Транзакции за период не найдены!";
-        }
-
-        StringBuilder sb = new StringBuilder("ФИНАНСОВЫЙ ОТЧЁТ\n");
-        sb.append("-".repeat(50)).append("\n");
-        sb.append("Общие данные:\n");
-        sb.append(String.format("Доходы: %15.2f руб.%n", report.totalIncome()));
-        sb.append(String.format("Расходы: %15.2f руб.%n", report.totalExpense()));
-        sb.append(String.format("Баланс: %15.2f руб.%n", report.totalBalance()));
-        sb.append("-".repeat(50)).append("\n");
-
-        sb.append("По категориям:\n");
-        sb.append(String.format("%-20s %-15s %-15s %-15s%n", "Категория", "Доходы", "Расходы", "Баланс"));
-        sb.append("-".repeat(65)).append("\n");
-        for (Map.Entry<String, double[]> entry : report.categoryReport().entrySet()) {
-            String category = entry.getKey().substring(0, 1).toUpperCase() + entry.getKey().substring(1);
-            double[] stats = entry.getValue();
-            sb.append(String.format("%-20s %15.2f %15.2f %15.2f%n", category, stats[0], stats[1], stats[2]));
-        }
-        sb.append("-".repeat(65)).append("\n");
-
-        if (report.goalData() != null) {
-            sb.append("Прогресс цели:\n");
-            sb.append(String.format("Цель: %15.2f руб.%n", report.goalData()[0]));
-            sb.append(String.format("Доходы: %15.2f руб.%n", report.goalData()[1]));
-            sb.append(String.format("Расходы: %15.2f руб.%n", report.goalData()[2]));
-            sb.append(String.format("Накоплено: %15.2f руб.%n", report.goalData()[3]));
-            sb.append(String.format("Осталось: %15.2f руб.%n", report.goalData()[4]));
-            sb.append("-".repeat(50)).append("\n");
-        }
-
-        return sb.toString();
-    }
-
     public String databaseError(Exception e) {
         return "Ошибка базы данных: " + e.getMessage() + " Попробуйте ещё раз!";
     }
@@ -465,18 +375,20 @@ public class TransactionStatsService {
     /**
      * Финансовый отчёт пользователя.
      *
-     * @param totalIncome    общий доход за период
-     * @param totalExpense   общий расход за период
-     * @param totalBalance   итоговый баланс за период
-     * @param categoryReport статистика по категориям (доходы, расходы, баланс)
-     * @param goalData       данные по финансовой цели (цель, доходы, расходы, накоплено, осталось)
      */
-    public record FinancialReport(
-            double totalIncome,
-            double totalExpense,
-            double totalBalance,
-            Map<String, double[]> categoryReport,
-            double[] goalData
-    ) {
+    public class FinancialReport {
+        public double totalIncome;
+        public double totalExpense;
+        public double totalBalance;
+        public Map<String, double[]> categoryReport;
+        public double[] goalData;
+
+        public FinancialReport(double totalIncome, double totalExpense, double totalBalance, Map<String, double[]> categoryReport, double[] goalData) {
+            this.totalIncome = totalIncome;
+            this.totalExpense = totalExpense;
+            this.totalBalance = totalBalance;
+            this.categoryReport = categoryReport;
+            this.goalData = goalData;
+        }
     }
 }

@@ -16,6 +16,14 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Вспомогательный сервлет, передающий данные о балансе.
+ *
+ * @author Gureva Anna
+ * @version 1.0
+ * @since 21.03.2025
+ */
+
 @WebServlet(name = "GetBalanceServlet", urlPatterns = "/get_balance")
 public class GetBalanceServlet extends HttpServlet {
     TransactionStatsService transactionStatsService;
@@ -30,7 +38,7 @@ public class GetBalanceServlet extends HttpServlet {
         this.transactionStatsService = new TransactionStatsService(transRepo, user);
     }
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");

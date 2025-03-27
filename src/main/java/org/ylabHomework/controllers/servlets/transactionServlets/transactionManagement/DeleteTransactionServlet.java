@@ -20,6 +20,13 @@ import java.io.IOException;
 
 import static org.ylabHomework.serviceClasses.Constants.DELETE_TRANSACTION_JSP;
 
+/**
+ * Сервлет, демонстрирующий пользователю страницу, на которой он может удалить транзакцию.
+ *
+ * @author Gureva Anna
+ * @version 1.0
+ * @since 21.03.2025
+ */
 @WebServlet(name = "DeleteTransactionServlet", urlPatterns = "/delete_transaction")
 public class DeleteTransactionServlet extends HttpServlet {
     TransactionService transactionService;
@@ -35,13 +42,13 @@ public class DeleteTransactionServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         req.getRequestDispatcher(DELETE_TRANSACTION_JSP).forward(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         BasicTransactionDTO transactionDTO = objectMapper.readValue(req.getReader(), BasicTransactionDTO.class);
         transactionDTO.setDescription(transactionDTO.getDescription().trim());

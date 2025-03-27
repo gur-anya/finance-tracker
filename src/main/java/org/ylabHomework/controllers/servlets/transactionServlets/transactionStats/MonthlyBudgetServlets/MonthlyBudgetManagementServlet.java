@@ -16,6 +16,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Вспомогательный сервлет, передающий месячный бюджет на страницу.
+ *
+ * @author Gureva Anna
+ * @version 1.0
+ * @since 21.03.2025
+ */
 @WebServlet(name = "MonthlyBudgetManagementServlet", urlPatterns = "/get_monthly_budget_management")
 public class MonthlyBudgetManagementServlet extends HttpServlet {
     TransactionStatsService transactionStatsService;
@@ -31,7 +38,7 @@ public class MonthlyBudgetManagementServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");

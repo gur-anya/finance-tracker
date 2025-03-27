@@ -3,11 +3,10 @@ package org.ylabHomework.controllers.servlets.userServlets;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mapstruct.factory.Mappers;
 import org.ylabHomework.DTOs.ResponseMessageDTO;
 import org.ylabHomework.DTOs.UserDTOs.LoginDTO;
 import org.ylabHomework.mappers.LoginMapper;
-import org.mapstruct.factory.Mappers;
-import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
 import org.ylabHomework.repositories.UserRepository;
@@ -20,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
 
 import static org.ylabHomework.serviceClasses.Constants.LOGIN_JSP;
 /**
@@ -44,13 +42,13 @@ public class LoginServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         req.getRequestDispatcher(LOGIN_JSP).forward(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         LoginDTO loginDTO = (LoginDTO) req.getAttribute("DTO");
         User loginUser = this.loginMapper.toModel(loginDTO);
         req.removeAttribute("DTO");

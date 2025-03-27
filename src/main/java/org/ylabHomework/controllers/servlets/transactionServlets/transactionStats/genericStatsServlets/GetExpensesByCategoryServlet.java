@@ -14,6 +14,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
+
+/**
+ * Вспомогательный сервлет, передающий данные о расходах по категориям.
+ *
+ * @author Gureva Anna
+ * @version 1.0
+ * @since 21.03.2025
+ */
+
 @WebServlet(name = "GetExpensesByCategoryServlet", urlPatterns = "/get_expenses_by_category")
 public class GetExpensesByCategoryServlet extends HttpServlet {
     TransactionStatsService transactionStatsService;
@@ -28,7 +37,7 @@ public class GetExpensesByCategoryServlet extends HttpServlet {
         this.transactionStatsService = new TransactionStatsService(transRepo, user);
     }
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");

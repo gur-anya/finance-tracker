@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-
 import static org.ylabHomework.serviceClasses.Constants.USER_MAIN_JSP;
 
 /**
@@ -22,7 +21,7 @@ import static org.ylabHomework.serviceClasses.Constants.USER_MAIN_JSP;
 @WebServlet(name = "UserMainPageServlet", urlPatterns = "/main_user_page")
 public class UserMainPageServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         req.setAttribute("username", session.getAttribute("username"));

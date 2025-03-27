@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-
 import static org.ylabHomework.serviceClasses.Constants.PERSONAL_ACCOUNT_JSP;
 /**
  * Сервлет, демонстрирующий пользователю страницу с его личным кабинетом,
@@ -21,7 +20,7 @@ import static org.ylabHomework.serviceClasses.Constants.PERSONAL_ACCOUNT_JSP;
 @WebServlet(name = "PersonalAccountServlet", urlPatterns = "/personal_account")
 public class PersonalAccountServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         req.setAttribute("username", session.getAttribute("username"));

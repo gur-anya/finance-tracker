@@ -8,7 +8,6 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -85,7 +84,7 @@ public class Config {
         String url = property.getProperty("url");
 
         Connection con = DriverManager.getConnection(url, username, password);
-        con.setAutoCommit(false);
+        con.setAutoCommit(true);
         return con;
 
     }

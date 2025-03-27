@@ -16,6 +16,13 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Вспомогательный сервлет, передающий финансовую цель на страницу.
+ *
+ * @author Gureva Anna
+ * @version 1.0
+ * @since 21.03.2025
+ */
 @WebServlet(name = "GoalManagementServlet", urlPatterns = "/get_goal_management")
 public class GoalManagementServlet extends HttpServlet {
     TransactionStatsService transactionStatsService;
@@ -31,7 +38,7 @@ public class GoalManagementServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");

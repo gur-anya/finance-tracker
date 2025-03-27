@@ -3,10 +3,10 @@ package org.ylabHomework.controllers.servlets.userServlets;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mapstruct.factory.Mappers;
 import org.ylabHomework.DTOs.ResponseMessageDTO;
 import org.ylabHomework.DTOs.UserDTOs.BasicUserDTO;
 import org.ylabHomework.mappers.UserMapper;
-import org.mapstruct.factory.Mappers;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.UserRepository;
 import org.ylabHomework.services.UserService;
@@ -17,8 +17,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.SQLException;
-
 
 import static org.ylabHomework.serviceClasses.Constants.REGISTRATION_JSP;
 /**
@@ -43,13 +41,13 @@ public class RegistrationServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         req.getRequestDispatcher(REGISTRATION_JSP).forward(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         BasicUserDTO userDTO = (BasicUserDTO) req.getAttribute("DTO");
         req.removeAttribute("DTO");
         User newUser = this.userMapper.toModel(userDTO);

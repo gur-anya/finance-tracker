@@ -9,9 +9,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
-
 
 import static org.ylabHomework.serviceClasses.Constants.TRANSACTIONS_MAIN_JSP;
 
@@ -26,7 +24,7 @@ import static org.ylabHomework.serviceClasses.Constants.TRANSACTIONS_MAIN_JSP;
 @WebServlet(name = "TransactionsMainPageServlet", urlPatterns = "/main_transaction_page")
 public class TransactionsMainPageServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         TransactionRepository transactionRepository = new TransactionRepository((User) req.getAttribute("loggedUser"));
         getServletContext().setAttribute("transactionRepository", transactionRepository);

@@ -18,6 +18,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.ylabHomework.serviceClasses.Constants.GENERAL_REPORT_JSP;
+
+/**
+ * Сервлет, демонстрирующий пользователю страницу, на которой он может просмотреть общий финансовый отчет.
+ *
+ * @author Gureva Anna
+ * @version 1.0
+ * @since 21.03.2025
+ */
 @WebServlet(name = "GeneralReportServlet", urlPatterns = "/general_report")
 public class GeneralReportServlet extends HttpServlet {
     TransactionStatsService transactionStatsService;
@@ -33,13 +42,14 @@ public class GeneralReportServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
-        req.getRequestDispatcher("transaction_stats_jsps/general_report_page.jsp").forward(req, resp);
+        req.getRequestDispatcher(GENERAL_REPORT_JSP).forward(req, resp);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+    @SuppressWarnings("unchecked")
+    public void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
         ObjectMapper mapper = new ObjectMapper();
@@ -63,19 +73,19 @@ public class GeneralReportServlet extends HttpServlet {
         TransactionStatsService.FinancialReport report = transactionStatsService.generateGeneralReport(startTime, endTime);
 
         Map<String, Double> basicStats = new HashMap<>();
-        basicStats.put("totalIncome", report.totalIncome());
-        basicStats.put("totalExpense", report.totalExpense());
-        basicStats.put("totalBalance", report.totalBalance());
+        basicStats.put("totalIncome", report.totalIncome);
+        basicStats.put("totalExpense", report.totalExpense);
+        basicStats.put("totalBalance", report.totalBalance);
 
         responseData.put("basicStats", basicStats);
-        responseData.put("categoryReport", report.categoryReport());
+        responseData.put("categoryReport", report.categoryReport);
 
         Map<String, Double> goalData = new HashMap<>();
-        goalData.put("goalSum", report.goalData()[0]);
-        goalData.put("goalIncome", report.goalData()[1]);
-        goalData.put("goalExpense", report.goalData()[2]);
-        goalData.put("saved", report.goalData()[3]);
-        goalData.put("left", report.goalData()[4]);
+        goalData.put("goalSum", report.goalData[0]);
+        goalData.put("goalIncome", report.goalData[1]);
+        goalData.put("goalExpense", report.goalData[2]);
+        goalData.put("saved", report.goalData[3]);
+        goalData.put("left", report.goalData[4]);
 
         responseData.put("goalData", goalData);
 

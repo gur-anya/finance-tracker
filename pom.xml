@@ -34,7 +34,8 @@
         <el.ver>5.0.0</el.ver>
         <logback.ver>1.2.11</logback.ver>
         <aspectj.ver>1.9.22</aspectj.ver>
-        <aspectj.plugin.ver>1.14</aspectj.plugin.ver>
+        <aspectj.plugin.ver>1.15.0</aspectj.plugin.ver>
+        <war.plugin.ver>3.4.0</war.plugin.ver>
     </properties>
 
     <dependencies>
@@ -215,7 +216,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
-                <version>1.15.0</version>
+                <version>${aspectj.plugin.ver}</version>
                 <configuration>
                     <source>17</source>
                     <target>17</target>
@@ -243,7 +244,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
-                <version>3.4.0</version>
+                <version>${war.plugin.ver}</version>
                 <configuration>
                     <warSourceDirectory>src/main/webapp</warSourceDirectory>
                     <failOnMissingWebXml>false</failOnMissingWebXml>

@@ -2,8 +2,10 @@ package org.ylabHomework.DTOs.UserDTOs;
 
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import jakarta.validation.constraints.*;
-
+import jakarta.validation.constraints.AssertTrue;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.NotEmpty;
 import org.ylabHomework.serviceClasses.Unique;
 
 
@@ -16,7 +18,6 @@ public class BasicUserDTO {
     @Unique(message = "Пользователь с таким email уже зарегистрирован!")
     private String email;
     @NotEmpty(message = "Пароль не должен быть пустым.")
-    //  @Size(min = 8, message = "Пароль должен состоять из 8 и более символов.")
     private String password;
     @Max(value = 1)
     private int role;

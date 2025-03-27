@@ -21,7 +21,7 @@ import static org.ylabHomework.serviceClasses.Constants.TRANSACTIONS_MANAGEMENT_
 @WebServlet(name = "TransactionManagementPageServlet", urlPatterns = "/transactions_management_page")
 public class TransactionManagementPageServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         req.setAttribute("useremail", session.getAttribute("useremail"));

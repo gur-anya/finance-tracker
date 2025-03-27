@@ -1,13 +1,12 @@
 package org.ylabHomework.controllers.servlets.userServlets;
 
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.mapstruct.factory.Mappers;
 import org.ylabHomework.DTOs.ResponseMessageDTO;
 import org.ylabHomework.DTOs.UserDTOs.ActionsWithUserDTO;
 import org.ylabHomework.mappers.ActionWithUserMapper;
-import org.mapstruct.factory.Mappers;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.UserRepository;
 import org.ylabHomework.services.UserService;
@@ -19,9 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.Map;
-
 
 import static org.ylabHomework.serviceClasses.Constants.UPDATE_ACCOUNT_JSP;
 /**
@@ -47,7 +44,7 @@ public class UpdateAccountServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         HttpSession session = req.getSession(false);
         req.setAttribute("username", session.getAttribute("username"));
@@ -56,7 +53,7 @@ public class UpdateAccountServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         ActionsWithUserDTO actionsDTO = (ActionsWithUserDTO) req.getAttribute("DTO");
         req.removeAttribute("DTO");
 

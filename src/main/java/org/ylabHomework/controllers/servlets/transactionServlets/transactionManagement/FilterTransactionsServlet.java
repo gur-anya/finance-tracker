@@ -23,6 +23,13 @@ import java.util.Map;
 
 import static org.ylabHomework.serviceClasses.Constants.SHOW_TRANSACTIONS_JSP;
 
+/**
+ * Сервлет, демонстрирующий пользователю страницу, на которой он может просмотреть транзакции с заданным фильтром.
+ *
+ * @author Gureva Anna
+ * @version 1.0
+ * @since 21.03.2025
+ */
 @WebServlet(name = "FilterTransactionsServlet", urlPatterns = "/show_transactions")
 public class FilterTransactionsServlet extends HttpServlet {
     TransactionService transactionService;
@@ -38,14 +45,14 @@ public class FilterTransactionsServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+    public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
         req.getRequestDispatcher(SHOW_TRANSACTIONS_JSP).forward(req, resp);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         Map<String, String> jsonData = mapper.readValue(request.getReader(), Map.class);

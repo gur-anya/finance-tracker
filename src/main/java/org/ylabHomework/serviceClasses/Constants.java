@@ -9,9 +9,54 @@ package org.ylabHomework.serviceClasses;
  * </p>
  */
 public class Constants {
+    /**
+     * Ссылка на страницу для обновления месячного бюджета update_goal_page.jsp
+     */
+    public static final String UPDATE_GOAL_PAGE_JSP = "transaction_stats_jsps/update_goal_page.jsp";
+    /**
+     * Ссылка на страницу для обновления месячного бюджета update_budget_page.jsp
+     */
+    public static final String UPDATE_BUDGET_PAGE_JSP = "transaction_stats_jsps/update_budget_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра страницы управления целью goal_management_page.jsp
+     */
+    public static final String SHOW_GOAL_MANAGEMENT_PAGE_JSP = "transaction_stats_jsps/goal_management_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра страницы управления месячным бюджетом monthly_budget_management_page.jsp
+     */
+    public static final String SHOW_BUDGET_MANAGEMENT_PAGE_JSP = "transaction_stats_jsps/monthly_budget_management_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра страницы со статусом месячного бюджета check_budget_page.jsp.
+     */
+    public static final String SHOW_CHECK_BUDGET_JSP = "transaction_stats_jsps/check_budget_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра страницы с прогрессом по цели check_goal_page.jsp.
+     */
+    public static final String SHOW_CHECK_GOAL_JSP = "transaction_stats_jsps/check_goal_page.jsp";
 
     /**
-     * Ссылка на страницу с формой главной страницы транзакций main_transaction_page.jsp.
+     * Ссылка на страницу для просмотра страницы по управлению статистикой транзакций transactions_stats_page.jsp.
+     */
+    public static final String SHOW_STATS_PAGE_JSP = "transaction_stats_jsps/transactions_stats_page.jsp";
+
+    /**
+     * Ссылка на страницу для просмотра расходов и доходов за период summary_income_expense_page.jsp.
+     */
+    public static final String SUMMARY_INCOME_EXPENSE_JSP = "transaction_stats_jsps/summary_income_expense_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра финансового отчета general_report_page.jsp.
+     */
+    public static final String GENERAL_REPORT_JSP = "transaction_stats_jsps/general_report_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра расходов по категориям summary_expenses_by_categories_page.jsp.
+     */
+    public static final String CATEGORY_EXPENSES_JSP = "transaction_stats_jsps/summary_expenses_by_categories_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра баланса balance_page.jsp.
+     */
+    public static final String BALANCE_JSP = "transaction_stats_jsps/balance_page.jsp";
+    /**
+     * Ссылка на главную страницу для управления транзакций main_transaction_page.jsp.
      */
     public static final String TRANSACTIONS_MAIN_JSP = "transaction_jsps/main_transaction_page.jsp";
 
@@ -31,11 +76,11 @@ public class Constants {
     /**
      * Ссылка на страницу для просмотра транзакций с заданным фильтром show_transactions_page.jsp.
      */
-    public static final String SHOW_TRANSACTIONS_JSP ="transaction_jsps/show_transactions_page.jsp";
+    public static final String SHOW_TRANSACTIONS_JSP = "transaction_jsps/show_transactions_page.jsp";
     /**
      * Ссылка на страницу для удаления транзакций delete_transaction_page.jsp.
      */
-    public static final String DELETE_TRANSACTION_JSP ="transaction_jsps/delete_transaction_page.jsp";
+    public static final String DELETE_TRANSACTION_JSP = "transaction_jsps/delete_transaction_page.jsp";
 
     /**
      * Ссылка на главную страницу index.jsp.
