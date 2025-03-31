@@ -18,7 +18,7 @@ import java.util.Objects;
 @Getter
 @Setter
 public class Transaction {
-    private TransactionTYPE type;
+    private int type;
     private double sum;
     private String category;
     private LocalDateTime timestamp;
@@ -38,16 +38,11 @@ public class Transaction {
         return Objects.hash(type, sum, category, timestamp, description);
     }
 
-    public Transaction(TransactionTYPE type, double sum, String category, String description) {
+    public Transaction(int type, double sum, String category, String description) {
         this.type = type;
         this.sum = sum;
         this.category = category;
         this.timestamp = LocalDateTime.now();
         this.description = description;
-    }
-
-    public enum TransactionTYPE {
-        INCOME,
-        EXPENSE
     }
 }

@@ -37,7 +37,7 @@ public class TransactionController {
     /**
      * Интерфейс паттерна Команда.
      */
-    private interface Command {
+    public interface Command {
         void execute();
     }
 
@@ -78,11 +78,26 @@ public class TransactionController {
         statsCommands.put("6", this::showGeneralReport);
         statsCommands.put("7", this::showMainMenu);
 
-        filterCommands.put("1", () -> showTransactionList(getTransactionsBeforeTimestamp()));
-        filterCommands.put("2", () -> showTransactionList(getTransactionsAfterTimestamp()));
-        filterCommands.put("3", () -> showTransactionList(getTransactionsByCategory()));
-        filterCommands.put("4", () -> showTransactionList(service.getTransactionsByType(getTransactionTypeInput())));
-        filterCommands.put("5", () -> showTransactionList(service.getAllTransactions()));
+        filterCommands.put("1", () -> {
+            showTransactionList(getTransactionsBeforeTimestamp());
+            showTransactionsFilter();
+        });
+        filterCommands.put("2", () -> {
+            showTransactionList(getTransactionsAfterTimestamp());
+            showTransactionsFilter();
+        });
+        filterCommands.put("3", () -> {
+            showTransactionList(getTransactionsByCategory());
+            showTransactionsFilter();
+        });
+        filterCommands.put("4", () -> {
+            showTransactionList(service.getTransactionsByType(getTransactionTypeInput()));
+            showTransactionsFilter();
+        });
+        filterCommands.put("5", () -> {
+            showTransactionList(service.getAllTransactions());
+            showTransactionsFilter();
+        });
         filterCommands.put("6", this::showTransactionManagement);
 
         updateCommands.put("1", new UpdateTypeCommand());
@@ -141,9 +156,9 @@ public class TransactionController {
      * Создаёт новую транзакцию на основе введённых пользователем данных.
      */
     public void createTransaction() {
-        Transaction.TransactionTYPE type = getTransactionTypeInput();
+        int type = getTransactionTypeInput();
         String sum = getValidInput("Введите сумму:", service::checkSum);
-        String category = getValidInput("Введите категорию:", service::checkCategory);
+        String category = getValidInput("Введите категорию (введите Цель для транзакции по финансовой цели):", service::checkCategory);
         System.out.println("Введите описание (опционально):");
         String description = scanner.nextLine();
 
@@ -160,6 +175,7 @@ public class TransactionController {
         if (transaction != null) {
             executeTransactionMenu(Constants.UPDATE_TRANSACTIONS_MENU, updateCommands, transaction, "Пожалуйста, введите 1, 2, 3, 4 или 5.");
         }
+        showTransactionManagement();
     }
 
     /**
@@ -170,6 +186,7 @@ public class TransactionController {
         if (transaction != null) {
             executeTransactionMenu("Вы действительно хотите удалить эту транзакцию? да/нет", deleteCommands, transaction, "Пожалуйста, введите да или нет.");
         }
+        showTransactionManagement();
     }
 
     /**
@@ -243,10 +260,17 @@ public class TransactionController {
      * Отображает меню для формирования финансового отчёта.
      */
     public void showGeneralReport() {
-        System.out.println("Введите дату начала периода (dd.MM.yyyy HH:mm, пусто для начала):");
+        System.out.println("Введите дату начала периода (dd.MM.yyyy HH:mm, оставьте пустым для отчета с начала отслеживания в приложении):");
         LocalDateTime startTime = periodInput();
-        System.out.println("Введите дату конца периода (dd.MM.yyyy HH:mm, пусто для конца):");
+        System.out.println("Введите дату конца периода (dd.MM.yyyy HH:mm, оставьте пустым для отчета с конца отслеживания в приложении):");
         LocalDateTime endTime = periodInput();
+        if (startTime!=null && endTime != null) {
+            if (startTime.isAfter(endTime)) {
+                LocalDateTime aux = startTime;
+                startTime = endTime;
+                endTime = aux;
+            }
+        }
         System.out.println(statsService.generateGeneralReportFormatted(startTime, endTime));
         showStatsAndAnalysisMenu();
     }
@@ -266,7 +290,7 @@ public class TransactionController {
 
         @Override
         public void execute() {
-            Transaction.TransactionTYPE newType = getTransactionTypeInput();
+            int newType = getTransactionTypeInput();
             System.out.println(service.updateTransactionType(newType, transaction).content);
         }
     }
@@ -355,7 +379,7 @@ public class TransactionController {
         for (int i = 0; i < transactions.size(); i++) {
             Transaction trans = transactions.get(i);
             double sum = trans.getSum();
-            if (trans.getType() == Transaction.TransactionTYPE.EXPENSE) sum = -sum;
+            if (trans.getType() == 2) sum = -sum;
             System.out.printf("%d. %.2f руб., %s, %s, %s%n",
                     i + 1, sum, trans.getCategory(), trans.getTimestamp().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")), trans.getDescription());
         }
@@ -366,13 +390,13 @@ public class TransactionController {
      *
      * @return выбранный тип транзакции (INCOME или EXPENSE)
      */
-    private Transaction.TransactionTYPE getTransactionTypeInput() {
+    private int getTransactionTypeInput() {
         while (true) {
             System.out.println("Выберите тип транзакции (1 - доход, 2 - расход):");
             String input = scanner.nextLine().toLowerCase().trim();
             switch (input) {
-                case "1": return Transaction.TransactionTYPE.INCOME;
-                case "2": return Transaction.TransactionTYPE.EXPENSE;
+                case "1": return 1;
+                case "2": return 2;
                 default: System.out.println("Пожалуйста, введите 1 или 2:");
             }
         }
@@ -387,11 +411,12 @@ public class TransactionController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
         String input = scanner.nextLine();
         if (input.isEmpty()) return null;
-        try {
-            return LocalDateTime.parse(input, formatter);
-        } catch (Exception e) {
-            System.out.println("Неверный формат! Используйте dd.MM.yyyy HH:mm");
-            return periodInput();
+        while (true) {
+            try {
+                return LocalDateTime.parse(input, formatter);
+            } catch (Exception e) {
+                System.out.println("Неверный формат! Используйте dd.MM.yyyy HH:mm");
+            }
         }
     }
 
