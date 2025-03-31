@@ -8,8 +8,8 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -26,15 +26,21 @@ import java.util.Properties;
 public class Config {
 
     private static final Properties property = new Properties();
-
     static {
-        try (FileInputStream inputStream = new FileInputStream("src/main/resources/config.properties")) {
+        try (InputStream inputStream = Config.class.getResourceAsStream("/config.properties")) {
+            if (inputStream == null) {
+                throw new RuntimeException("Не удалось найти config.properties в ресурсах");
+            }
             property.load(inputStream);
         } catch (IOException e) {
-            throw new RuntimeException("Ошибка! " + e);
+            throw new RuntimeException("Ошибка загрузки config.properties: " + e);
+        }
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Драйвер PostgreSQL не найден в classpath: " + e);
         }
     }
-
     public static void init() {
         String username = property.getProperty("username");
         String password = property.getProperty("password");
@@ -78,7 +84,7 @@ public class Config {
         String url = property.getProperty("url");
 
         Connection con = DriverManager.getConnection(url, username, password);
-        con.setAutoCommit(false);
+        con.setAutoCommit(true);
         return con;
 
     }

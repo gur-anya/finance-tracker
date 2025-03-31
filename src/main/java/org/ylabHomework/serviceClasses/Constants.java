@@ -9,88 +9,112 @@ package org.ylabHomework.serviceClasses;
  * </p>
  */
 public class Constants {
-    public static final String SHOW_ADMIN_MAIN_PAGE_TEXT_BLOCK = """
-            Выберите, что хотите сделать:
-            1. Просмотреть пользователей
-            2. Заблокировать пользователя
-            3. Разблокировать пользователя
-            4. Удалить пользователя
-            5. Выйти из аккаунта
-            """;
     /**
-     * Текстовый блок для контроллера пользователя: показать меню изменения данных для пользователя.
+     * Ссылка на страницу для обновления месячного бюджета update_goal_page.jsp
      */
-    public static final String UPDATE_USER_TEXT_BLOCK = """
-            Что вы хотите изменить?
-            1. Имя пользователя
-            2. Адрес электронной почты
-            3. Пароль""";
+    public static final String UPDATE_GOAL_PAGE_JSP = "transaction_stats_jsps/update_goal_page.jsp";
+    /**
+     * Ссылка на страницу для обновления месячного бюджета update_budget_page.jsp
+     */
+    public static final String UPDATE_BUDGET_PAGE_JSP = "transaction_stats_jsps/update_budget_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра страницы управления целью goal_management_page.jsp
+     */
+    public static final String SHOW_GOAL_MANAGEMENT_PAGE_JSP = "transaction_stats_jsps/goal_management_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра страницы управления месячным бюджетом monthly_budget_management_page.jsp
+     */
+    public static final String SHOW_BUDGET_MANAGEMENT_PAGE_JSP = "transaction_stats_jsps/monthly_budget_management_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра страницы со статусом месячного бюджета check_budget_page.jsp.
+     */
+    public static final String SHOW_CHECK_BUDGET_JSP = "transaction_stats_jsps/check_budget_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра страницы с прогрессом по цели check_goal_page.jsp.
+     */
+    public static final String SHOW_CHECK_GOAL_JSP = "transaction_stats_jsps/check_goal_page.jsp";
 
-    public static final String TRANSACTIONS_MAIN_PAGE = """
-            Выберите действие:
-            1. Перейти к транзакциям
-            2. Перейти в меню статистики и анализа
-            3. Назад
-            4. Выход из программы
-            """;
-    public static final String TRANSACTIONS_MANAGEMENT_MENU = """
-            Выберите действие:
-            1. Просмотреть транзакции
-            2. Добавить транзакцию
-            3. Редактировать транзакции
-            4. Удалить транзакцию
-            5. Назад
-            """;
-    public static final String STATS_AND_ANALYSIS_MENU = """
-            Выберите действие:
-            1. Управлять месячным бюджетом
-            2. Управлять финансовой целью
-            3. Вывести текущий баланс с учетом всех транзакций
-            4. Рассчитать суммарный доход и расход за период
-            5. Проанализировать общие расходы по категориям
-            6. Сформировать отчет по финансовому состоянию
-            7. Назад
-            """;
-    public static final String FILTER_CHOOSING_MENU = """
-            Выберите фильтр для транзакций:
-            1. До даты
-            2. После даты
-            3. По категории
-            4. По типу (доход/расход)
-            5. Все (без фильтра)
-            6. Назад
-            """;
-    public static final String UPDATE_TRANSACTIONS_MENU = """
-            Что хотите отредактировать:
-            1. Тип
-            2. Сумму
-            3. Категорию
-            4. Описание
-            5. Назад
-            """;
-    public static final String MONTHLY_BUDGET_MENU = """
-            Выберите действие:
-            1. Изменить бюджет на месяц
-            2. Проверить остаток на месяц
-            3. В меню статистики и анализа
-            """;
-    public static final String GOAL_MENU = """
-            Выберите действие:
-            1. Изменить цель
-            2. Проверить прогресс по цели
-            3. В меню статистики и анализа
-            """;
+    /**
+     * Ссылка на страницу для просмотра страницы по управлению статистикой транзакций transactions_stats_page.jsp.
+     */
+    public static final String SHOW_STATS_PAGE_JSP = "transaction_stats_jsps/transactions_stats_page.jsp";
 
+    /**
+     * Ссылка на страницу для просмотра расходов и доходов за период summary_income_expense_page.jsp.
+     */
+    public static final String SUMMARY_INCOME_EXPENSE_JSP = "transaction_stats_jsps/summary_income_expense_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра финансового отчета general_report_page.jsp.
+     */
+    public static final String GENERAL_REPORT_JSP = "transaction_stats_jsps/general_report_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра расходов по категориям summary_expenses_by_categories_page.jsp.
+     */
+    public static final String CATEGORY_EXPENSES_JSP = "transaction_stats_jsps/summary_expenses_by_categories_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра баланса balance_page.jsp.
+     */
+    public static final String BALANCE_JSP = "transaction_stats_jsps/balance_page.jsp";
+    /**
+     * Ссылка на главную страницу для управления транзакций main_transaction_page.jsp.
+     */
+    public static final String TRANSACTIONS_MAIN_JSP = "transaction_jsps/main_transaction_page.jsp";
 
+    /**
+     * Ссылка на страницу для управления транзакциями transactions_management_page.jsp.
+     */
+    public static final String TRANSACTIONS_MANAGEMENT_JSP = "transaction_jsps/transactions_management_page.jsp";
+    /**
+     * Ссылка на страницу для обновления транзакций update_transaction_page.jsp.
+     */
+    public static final String UPDATE_TRANSACTION_JSP = "transaction_jsps/update_transaction_page.jsp";
+
+    /**
+     * Ссылка на страницу для создания транзакций create_transactions_page.jsp.
+     */
+    public static final String CREATE_TRANSACTION_JSP = " transaction_jsps/create_transactions_page.jsp";
+    /**
+     * Ссылка на страницу для просмотра транзакций с заданным фильтром show_transactions_page.jsp.
+     */
+    public static final String SHOW_TRANSACTIONS_JSP = "transaction_jsps/show_transactions_page.jsp";
+    /**
+     * Ссылка на страницу для удаления транзакций delete_transaction_page.jsp.
+     */
+    public static final String DELETE_TRANSACTION_JSP = "transaction_jsps/delete_transaction_page.jsp";
+
+    /**
+     * Ссылка на главную страницу index.jsp.
+     */
+    public static final String INDEX_JSP = "index.jsp";
+    /**
+     * Ссылка на страницу с формой регистрации registration.jsp.
+     */
+    public static final String REGISTRATION_JSP = "user_jsps/registration.jsp";
+    /**
+     * Ссылка на страницу с формой логина login.jsp.
+     */
+    public static final String LOGIN_JSP = "user_jsps/login.jsp";
+
+    /**
+     * Ссылка на страницу с формой главной страницы пользователя main_user_page.jsp.
+     */
+    public static final String USER_MAIN_JSP = "user_jsps/main_user_page.jsp";
+    /**
+     * Ссылка на страницу с формой просмотре действий для аккаунта пользователя personal_account.jsp.
+     */
+    public static final String PERSONAL_ACCOUNT_JSP = "user_jsps/personal_account.jsp";
+    /**
+     * Ссылка на страницу с формой удаления аккаунта пользователя delete_account.jsp.
+     */
+    public static final String DELETE_ACCOUNT_JSP = "user_jsps/delete_account.jsp";
+    /**
+     * Ссылка на страницу с формой редактирования аккаунта пользователя update_account.jsp.
+     */
+    public static final String UPDATE_ACCOUNT_JSP = "user_jsps/update_account.jsp";
     /**
      * Запрос для поиска всех пользователей в таблице users.
      */
     public static final String FIND_ALL_USERS = "SELECT * FROM main.users";
-
-    /**
-     * Запрос для поиска всех зарегистрированных адресов электронной почты в таблице users.
-     */
-    public static final String FIND_ALL_EMAILS = "SELECT email FROM main.users";
 
     /**
      * Запрос для добавления нового пользователя в таблицу users.
@@ -104,6 +128,11 @@ public class Constants {
      * Ожидает параметр: email.
      */
     public static final String FIND_USER_BY_EMAIL = "SELECT * FROM main.users WHERE email = ?";
+    /**
+     * Запрос для поиска пользователя по id в таблице users.
+     * Ожидает параметр: id.
+     */
+    public static final String FIND_USER_BY_ID = "SELECT * FROM main.users WHERE id = ?";
 
     /**
      * Запрос для удаления пользователя по адресу электронной почты из таблицы users.
@@ -210,9 +239,9 @@ public class Constants {
 
     /**
      * Запрос для удаления транзакции из таблицы transactions.
-     * Ожидает параметры: timestamp, user_id.
+     * Ожидает параметры: user_id, type, sum, category, description, timestamp.
      */
-    public static final String DELETE_TRANSACTION = "DELETE FROM main.transactions WHERE timestamp = ? AND user_id = ?";
+    public static final String DELETE_TRANSACTION = "DELETE FROM main.transactions WHERE user_id = ? AND type = ? AND sum = ? AND category = ? AND description = ? AND timestamp = ?";
 
     /**
      * Запрос для получения месячного бюджета пользователя из таблицы users.

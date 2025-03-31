@@ -1,8 +1,5 @@
 package org.ylabHomework.models;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.time.LocalDateTime;
 import java.util.Objects;
 /**
@@ -15,8 +12,8 @@ import java.util.Objects;
  *   @version 1.0
  *   @since 07.03.2025
  */
-@Getter
-@Setter
+
+
 public class Transaction {
     private int type;
     private double sum;
@@ -43,6 +40,46 @@ public class Transaction {
         this.sum = sum;
         this.category = category;
         this.timestamp = LocalDateTime.now();
+        this.description = description;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public double getSum() {
+        return sum;
+    }
+
+    public void setSum(double sum) {
+        this.sum = sum;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
         this.description = description;
     }
 }

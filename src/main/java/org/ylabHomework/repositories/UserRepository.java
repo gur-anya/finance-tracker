@@ -106,7 +106,34 @@ public class UserRepository {
         }
         return null;
     }
+    /**
+     * Находит пользователя по заданному идентификатору.
+     *
+     * @param id идентификатор пользователя
+     * @return объект User, если пользователь найден; null иначе
+     * @throws SQLException если произошла ошибка при работе с базой данных
+     */
+    public User readUserById(int id) throws SQLException {
+        Config config = new Config();
+        String sql = Constants.FIND_USER_BY_ID;
 
+        try (Connection connection = config.establishConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    User user = new User(
+                            resultSet.getString("name"),
+                            resultSet.getString("email").toLowerCase().trim(),
+                            resultSet.getString("password"),
+                            resultSet.getInt("role_id"));
+                    user.setActive(resultSet.getBoolean("is_active"));
+                    return user;
+                }
+            }
+        }
+        return null;
+    }
     /**
      * Удаляет пользователя по заданному адресу электронной почты.
      *
