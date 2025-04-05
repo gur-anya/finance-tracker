@@ -1,7 +1,10 @@
 package org.ylabHomework.services;
 
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.mindrot.jbcrypt.BCrypt;
+import org.springframework.stereotype.Service;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.UserRepository;
 
@@ -18,12 +21,13 @@ import java.util.regex.Pattern;
  * * @since 09.03.2025
  * </p>
  */
+@Service
+@Data
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository repository;
 
-    public UserService(UserRepository repository) {
-        this.repository = repository;
-    }
+
 
     /**
      * Создаёт нового пользователя с заданными данными.

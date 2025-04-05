@@ -107,7 +107,7 @@
         const jsonString = JSON.stringify(result);
 
         fetch('/delete_transaction', {
-            method: 'POST',
+            method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json; charset=UTF-8'
             },

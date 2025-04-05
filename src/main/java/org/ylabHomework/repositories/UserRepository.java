@@ -1,15 +1,16 @@
 package org.ylabHomework.repositories;
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.ylabHomework.models.User;
-import org.ylabHomework.serviceClasses.Config;
 import org.ylabHomework.serviceClasses.Constants;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 /**
  * Репозиторий для работы с сущностью User через базу данных.
@@ -19,39 +20,30 @@ import java.util.Set;
  * * @since 09.03.2025
  * </p>
  */
+@Data
+@RequiredArgsConstructor
+@Repository
 public class UserRepository {
-
-    /**
-     * Конструктор для инициализации репозитория для работы с пользователями.
-     * Соединение с базой данных устанавливается для каждой операции отдельно.
-     */
-    public UserRepository() {
-    }
+    private final JdbcTemplate jdbcTemplate;
 
     /**
      * Находит всех созданных пользователей. В случае выброса SQLException выводится содержимое исключения.
      *
      * @return список из всех пользователей
      */
-    public Set<User> getUsers() throws SQLException {
-        Config config = new Config();
-        Set<User> users = new HashSet<>();
-        String sql = Constants.FIND_ALL_USERS;
-
-        Connection connection = config.establishConnection();
-        PreparedStatement statement = connection.prepareStatement(sql);
-        ResultSet resultSet = statement.executeQuery();
-
-        while (resultSet.next()) {
-            User user = new User(
-                    resultSet.getString("name"),
-                    resultSet.getString("email").toLowerCase().trim(),
-                    resultSet.getString("password"),
-                    resultSet.getInt("role_id"));
-            user.setActive(resultSet.getBoolean("is_active"));
-            users.add(user);
-        }
-        return users;
+    @Transactional(readOnly = true)
+    public List<User> getUsers() throws SQLException {
+        return jdbcTemplate.query(
+                Constants.FIND_ALL_USERS,
+                (rs, rowNum) -> {
+                        User user = new User(
+                                rs.getString("name"),
+                                rs.getString("email").toLowerCase().trim(),
+                                rs.getString("password"),
+                                rs.getInt("role_id"));
+                        user.setActive(rs.getBoolean("is_active"));
+                    return user;
+                });
     }
 
     /**
@@ -60,21 +52,15 @@ public class UserRepository {
      * @param user новый пользователь для добавления
      * @throws SQLException если произошла ошибка при работе с базой данных
      */
+    @Transactional(rollbackFor = Exception.class)
     public void addUser(User user) throws SQLException {
-        Config config = new Config();
         String normalizedEmail = user.getEmail().toLowerCase().trim();
-        String sql = Constants.ADD_USER;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, user.getName());
-            statement.setString(2, normalizedEmail);
-            statement.setString(3, user.getPassword());
-            statement.setInt(4, 1);
-            statement.setBoolean(5, true);
-
-            statement.executeUpdate();
-        }
+        jdbcTemplate.update(Constants.ADD_USER,
+                user.getName(),
+                normalizedEmail,
+                user.getPassword(),
+                1,
+                true);
     }
 
     /**
@@ -84,56 +70,26 @@ public class UserRepository {
      * @return объект User, если пользователь найден; null иначе
      * @throws SQLException если произошла ошибка при работе с базой данных
      */
+    @Transactional(readOnly = true)
     public User readUserByEmail(String email) throws SQLException {
-        Config config = new Config();
         String normalizedEmail = email.toLowerCase().trim();
-        String sql = Constants.FIND_USER_BY_EMAIL;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, normalizedEmail);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    User user = new User(
-                            resultSet.getString("name"),
-                            resultSet.getString("email").toLowerCase().trim(),
-                            resultSet.getString("password"),
-                            resultSet.getInt("role_id"));
-                    user.setActive(resultSet.getBoolean("is_active"));
-                    return user;
-                }
-            }
-        }
-        return null;
+        return jdbcTemplate.query(
+                Constants.FIND_USER_BY_EMAIL,
+                new Object[]{normalizedEmail},
+                (rs) -> {
+                    if (rs.next()) {
+                        User user = new User(
+                                rs.getString("name"),
+                                rs.getString("email").toLowerCase().trim(),
+                                rs.getString("password"),
+                                rs.getInt("role_id"));
+                        user.setActive(rs.getBoolean("is_active"));
+                        return user;
+                    }
+                    return null;
+                });
     }
-    /**
-     * Находит пользователя по заданному идентификатору.
-     *
-     * @param id идентификатор пользователя
-     * @return объект User, если пользователь найден; null иначе
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public User readUserById(int id) throws SQLException {
-        Config config = new Config();
-        String sql = Constants.FIND_USER_BY_ID;
 
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, id);
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    User user = new User(
-                            resultSet.getString("name"),
-                            resultSet.getString("email").toLowerCase().trim(),
-                            resultSet.getString("password"),
-                            resultSet.getInt("role_id"));
-                    user.setActive(resultSet.getBoolean("is_active"));
-                    return user;
-                }
-            }
-        }
-        return null;
-    }
     /**
      * Удаляет пользователя по заданному адресу электронной почты.
      *
@@ -141,17 +97,12 @@ public class UserRepository {
      * @return true, если удаление успешно; false иначе
      * @throws SQLException если произошла ошибка при работе с базой данных
      */
+    @Transactional(rollbackFor = Exception.class)
     public boolean deleteUserByEmail(String email) throws SQLException {
-        Config config = new Config();
         String normalizedEmail = email.toLowerCase().trim();
-        String sql = Constants.DELETE_USER_BY_EMAIL;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, normalizedEmail);
-            int rowsAffected = statement.executeUpdate();
-            return rowsAffected > 0;
-        }
+        jdbcTemplate.update(Constants.DELETE_USER_BY_EMAIL,
+                normalizedEmail);
+        return true;
     }
 
     /**
@@ -161,16 +112,11 @@ public class UserRepository {
      * @param user    пользователь, для которого обновляется имя
      * @throws SQLException если произошла ошибка при работе с базой данных
      */
+    @Transactional(rollbackFor = Exception.class)
     public void updateName(String newName, User user) throws SQLException {
-        Config config = new Config();
-        String sql = Constants.UPDATE_USER_NAME;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, newName);
-            statement.setString(2, user.getEmail().toLowerCase().trim());
-            statement.executeUpdate();
-        }
+        jdbcTemplate.update(Constants.UPDATE_USER_NAME,
+                newName,
+                user.getEmail().toLowerCase().trim());
     }
 
     /**
@@ -180,17 +126,11 @@ public class UserRepository {
      * @param user     пользователь, для которого обновляется электронная почта
      * @throws SQLException если произошла ошибка при работе с базой данных
      */
+    @Transactional(rollbackFor = Exception.class)
     public void updateEmail(String newEmail, User user) throws SQLException {
-        Config config = new Config();
-        String normalizedNewEmail = newEmail.toLowerCase().trim();
-        String sql = Constants.UPDATE_USER_EMAIL;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, normalizedNewEmail);
-            statement.setString(2, user.getEmail().toLowerCase().trim());
-            statement.executeUpdate();
-        }
+        jdbcTemplate.update(Constants.UPDATE_USER_EMAIL,
+                newEmail.toLowerCase().trim(),
+                user.getEmail().toLowerCase().trim());
     }
 
     /**
@@ -200,16 +140,11 @@ public class UserRepository {
      * @param user    пользователь, для которого обновляется пароль
      * @throws SQLException если произошла ошибка при работе с базой данных
      */
+    @Transactional(rollbackFor = Exception.class)
     public void updatePassword(String newPass, User user) throws SQLException {
-        Config config = new Config();
-        String sql = Constants.UPDATE_USER_PASSWORD;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, newPass);
-            statement.setString(2, user.getEmail().toLowerCase().trim());
-            statement.executeUpdate();
-        }
+        jdbcTemplate.update(Constants.UPDATE_USER_PASSWORD,
+                newPass,
+                user.getEmail().toLowerCase().trim());
     }
 
     /**
@@ -219,38 +154,32 @@ public class UserRepository {
      * @param user     пользователь, для которого обновляется статус
      * @throws SQLException если произошла ошибка при работе с базой данных
      */
+    @Transactional(rollbackFor = Exception.class)
     public void updateActive(boolean isActive, User user) throws SQLException {
-        Config config = new Config();
-        String sql = Constants.UPDATE_USER_ACTIVITY;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setBoolean(1, isActive);
-            statement.setString(2, user.getEmail().toLowerCase().trim());
-            statement.executeUpdate();
-        }
+        jdbcTemplate.update(Constants.UPDATE_USER_ACTIVITY,
+                isActive,
+                user.getEmail().toLowerCase().trim());
     }
 
-      /**
+    /**
      * Находит id пользователя по заданному адресу электронной почты. В случае выброса SQLException выводится содержимое исключения.
      *
      * @param email адрес электронной почты пользователя; нормализуется в методе
      * @return int id - id пользователя с заданным адресом электронной почты, если пользователь существует;
      * -1 иначе
      */
+    @Transactional(readOnly = true)
     public int findUserIdByEmail(String email) throws SQLException {
-        Config config = new Config();
-        Connection connection = config.establishConnection();
-        email = email.toLowerCase().replaceAll("\\s+", " ").trim();
-        String sql = Constants.FIND_USER_ID_BY_EMAIL;
-        try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, email);
-            ResultSet resultSet = statement.executeQuery();
-            int userId = -1;
-            if (resultSet.next()) {
-                userId = resultSet.getInt("id");
-            }
-            return userId;
-        }
+        String normalizedEmail = email.toLowerCase().trim();
+        return jdbcTemplate.query(
+                Constants.FIND_USER_BY_EMAIL,
+                new Object[]{normalizedEmail},
+                (rs) -> {
+                    int userId = -1;
+                    if (rs.next()) {
+                        userId = rs.getInt("id");
+                    }
+                    return userId;
+                });
     }
 }

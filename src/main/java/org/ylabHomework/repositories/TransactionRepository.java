@@ -1,12 +1,17 @@
 package org.ylabHomework.repositories;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
-import org.ylabHomework.serviceClasses.Config;
 import org.ylabHomework.serviceClasses.Constants;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -22,452 +27,217 @@ import java.util.List;
  * * @since 15.03.2025
  * </p>
  */
+@Data
+@RequiredArgsConstructor
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Repository
 public class TransactionRepository {
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    private User user;
+    private final JdbcTemplate jdbcTemplate;
     private final UserRepository userRepository;
 
-    /**
-     * Конструктор для инициализации репозитория для работы с транзакциями, используя заданного пользователя и его репозиторий.
-     * Соединение с базой данных устанавливается для каждой операции отдельно.
-     *
-     * @param user пользователь, с транзакциями которого ведется работа
-     */
-    public TransactionRepository(User user) {
-        this.user = user;
-        this.userRepository = new UserRepository();
+    @Transactional(rollbackFor = Exception.class)
+    public void createTransaction(User user, Transaction transaction) throws SQLException {
+        jdbcTemplate.update(Constants.ADD_TRANSACTION,
+                transaction.getType(),
+                transaction.getSum(),
+                transaction.getCategory(),
+                transaction.getDescription(),
+                Timestamp.valueOf(transaction.getTimestamp()),
+                userRepository.findUserIdByEmail(user.getEmail()));
     }
 
-    /**
-     * Добавляет новую транзакцию в таблицу транзакций пользователя.
-     *
-     * @param transaction транзакция для добавления
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public void createTransaction(Transaction transaction) throws SQLException {
-        Config config = new Config();
-        String sql = Constants.ADD_TRANSACTION;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, transaction.getType());
-            statement.setDouble(2, transaction.getSum());
-            statement.setString(3, transaction.getCategory());
-            statement.setString(4, transaction.getDescription());
-            statement.setTimestamp(5, Timestamp.valueOf(transaction.getTimestamp()));
-            statement.setInt(6, userRepository.findUserIdByEmail(user.getEmail()));
-            statement.executeUpdate();
-            connection.commit();
-        }
-    }
-
-    /**
-     * Находит все транзакции пользователя.
-     *
-     * @return список всех транзакций пользователя
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public List<Transaction> getAllTransactions() throws SQLException {
-        Config config = new Config();
-        List<Transaction> transactions = new ArrayList<>();
-        String sql = Constants.FIND_ALL_TRANSACTIONS_BY_USER;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, userRepository.findUserIdByEmail(user.getEmail()));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
+    @Transactional(readOnly = true)
+    public List<Transaction> getAllTransactions(User user) throws SQLException {
+        return jdbcTemplate.query(
+                Constants.FIND_ALL_TRANSACTIONS_BY_USER,
+                new Object[]{userRepository.findUserIdByEmail(user.getEmail())},
+                (rs, rowNum) -> {
                     Transaction currTrans = new Transaction(
-                            resultSet.getInt("type"),
-                            resultSet.getDouble("sum"),
-                            resultSet.getString("category"),
-                            resultSet.getString("description"));
-                    currTrans.setTimestamp(resultSet.getTimestamp("timestamp").toLocalDateTime());
-                    transactions.add(currTrans);
-                }
-            }
-        }
-        return transactions;
+                            rs.getInt("type"),
+                            rs.getDouble("sum"),
+                            rs.getString("category"),
+                            rs.getString("description"));
+                    currTrans.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+                    return currTrans;
+                });
     }
 
-    /**
-     * Находит транзакции заданного пользователя по типу (доход/расход).
-     *
-     * @param type тип транзакции для фильтрации
-     * @return список транзакций указанного типа
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public List<Transaction> getTransactionsByType(int type) throws SQLException {
-        Config config = new Config();
-        List<Transaction> transactions = new ArrayList<>();
-        String sql = Constants.FIND_TRANSACTIONS_BY_TYPE;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, type);
-            statement.setInt(2, userRepository.findUserIdByEmail(user.getEmail()));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
+    @Transactional(readOnly = true)
+    public List<Transaction> getTransactionsByType(User user, int type) throws SQLException {
+        return jdbcTemplate.query(
+                Constants.FIND_TRANSACTIONS_BY_TYPE,
+                new Object[]{type, userRepository.findUserIdByEmail(user.getEmail())},
+                (rs, rowNum) -> {
                     Transaction currTrans = new Transaction(
-                            resultSet.getInt("type"),
-                            resultSet.getDouble("sum"),
-                            resultSet.getString("category"),
-                            resultSet.getString("description"));
-                    currTrans.setTimestamp(resultSet.getTimestamp("timestamp").toLocalDateTime());
-                    transactions.add(currTrans);
-                }
-            }
-        }
-        return transactions;
+                            rs.getInt("type"),
+                            rs.getDouble("sum"),
+                            rs.getString("category"),
+                            rs.getString("description"));
+                    currTrans.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+                    return currTrans;
+                });
     }
 
-    /**
-     * Находит транзакции заданного пользователя по категории.
-     *
-     * @param category категория для фильтрации; нормализуется в методе
-     * @return список транзакций указанной категории
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public List<Transaction> getTransactionsByCategory(String category) throws SQLException {
-        Config config = new Config();
-        List<Transaction> transactions = new ArrayList<>();
+    @Transactional(readOnly = true)
+    public List<Transaction> getTransactionsByCategory(User user, String category) throws SQLException {
         String normalizedCategory = category.trim().toLowerCase();
-        String sql = Constants.FIND_TRANSACTIONS_BY_CATEGORY;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, normalizedCategory);
-            statement.setInt(2, userRepository.findUserIdByEmail(user.getEmail()));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
+        return jdbcTemplate.query(
+                Constants.FIND_TRANSACTIONS_BY_CATEGORY,
+                new Object[]{normalizedCategory, userRepository.findUserIdByEmail(user.getEmail())},
+                (rs, rowNum) -> {
                     Transaction currTrans = new Transaction(
-                            resultSet.getInt("type"),
-                            resultSet.getDouble("sum"),
-                            resultSet.getString("category"),
-                            resultSet.getString("description"));
-                    currTrans.setTimestamp(resultSet.getTimestamp("timestamp").toLocalDateTime());
-                    transactions.add(currTrans);
-                }
-            }
-        }
-        return transactions;
+                            rs.getInt("type"),
+                            rs.getDouble("sum"),
+                            rs.getString("category"),
+                            rs.getString("description"));
+                    currTrans.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+                    return currTrans;
+                });
     }
 
-    /**
-     * Находит транзакции, совершенные до указанной даты и времени.
-     *
-     * @param timestamp временная метка для фильтрации
-     * @return список транзакций, совершенных до указанного времени
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public List<Transaction> getTransactionsBeforeTimestamp(LocalDateTime timestamp) throws SQLException {
-        Config config = new Config();
-        List<Transaction> transactions = new ArrayList<>();
-        String sql = Constants.FIND_TRANSACTIONS_BEFORE_TIMESTAMP;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setTimestamp(1, Timestamp.valueOf(timestamp));
-            statement.setInt(2, userRepository.findUserIdByEmail(user.getEmail()));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
+    @Transactional(readOnly = true)
+    public List<Transaction> getTransactionsBeforeTimestamp(User user, LocalDateTime timestamp) throws SQLException {
+        return jdbcTemplate.query(
+                Constants.FIND_TRANSACTIONS_BEFORE_TIMESTAMP,
+                new Object[]{Timestamp.valueOf(timestamp), userRepository.findUserIdByEmail(user.getEmail())},
+                (rs, rowNum) -> {
                     Transaction currTrans = new Transaction(
-                            resultSet.getInt("type"),
-                            resultSet.getDouble("sum"),
-                            resultSet.getString("category"),
-                            resultSet.getString("description"));
-                    currTrans.setTimestamp(resultSet.getTimestamp("timestamp").toLocalDateTime());
-                    transactions.add(currTrans);
-                }
-            }
-        }
-        return transactions;
+                            rs.getInt("type"),
+                            rs.getDouble("sum"),
+                            rs.getString("category"),
+                            rs.getString("description"));
+                    currTrans.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+                    return currTrans;
+                });
     }
 
-    /**
-     * Находит транзакции, совершенные после указанной даты и времени.
-     *
-     * @param timestamp временная метка для фильтрации
-     * @return список транзакций, совершенных после указанного времени
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public List<Transaction> getTransactionsAfterTimestamp(LocalDateTime timestamp) throws SQLException {
-        Config config = new Config();
-        List<Transaction> transactions = new ArrayList<>();
-        String sql = Constants.FIND_TRANSACTIONS_AFTER_TIMESTAMP;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setTimestamp(1, Timestamp.valueOf(timestamp));
-            statement.setInt(2, userRepository.findUserIdByEmail(user.getEmail()));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
+    @Transactional(readOnly = true)
+    public List<Transaction> getTransactionsAfterTimestamp(User user, LocalDateTime timestamp) throws SQLException {
+        return jdbcTemplate.query(
+                Constants.FIND_TRANSACTIONS_AFTER_TIMESTAMP,
+                new Object[]{Timestamp.valueOf(timestamp), userRepository.findUserIdByEmail(user.getEmail())},
+                (rs, rowNum) -> {
                     Transaction currTrans = new Transaction(
-                            resultSet.getInt("type"),
-                            resultSet.getDouble("sum"),
-                            resultSet.getString("category"),
-                            resultSet.getString("description"));
-                    currTrans.setTimestamp(resultSet.getTimestamp("timestamp").toLocalDateTime());
-                    transactions.add(currTrans);
-                }
-            }
-        }
-        return transactions;
+                            rs.getInt("type"),
+                            rs.getDouble("sum"),
+                            rs.getString("category"),
+                            rs.getString("description"));
+                    currTrans.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+                    return currTrans;
+                });
     }
 
-    /**
-     * Находит транзакции, совершенные между указанными временными рамками.
-     *
-     * @param timestamp1 нижняя граница времени
-     * @param timestamp2 верхняя граница времени
-     * @return список транзакций, совершенных в указанных рамках
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public List<Transaction> getTransactionsBetweenTimestamps(LocalDateTime timestamp1, LocalDateTime timestamp2) throws SQLException {
-        Config config = new Config();
-        List<Transaction> transactions = new ArrayList<>();
-        String sql = Constants.FIND_TRANSACTIONS_BETWEEN_TIMESTAMPS;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setTimestamp(1, Timestamp.valueOf(timestamp1));
-            statement.setTimestamp(2, Timestamp.valueOf(timestamp2));
-            statement.setInt(3, userRepository.findUserIdByEmail(user.getEmail()));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                while (resultSet.next()) {
+    @Transactional(readOnly = true)
+    public List<Transaction> getTransactionsBetweenTimestamps(User user, LocalDateTime timestamp1, LocalDateTime timestamp2) throws SQLException {
+        return jdbcTemplate.query(
+                Constants.FIND_TRANSACTIONS_BETWEEN_TIMESTAMPS,
+                new Object[]{Timestamp.valueOf(timestamp1), Timestamp.valueOf(timestamp2), userRepository.findUserIdByEmail(user.getEmail())},
+                (rs, rowNum) -> {
                     Transaction currTrans = new Transaction(
-                            resultSet.getInt("type"),
-                            resultSet.getDouble("sum"),
-                            resultSet.getString("category"),
-                            resultSet.getString("description"));
-                    currTrans.setTimestamp(resultSet.getTimestamp("timestamp").toLocalDateTime());
-                    transactions.add(currTrans);
-                }
-            }
-        }
-        return transactions;
+                            rs.getInt("type"),
+                            rs.getDouble("sum"),
+                            rs.getString("category"),
+                            rs.getString("description"));
+                    currTrans.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
+                    return currTrans;
+                });
     }
 
-    /**
-     * Изменяет тип заданной транзакции.
-     *
-     * @param newType     новый тип транзакции
-     * @param transaction транзакция, для которой меняется тип
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public void updateTransactionType(int newType, Transaction transaction) throws SQLException {
-        Config config = new Config();
-        String sql = Constants.UPDATE_TRANSACTION_TYPE;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, newType);
-            statement.setTimestamp(2, Timestamp.valueOf(transaction.getTimestamp()));
-            statement.setInt(3, userRepository.findUserIdByEmail(user.getEmail()));
-            statement.executeUpdate();
-            connection.commit();
-        }
+    @Transactional(rollbackFor = Exception.class)
+    public void updateTransactionType(User user, int newType, Transaction transaction) throws SQLException {
+        jdbcTemplate.update(Constants.UPDATE_TRANSACTION_TYPE,
+                newType,
+                Timestamp.valueOf(transaction.getTimestamp()),
+                userRepository.findUserIdByEmail(user.getEmail()));
     }
 
-    /**
-     * Изменяет сумму заданной транзакции.
-     *
-     * @param newSum      новая сумма транзакции
-     * @param transaction транзакция, для которой меняется сумма
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public void updateTransactionSum(double newSum, Transaction transaction) throws SQLException {
-        Config config = new Config();
-        String sql = Constants.UPDATE_TRANSACTION_SUM;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setDouble(1, newSum);
-            statement.setTimestamp(2, Timestamp.valueOf(transaction.getTimestamp()));
-            statement.setInt(3, userRepository.findUserIdByEmail(user.getEmail()));
-            statement.executeUpdate();
-            connection.commit();
-        }
+    @Transactional(rollbackFor = Exception.class)
+    public void updateTransactionSum(User user, double newSum, Transaction transaction) throws SQLException {
+        jdbcTemplate.update(Constants.UPDATE_TRANSACTION_SUM,
+                newSum,
+                Timestamp.valueOf(transaction.getTimestamp()),
+                userRepository.findUserIdByEmail(user.getEmail()));
     }
 
-    /**
-     * Изменяет категорию заданной транзакции.
-     *
-     * @param newCategory новая категория транзакции
-     * @param transaction транзакция, для которой меняется категория
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public void updateTransactionCategory(String newCategory, Transaction transaction) throws SQLException {
-        Config config = new Config();
-        String sql = Constants.UPDATE_TRANSACTION_CATEGORY;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, newCategory);
-            statement.setTimestamp(2, Timestamp.valueOf(transaction.getTimestamp()));
-            statement.setInt(3, userRepository.findUserIdByEmail(user.getEmail()));
-            statement.executeUpdate();
-            connection.commit();
-        }
+    @Transactional(rollbackFor = Exception.class)
+    public void updateTransactionCategory(User user, String newCategory, Transaction transaction) throws SQLException {
+        jdbcTemplate.update(Constants.UPDATE_TRANSACTION_CATEGORY,
+                newCategory,
+                Timestamp.valueOf(transaction.getTimestamp()),
+                userRepository.findUserIdByEmail(user.getEmail()));
     }
 
-    /**
-     * Изменяет описание заданной транзакции.
-     *
-     * @param description новое описание транзакции
-     * @param transaction транзакция, для которой меняется описание
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public void updateTransactionDescription(String description, Transaction transaction) throws SQLException {
-        Config config = new Config();
-        String sql = Constants.UPDATE_TRANSACTION_DESCRIPTION;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, description);
-            statement.setTimestamp(2, Timestamp.valueOf(transaction.getTimestamp()));
-            statement.setInt(3, userRepository.findUserIdByEmail(user.getEmail()));
-            statement.executeUpdate();
-            connection.commit();
-        }
+    @Transactional(rollbackFor = Exception.class)
+    public void updateTransactionDescription(User user, String description, Transaction transaction) throws SQLException {
+        jdbcTemplate.update(Constants.UPDATE_TRANSACTION_DESCRIPTION,
+                description,
+                Timestamp.valueOf(transaction.getTimestamp()),
+                userRepository.findUserIdByEmail(user.getEmail()));
     }
 
-    /**
-     * Удаляет заданную транзакцию из таблицы пользователя.
-     *
-     * @param transaction транзакция для удаления
-     * @return true, если удаление успешно; false иначе
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public boolean deleteTransaction(Transaction transaction) throws SQLException {
-        Config config = new Config();
-        String sql = Constants.DELETE_TRANSACTION;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, userRepository.findUserIdByEmail(user.getEmail()));
-            statement.setInt(2, transaction.getType());
-            statement.setDouble(3, transaction.getSum());
-            statement.setString(4, transaction.getCategory());
-            statement.setString(5, transaction.getDescription());
-            statement.setTimestamp(6, Timestamp.valueOf(transaction.getTimestamp()));
-
-            int rowsAffected = statement.executeUpdate();
-
-            connection.commit();
-            return rowsAffected > 0;
-        }
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteTransaction(User user, Transaction transaction) throws SQLException {
+        int rowsAffected = jdbcTemplate.update(Constants.DELETE_TRANSACTION,
+                userRepository.findUserIdByEmail(user.getEmail()),
+                transaction.getType(),
+                transaction.getSum(),
+                transaction.getCategory(),
+                transaction.getDescription(),
+                Timestamp.valueOf(transaction.getTimestamp()));
+        return rowsAffected > 0;
     }
 
-    /**
-     * Получает месячный бюджет пользователя из базы данных.
-     *
-     * @return значение месячного бюджета
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public double getMonthlyBudget() throws SQLException {
-        Config config = new Config();
-        String sql = Constants.GET_MONTHLY_BUDGET;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, userRepository.findUserIdByEmail(user.getEmail()));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getDouble("monthly_budget");
-                }
-            }
-        }
-        return 0.0;
+    @Transactional(readOnly = true)
+    public double getMonthlyBudget(User user) throws SQLException {
+        return jdbcTemplate.query(Constants.GET_MONTHLY_BUDGET,
+                new Object[]{userRepository.findUserIdByEmail(user.getEmail())},
+                (rs) -> {
+                    if (rs.next()) {
+                        return rs.getDouble("monthly_budget");
+                    }
+                    return 0.0;
+                });
     }
 
-    /**
-     * Устанавливает месячный бюджет пользователя в базе данных.
-     *
-     * @param budget новое значение бюджета
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public void setMonthlyBudget(double budget) throws SQLException {
-        Config config = new Config();
-        String sql = Constants.SET_MONTHLY_BUDGET;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setDouble(1, budget);
-            statement.setInt(2, userRepository.findUserIdByEmail(user.getEmail()));
-            statement.executeUpdate();
-        }
+    @Transactional(rollbackFor = Exception.class)
+    public void setMonthlyBudget(User user, double budget) throws SQLException {
+        jdbcTemplate.update(Constants.SET_MONTHLY_BUDGET,
+                budget,
+                userRepository.findUserIdByEmail(user.getEmail()));
     }
 
-    /**
-     * Получает финансовую цель пользователя из базы данных.
-     *
-     * @return значение финансовой цели
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public double getGoal() throws SQLException {
-        Config config = new Config();
-        String sql = Constants.GET_GOAL;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setInt(1, userRepository.findUserIdByEmail(user.getEmail()));
-            try (ResultSet resultSet = statement.executeQuery()) {
-                if (resultSet.next()) {
-                    return resultSet.getDouble("goal");
-                }
-            }
-        }
-        return 0.0;
+    @Transactional(readOnly = true)
+    public double getGoal(User user) throws SQLException {
+        return jdbcTemplate.query(Constants.GET_GOAL,
+                new Object[]{userRepository.findUserIdByEmail(user.getEmail())},
+                (rs) -> {
+                    if (rs.next()) {
+                        return rs.getDouble("goal");
+                    }
+                    return 0.0;
+                });
     }
 
-    /**
-     * Устанавливает финансовую цель пользователя в базе данных.
-     *
-     * @param goal новое значение цели
-     * @throws SQLException если произошла ошибка при работе с базой данных
-     */
-    public void setGoal(double goal) throws SQLException {
-        Config config = new Config();
-        String sql = Constants.SET_GOAL;
-
-        try (Connection connection = config.establishConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setDouble(1, goal);
-            statement.setInt(2, userRepository.findUserIdByEmail(user.getEmail()));
-            statement.executeUpdate();
-        }
+    @Transactional(rollbackFor = Exception.class)
+    public void setGoal(User user, double goal) throws SQLException {
+        jdbcTemplate.update(Constants.SET_GOAL,
+                goal,
+                userRepository.findUserIdByEmail(user.getEmail()));
     }
 
-    /**
-     * Фильтрует список транзакций, возвращая те, которые произошли после указанного времени или в момент времени.
-     *
-     * @param timestamp временная метка, начиная с которой нужно отфильтровать транзакции
-     * @param sorted    исходный список транзакций для фильтрации
-     * @return список транзакций, произошедших после или в момент указанной временной метки
-     */
+    @Transactional(readOnly = true)
     public List<Transaction> getSortedTransactionsAfterTimestamp(LocalDateTime timestamp, List<Transaction> sorted) {
         List<Transaction> transactions = new ArrayList<>();
         for (Transaction t : sorted) {
-            if (t.getTimestamp().isAfter(timestamp) || t.getTimestamp().equals(timestamp)){
+            if (t.getTimestamp().isAfter(timestamp) || t.getTimestamp().equals(timestamp)) {
                 transactions.add(t);
             }
         }
         return transactions;
     }
 
-    /**
-     * Фильтрует список транзакций по указанной категории.
-     * <p>Сравнение категорий выполняется без учёта регистра и пробелов в начале или конце.</p>
-     *
-     * @param category категория транзакций для фильтрации (в нижнем регистре, без лишних пробелов)
-     * @param sorted   исходный список транзакций для фильтрации
-     * @return список транзакций, соответствующих указанной категории
-     */
+    @Transactional(readOnly = true)
     public List<Transaction> getSortedTransactionsByCategory(String category, List<Transaction> sorted) {
         List<Transaction> transactions = new ArrayList<>();
         for (Transaction t : sorted) {

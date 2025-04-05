@@ -1,6 +1,10 @@
 package org.ylabHomework.services;
 
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
@@ -19,39 +23,16 @@ import java.util.List;
  * * @since 07.03.2025
  * </p>
  */
+@Service
+@Data
+@RequiredArgsConstructor
 public class TransactionService {
-    public TransactionRepository getRepository() {
-        return repository;
-    }
-
-    public TransactionStatsService getStatsService() {
-        return statsService;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    /**
-     * Конструктор для создания сервиса с заданным репозиторием и пользователем.
-     *
-     * @param repository репозиторий для работы с транзакциями
-     * @param user       пользователь, с транзакциями которого ведётся работа
-     */
-    public TransactionService(TransactionRepository repository, User user) {
-        this.repository = repository;
-        this.statsService = new TransactionStatsService(repository, user);
-        this.user = user;
-    }
 
     public final TransactionRepository repository;
 
-    public void setStatsService(TransactionStatsService statsService) {
-        this.statsService = statsService;
-    }
 
     public TransactionStatsService statsService;
-    public final User user;
+    public User user;
 
     /**
      * Проверяет корректность категории транзакции.
@@ -59,10 +40,10 @@ public class TransactionService {
      * @param category категория для проверки
      * @return результат проверки с сообщением
      */
-    public ParseResponseDTO checkCategory(String category) {
+    public ParseResponseDTO checkCategory(User user, String category) {
         if (category == null || category.trim().isEmpty()) {
             return new ParseResponseDTO(false, "Категория не может быть пустой!");
-        } else if (category.trim().equalsIgnoreCase("цель") && getGoal() == 0) {
+        } else if (category.trim().equalsIgnoreCase("цель") && getGoal(user) == 0) {
             System.out.println("Вы еще не установили цель! Вы можете сделать это в меню статистики и анализа. Введите другую категорию!");
         }
         return new ParseResponseDTO(true, category);
@@ -101,20 +82,20 @@ public class TransactionService {
      * @param description описание транзакции
      * @return сообщение об успешном создании или ошибке
      */
-    public ParseResponseDTO createTransaction(int type, String sum, String category, String description) {
+    public ParseResponseDTO createTransaction(User user, int type, String sum, String category, String description) {
         if (type != 1 && type != 2) {
             return new ParseResponseDTO(false, "Тип транзакции должен быть 1 (доход) или 2 (расход)! Попробуйте ещё раз!");
         }
         ParseResponseDTO sumCheck = checkSum(sum);
         if (!sumCheck.success) return sumCheck;
-        ParseResponseDTO categoryCheck = checkCategory(category);
+        ParseResponseDTO categoryCheck = checkCategory(user, category);
         if (!categoryCheck.success) return categoryCheck;
 
         double parsedSum = Double.parseDouble(sum);
         try {
-            repository.createTransaction(new Transaction(type, parsedSum, category, description));
-            if (type == 2 && getMonthlyBudget() != 0) {
-                System.out.println(checkExpenseLimitReminder());
+            repository.createTransaction(user, new Transaction(type, parsedSum, category, description));
+            if (type == 2 && getMonthlyBudget(user) != 0) {
+                System.out.println(checkExpenseLimitReminder(user));
             }
             return new ParseResponseDTO(true, "Транзакция успешно сохранена!");
         } catch (SQLException e) {
@@ -138,7 +119,7 @@ public class TransactionService {
      * @param transaction объект транзакции для обновления
      * @return сообщение о результате обновления типа
      */
-    public ParseResponseDTO updateTransactionType(int newType, Transaction transaction) {
+    public ParseResponseDTO updateTransactionType(User user, int newType, Transaction transaction) {
         if (transaction == null) {
             return new ParseResponseDTO(false, "Транзакция не найдена! Попробуйте ещё раз!");
         }
@@ -146,9 +127,9 @@ public class TransactionService {
             return new ParseResponseDTO(false, "Тип транзакции должен быть 1 (доход) или 2 (расход)! Попробуйте ещё раз!");
         }
         try {
-            repository.updateTransactionType(newType, transaction);
-            if (newType == 2 && getMonthlyBudget() != 0) {
-                System.out.println(checkExpenseLimitReminder());
+            repository.updateTransactionType(user, newType, transaction);
+            if (newType == 2 && getMonthlyBudget(user) != 0) {
+                System.out.println(checkExpenseLimitReminder(user));
             }
             return new ParseResponseDTO(true, "Тип транзакции успешно обновлён!");
         } catch (SQLException e) {
@@ -163,7 +144,7 @@ public class TransactionService {
      * @param transaction объект транзакции для обновления
      * @return сообщение о результате обновления суммы
      */
-    public ParseResponseDTO updateTransactionSum(String newSum, Transaction transaction) {
+    public ParseResponseDTO updateTransactionSum(User user, String newSum, Transaction transaction) {
         if (transaction == null) {
             return new ParseResponseDTO(false, "Транзакция не найдена! Попробуйте ещё раз!");
         }
@@ -171,9 +152,9 @@ public class TransactionService {
         if (!sumCheck.success) return sumCheck;
         double parsedSum = Double.parseDouble(newSum);
         try {
-            repository.updateTransactionSum(parsedSum, transaction);
-            if (transaction.getType() == 2 && getMonthlyBudget() != 0) {
-                System.out.println(checkExpenseLimitReminder());
+            repository.updateTransactionSum(user, parsedSum, transaction);
+            if (transaction.getType() == 2 && getMonthlyBudget(user) != 0) {
+                System.out.println(checkExpenseLimitReminder(user));
             }
             return new ParseResponseDTO(true, "Сумма транзакции успешно обновлена!");
         } catch (SQLException e) {
@@ -190,14 +171,14 @@ public class TransactionService {
      * @param transaction объект транзакции для обновления
      * @return сообщение о результате обновления категории
      */
-    public ParseResponseDTO updateTransactionCategory(String newCategory, Transaction transaction) {
+    public ParseResponseDTO updateTransactionCategory(User user, String newCategory, Transaction transaction) {
         if (transaction == null) {
             return new ParseResponseDTO(false, "Транзакция не найдена! Попробуйте ещё раз!");
         }
-        ParseResponseDTO categoryCheck = checkCategory(newCategory);
+        ParseResponseDTO categoryCheck = checkCategory(user, newCategory);
         if (!categoryCheck.success) return categoryCheck;
         try {
-            repository.updateTransactionCategory(newCategory, transaction);
+            repository.updateTransactionCategory(user, newCategory, transaction);
             return new ParseResponseDTO(true, "Категория транзакции успешно обновлена!");
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
@@ -218,7 +199,7 @@ public class TransactionService {
      * @param transaction    объект транзакции для обновления
      * @return сообщение о результате обновления описания
      */
-    public ParseResponseDTO updateTransactionDescription(String newDescription, Transaction transaction) {
+    public ParseResponseDTO updateTransactionDescription(User user, String newDescription, Transaction transaction) {
         if (transaction == null) {
             return new ParseResponseDTO(false, "Транзакция не найдена! Попробуйте ещё раз!");
         }
@@ -226,7 +207,7 @@ public class TransactionService {
             return new ParseResponseDTO(false, "Описание не должно превышать 200 символов! Попробуйте ещё раз!");
         }
         try {
-            repository.updateTransactionDescription(newDescription, transaction);
+            repository.updateTransactionDescription(user, newDescription, transaction);
             return new ParseResponseDTO(true, "Описание транзакции успешно обновлено!");
         } catch (SQLException e) {
             return new ParseResponseDTO(false, "Ошибка!  " + e.getMessage());
@@ -240,12 +221,12 @@ public class TransactionService {
      * @param budgetInput новое значение бюджета в виде строки
      * @return уведомление об успешном обновлении бюджета или сообщение об ошибке
      */
-    public ParseResponseDTO setMonthlyBudget(String budgetInput) {
+    public ParseResponseDTO setMonthlyBudget(User user, String budgetInput) {
         ParseResponseDTO budgetCheck = checkSum(budgetInput);
         if (!budgetCheck.success) return budgetCheck;
         double budget = Double.parseDouble(budgetInput);
         try {
-            repository.setMonthlyBudget(budget);
+            repository.setMonthlyBudget(user, budget);
             return new ParseResponseDTO(true, String.format("Новый месячный бюджет %.2f руб. успешно установлен!", budget));
         } catch (SQLException e) {
             return new ParseResponseDTO(false, "Ошибка! " + e.getMessage());
@@ -260,9 +241,9 @@ public class TransactionService {
      * @param timestamp временная метка
      * @return список транзакций
      */
-    public List<Transaction> getTransactionsBeforeTimestamp(LocalDateTime timestamp) {
+    public List<Transaction> getTransactionsBeforeTimestamp(User user, LocalDateTime timestamp) {
         try {
-            return transactionsFilterUpperCase(repository.getTransactionsBeforeTimestamp(timestamp));
+            return transactionsFilterUpperCase(repository.getTransactionsBeforeTimestamp(user, timestamp));
         } catch (SQLException e) {
             System.out.println("Ошибка! " + e.getMessage());
         }
@@ -275,32 +256,13 @@ public class TransactionService {
      * @param timestamp временная метка
      * @return список транзакций
      */
-    public List<Transaction> getTransactionsAfterTimestamp(LocalDateTime timestamp) {
+    public List<Transaction> getTransactionsAfterTimestamp(User user, LocalDateTime timestamp) {
         try {
-            return transactionsFilterUpperCase(repository.getTransactionsAfterTimestamp(timestamp));
+            return transactionsFilterUpperCase(repository.getTransactionsAfterTimestamp(user, timestamp));
         } catch (SQLException e) {
             System.out.println("Ошибка! " + e.getMessage());
         }
         return new ArrayList<>();
-    }
-
-    /**
-     * Проверяет корректность введённой временной метки.
-     *
-     * @param timestampInput строка с временной меткой в формате dd.MM.yyyy HH:mm
-     * @return результат проверки с временной меткой или сообщением об ошибке
-     */
-    public ParseTimeResponseDTO checkTimestampInput(String timestampInput) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
-        ParseTimeResponseDTO unsuccess = new ParseTimeResponseDTO();
-        try {
-            LocalDateTime timestamp = LocalDateTime.parse(timestampInput, formatter);
-            return new ParseTimeResponseDTO(true, timestamp);
-        } catch (Exception e) {
-            unsuccess.success = false;
-            unsuccess.content = "Неверный формат! Используйте dd.MM.yyyy HH:mm";
-            return unsuccess;
-        }
     }
 
 
@@ -310,9 +272,9 @@ public class TransactionService {
      * @param category категория для фильтрации
      * @return список транзакций
      */
-    public List<Transaction> getTransactionsByCategory(String category) {
+    public List<Transaction> getTransactionsByCategory(User user, String category) {
         try {
-            return transactionsFilterUpperCase(repository.getTransactionsByCategory(category));
+            return transactionsFilterUpperCase(repository.getTransactionsByCategory(user, category));
         } catch (SQLException e) {
             String sqlState = e.getSQLState();
             String message = e.getMessage();
@@ -331,9 +293,9 @@ public class TransactionService {
      * @param type тип транзакции для фильтрации
      * @return список транзакций
      */
-    public List<Transaction> getTransactionsByType(int type) {
+    public List<Transaction> getTransactionsByType(User user, int type) {
         try {
-            return transactionsFilterUpperCase(repository.getTransactionsByType(type));
+            return transactionsFilterUpperCase(repository.getTransactionsByType(user, type));
         } catch (SQLException e) {
             System.out.println(databaseError(e));
             return new ArrayList<>();
@@ -345,9 +307,9 @@ public class TransactionService {
      *
      * @return список всех транзакций
      */
-    public List<Transaction> getAllTransactions() {
+    public List<Transaction> getAllTransactions(User user) {
         try {
-            return transactionsFilterUpperCase(repository.getAllTransactions());
+            return transactionsFilterUpperCase(repository.getAllTransactions(user));
         } catch (SQLException e) {
             System.out.println(databaseError(e));
             return new ArrayList<>();
@@ -377,12 +339,12 @@ public class TransactionService {
      * @param transaction транзакция для удаления
      * @return сообщение о результате удаления
      */
-    public ParseResponseDTO deleteTransaction(Transaction transaction) {
+    public ParseResponseDTO deleteTransaction(User user, Transaction transaction) {
         if (transaction == null) {
             return new ParseResponseDTO(false, "Транзакция не найдена! Попробуйте ещё раз!");
         }
         try {
-            if (repository.deleteTransaction(transaction)) {
+            if (repository.deleteTransaction(user, transaction)) {
                 return new ParseResponseDTO(true, "Транзакция успешно удалена!");
             }
             return new ParseResponseDTO(false, "Транзакция не найдена! Попробуйте ещё раз!");
@@ -396,9 +358,9 @@ public class TransactionService {
      *
      * @return значение месячного бюджета
      */
-    public double getMonthlyBudget() {
+    public double getMonthlyBudget(User user) {
         try {
-            return repository.getMonthlyBudget();
+            return repository.getMonthlyBudget(user);
         } catch (SQLException e) {
             System.out.println(databaseError(e));
             return 0;
@@ -410,9 +372,9 @@ public class TransactionService {
      *
      * @return значение финансовой цели
      */
-    public double getGoal() {
+    public double getGoal(User user) {
         try {
-            return repository.getGoal();
+            return repository.getGoal(user);
         } catch (SQLException e) {
             System.out.println(databaseError(e));
             return 0;
@@ -425,13 +387,13 @@ public class TransactionService {
      * @param goalInput новое значение цели в виде строки
      * @return уведомление об успешной установке цели или сообщение об ошибке
      */
-    public String setGoal(String goalInput) {
+    public String setGoal(User user, String goalInput) {
         ParseResponseDTO goalCheck = checkSum(goalInput);
         if (!goalCheck.success) {
             return goalCheck.content;
         } else {
             try {
-                repository.setGoal(Double.parseDouble(goalInput));
+                repository.setGoal(user, Double.parseDouble(goalInput));
                 return "Новая цель " + String.format("%.2f", Double.parseDouble(goalInput)) + " руб. успешно установлена!";
             } catch (SQLException e) {
                 return "Ошибка! " + e.getMessage();
@@ -444,8 +406,8 @@ public class TransactionService {
      *
      * @return строка с информацией о бюджете
      */
-    public String getMonthlyBudgetInfo() {
-        double monthlyBudget = getMonthlyBudget();
+    public String getMonthlyBudgetInfo(User user) {
+        double monthlyBudget = getMonthlyBudget(user);
         if (monthlyBudget != 0) {
             return "Ваш месячный бюджет: " + String.format("%.2f", monthlyBudget) + " руб.";
         }
@@ -457,15 +419,15 @@ public class TransactionService {
      *
      * @return сообщение о состоянии бюджета
      */
-    public String checkMonthlyBudgetLimit() {
+    public String checkMonthlyBudgetLimit(User user) {
         try {
-            if (repository.getMonthlyBudget() == 0) {
+            if (repository.getMonthlyBudget(user) == 0) {
                 return "";
             }
         } catch (SQLException e) {
             System.out.println("Ошибка! " + e);
         }
-        double balance = statsService.checkMonthlyBudgetLimit();
+        double balance = statsService.checkMonthlyBudgetLimit(user);
         if (balance < 0) {
             return "Вы превысили лимит на месяц на " + String.format("%.2f", Math.abs(balance)) + " руб.!";
         }
@@ -478,14 +440,14 @@ public class TransactionService {
     /**
      * Проверяет лимит расходов и выводит уведомление, если он близок к исчерпанию.
      */
-    public String checkExpenseLimitReminder() {
-        if (getMonthlyBudget() == 0) {
+    public String checkExpenseLimitReminder(User user) {
+        if (getMonthlyBudget(user) == 0) {
             return "";
         }
-        double remainingBudget = statsService.checkMonthlyBudgetLimit();
+        double remainingBudget = statsService.checkMonthlyBudgetLimit(user);
         if (remainingBudget <= 0) {
             return notifyAboutMonthlyLimit(Math.abs(remainingBudget));
-        } else if (remainingBudget <= getMonthlyBudget() * 0.1) {
+        } else if (remainingBudget <= getMonthlyBudget(user) * 0.1) {
             return  "Осторожно! Остаток бюджета составляет " + String.format("%.2f", remainingBudget) +
                     " руб. (менее 10% от лимита).";
         }
@@ -510,8 +472,8 @@ public class TransactionService {
      *
      * @return строка с информацией о цели
      */
-    public String getGoalInfo() {
-        double goal = getGoal();
+    public String getGoalInfo(User user) {
+        double goal = getGoal(user);
         if (goal != 0) {
             return "Ваша установленная цель: " + String.format("%.2f", goal) + " руб.";
         }

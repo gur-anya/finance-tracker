@@ -94,4 +94,43 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet id="create-login-audit-table" author="Gureva Anna">
+        <createTable tableName="login_audition" schemaName="service_schema"
+                     remarks="Служебная таблица для хранения результатов замера логина пользователя">
+            <column name="id" type="BIGINT" defaultValueComputed="nextval('service_schema.login_audition_id_seq')"
+                    remarks="Идентификатор действия">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_email" type="VARCHAR(255)" remarks="Почта аудируемого пользователя">
+                <constraints nullable="false"/>
+            </column>
+            <column name="login_time" type="BIGINT" remarks="Время, ушедшее на совершение логина">
+                <constraints nullable="false"/>
+            </column>
+            <column name="success" type="BOOLEAN" remarks="Успех совершения логина">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create-user-audit-table" author="Gureva Anna">
+        <createTable tableName="user_actions_audition" schemaName="service_schema"
+                     remarks="Служебная таблица для хранения действий пользователей">
+            <column name="id" type="BIGINT" defaultValueComputed="nextval('service_schema.user_actions_id_seq')"
+                    remarks="Идентификатор действия">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="user_email" type="VARCHAR(255)" remarks="Почта аудируемого пользователя">
+                <constraints nullable="false"/>
+            </column>
+            <column name="action" type="VARCHAR(300)" remarks="Действие аудируемого пользователя">
+                <constraints nullable="false"/>
+            </column>
+            <column name="timestamp" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"
+                    remarks="Время совершения действия">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
 </databaseChangeLog>

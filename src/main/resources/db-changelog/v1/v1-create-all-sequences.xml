@@ -10,4 +10,12 @@
     <changeSet id="create-trans-seq" author="Gureva Anna">
         <createSequence sequenceName="transactions_id_seq" schemaName="main"/>
     </changeSet>
+
+    <changeSet id="create-login-audit-seq" author="Gureva Anna">
+        <createSequence sequenceName="login_audition_id_seq" schemaName="service_schema"/>
+    </changeSet>
+
+    <changeSet id="create-user_actions_seq" author="Gureva Anna">
+        <createSequence sequenceName="user_actions_id_seq" schemaName="service_schema"/>
+    </changeSet>
 </databaseChangeLog>

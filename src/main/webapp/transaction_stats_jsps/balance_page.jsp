@@ -18,7 +18,7 @@
                 return response.json();
             })
             .then(data => {
-                document.getElementById("balanceContainer").textContent = data.balance;
+                document.getElementById("balanceContainer").textContent = data.param;
             })
             .catch(error => {
                 document.getElementById("balanceContainer").textContent = "Ошибка загрузки";
