@@ -1,19 +1,21 @@
 package org.ylabHomework.controllers.userControllers;
 
 
-import javax.validation.*;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.ylabHomework.DTOs.ResponseMessageDTO;
 import org.ylabHomework.DTOs.UserDTOs.BasicUserDTO;
 import org.ylabHomework.mappers.UserMappers.UserMapper;
@@ -21,34 +23,35 @@ import org.ylabHomework.models.User;
 import org.ylabHomework.serviceClasses.Constants;
 import org.ylabHomework.services.UserService;
 
-@Api(value = "API регистрации")
+@Tag(name = "API регистрации")
 @Controller
 @RequiredArgsConstructor
 public class RegistrationController {
     private final UserMapper userMapper;
     private final UserService userService;
-    @ApiOperation(value = "Показать страницу регистрации",
-            notes = "Перенаправляет на страницу регистрации нового пользователя")
-    @ApiResponse(code = 200, message = "Страница регистрации")
+
+    @Operation(
+            summary = "Показать страницу регистрации",
+            description = "Перенаправляет на страницу регистрации нового пользователя")
+    @ApiResponse(responseCode = "200", description = "Страница регистрации")
     @GetMapping(value = "/registration")
     public String showRegistrationPage() {
         return Constants.REGISTRATION_JSP;
     }
 
-    @ApiOperation(value = "Зарегистрировать нового пользователя",
-            notes = "Создаёт нового пользователя. В случае ошибки валидации возвращает список ошибок.")
+    @Operation(
+            summary = "Зарегистрировать нового пользователя",
+            description = "Создаёт нового пользователя. В случае ошибки валидации возвращает список ошибок.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Регистрация успешна: Успешно!", response = ResponseMessageDTO.class),
-            @ApiResponse(code = 400, message = "Некорректные данные. Сообщение содержит список ошибок валидации",
-                    response = ResponseMessageDTO.class),
-            @ApiResponse(code = 409, message = "Конфликт: попытка зарегистрировать зарегистрированный email",
-                    response = ResponseMessageDTO.class),
+            @ApiResponse(responseCode = "200", description = "Регистрация успешна: Успешно!"),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные. Сообщение содержит список ошибок валидации"),
+            @ApiResponse(responseCode = "409", description = "Конфликт: попытка зарегистрировать зарегистрированный email"),
     })
     @PostMapping(value = "/registration")
     @ResponseBody
     public ResponseEntity<ResponseMessageDTO> registerUser(
             @Valid @RequestBody BasicUserDTO userDTO,
-            BindingResult result){
+            BindingResult result) {
         StringBuilder stateMessageBuilder = new StringBuilder();
         String stateMessage;
         ResponseMessageDTO responseMessageDTO = new ResponseMessageDTO();

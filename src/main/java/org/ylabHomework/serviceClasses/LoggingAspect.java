@@ -15,7 +15,7 @@ import org.ylabHomework.DTOs.UserDTOs.LoginDTO;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.AspectsRepository;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 /**
  * Аспект, логгирующий действия пользователей и замеряющий время логина. Все полученные данные вносятся в БД и выводятся
  * в консоль.

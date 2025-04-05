@@ -1,10 +1,12 @@
 package org.ylabHomework.controllers.userControllers;
 
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,41 +20,43 @@ import org.ylabHomework.models.User;
 import org.ylabHomework.serviceClasses.Constants;
 import org.ylabHomework.services.UserService;
 
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-@Api(value = "API личного кабинета")
+@Tag(name = "API личного кабинета")
 @Controller
 @RequiredArgsConstructor
 public class PersonalAccountController {
     private final UserService userService;
 
-    @ApiOperation(value = "Показать страницу личного кабинета",
-            notes = "Перенаправляет на страницу личного кабинета")
-    @ApiResponse(code = 200, message = "Страница личного кабинета")
+    @Operation(
+            summary = "Показать страницу личного кабинета",
+            description = "Перенаправляет на страницу личного кабинета")
+    @ApiResponse(responseCode = "200", description = "Страница личного кабинета")
     @GetMapping(value = "/personal_account")
     public String showAccountPage() {
         return Constants.PERSONAL_ACCOUNT_JSP;
     }
 
-    @ApiOperation(value = "Показать страницу удаления аккаунта",
-            notes = "Перенаправляет на страницу удаления аккаунта")
-    @ApiResponse(code = 200, message = "Страница удаления аккаунта")
+    @Operation(
+            summary = "Показать страницу удаления аккаунта",
+            description = "Перенаправляет на страницу удаления аккаунта")
+    @ApiResponse(responseCode = "200", description = "Страница удаления аккаунта")
     @GetMapping(value = "/delete_account")
     public String showDeleteAccountPage() {
         return Constants.DELETE_ACCOUNT_JSP;
     }
 
-    @ApiOperation(value = "Показать страницу обновления аккаунта",
-            notes = "Перенаправляет на страницу обновления данных аккаунта")
-    @ApiResponse(code = 200, message = "Страница обновления аккаунта")
+    @Operation(
+            summary = "Показать страницу обновления аккаунта",
+            description = "Перенаправляет на страницу обновления данных аккаунта")
+    @ApiResponse(responseCode = "200", description = "Страница обновления аккаунта")
     @GetMapping(value = "/update_account")
     public String showUpdateAccountPage() {
         return Constants.UPDATE_ACCOUNT_JSP;
     }
 
-    @ApiOperation(value = "Удалить аккаунт пользователя",
-            notes = "Удаляет аккаунт по email из сессии и завершает сессию")
-    @ApiResponse(code = 200, message = "Успешное удаление и перенаправление")
+    @Operation(
+            summary = "Удалить аккаунт пользователя",
+            description = "Удаляет аккаунт по email из сессии и завершает сессию")
+    @ApiResponse(responseCode = "200", description = "Успешное удаление и перенаправление")
     @DeleteMapping(value = "/delete_account")
     @ResponseBody
     public String deleteAccount(HttpSession session) {
@@ -66,13 +70,13 @@ public class PersonalAccountController {
         return "redirect:/";
     }
 
-    @ApiOperation(value = "Обновить данные аккаунта пользователя",
-            notes = "Обновляет имя, email или пароль пользователя. В случае ошибки валидации или конфликта возвращает сообщение.")
+    @Operation(
+            summary = "Обновить данные аккаунта пользователя",
+            description = "Обновляет имя, email или пароль пользователя. В случае ошибки валидации или конфликта возвращает сообщение.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Данные обновлены успешно", response = ResponseMessageDTO.class),
-            @ApiResponse(code = 400, message = "Некорректные данные. Сообщение содержит список ошибок валидации",
-                    response = ResponseMessageDTO.class),
-            @ApiResponse(code = 409, message = "Конфликт данных (например, email уже занят)", response = ResponseMessageDTO.class)
+            @ApiResponse(responseCode = "200", description = "Данные обновлены успешно"),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные. Сообщение содержит список ошибок валидации"),
+            @ApiResponse(responseCode = "409", description = "Конфликт данных (например, email уже занят)")
     })
     @PostMapping(value = "/update_account")
     @ResponseBody

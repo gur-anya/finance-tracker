@@ -1,9 +1,12 @@
 package org.ylabHomework.controllers.userControllers;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +24,7 @@ import org.ylabHomework.models.User;
 import org.ylabHomework.serviceClasses.Constants;
 import org.ylabHomework.services.UserService;
 
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-@Api(value = "API авторизации: логин, логаут")
+@Tag(name = "API авторизации: логин, логаут")
 @Controller
 @RequiredArgsConstructor
 public class AuthorizationController {
@@ -31,22 +32,22 @@ public class AuthorizationController {
 
     private final UserService userService;
 
-    @ApiOperation(value = "Показать страницу логина",
-            notes = "Перенаправляет на страницу входа в систему")
-    @ApiResponse(code = 200, message = "Страница логина")
+    @Operation(
+            summary = "Показать страницу логина",
+            description = "Перенаправляет на страницу входа в систему")
+    @ApiResponse(responseCode = "200", description = "Страница логина")
     @GetMapping(value = "/login")
     public String showLoginPage() {
         return Constants.LOGIN_JSP;
     }
 
-    @ApiOperation(value = "Вход пользователя в систему",
-            notes = "Аутентифицирует пользователя и создаёт сессию. В случае ошибки валидации или неверных данных возвращает сообщение.")
+    @Operation(
+            summary = "Вход пользователя в систему",
+            description = "Аутентифицирует пользователя и создаёт сессию. В случае ошибки валидации или неверных данных возвращает сообщение.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Успешный вход: Успешно!", response = ResponseMessageDTO.class),
-            @ApiResponse(code = 400, message = "Некорректные данные. Сообщение содержит список ошибок валидации",
-                    response = ResponseMessageDTO.class),
-            @ApiResponse(code = 401, message = "Ошибка аутентификации: Произошла ошибка! Попробуйте еще раз!",
-                    response = ResponseMessageDTO.class)
+            @ApiResponse(responseCode = "200", description = "Успешный вход: Успешно!"),
+            @ApiResponse(responseCode = "400", description = "Некорректные данные. Сообщение содержит список ошибок валидации"),
+            @ApiResponse(responseCode = "401", description = "Ошибка аутентификации: Произошла ошибка! Попробуйте еще раз!")
     })
     @PostMapping(value = "/login")
     @ResponseBody
@@ -85,17 +86,19 @@ public class AuthorizationController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(responseMessageDTO);
     }
 
-    @ApiOperation(value = "Показать главную страницу пользователя",
-            notes = "Перенаправляет на главную страницу пользователя")
-    @ApiResponse(code = 200, message = "Главная страница пользователя")
+    @Operation(
+            summary = "Показать главную страницу пользователя",
+            description = "Перенаправляет на главную страницу пользователя")
+    @ApiResponse(responseCode = "200", description = "Главная страница пользователя")
     @GetMapping(value = "/main_user_page")
     public String showUserMainPage() {
         return Constants.USER_MAIN_JSP;
     }
 
-    @ApiOperation(value = "Выход пользователя из системы",
-            notes = "Завершает сессию пользователя и перенаправляет на главную страницу для неавторизованных пользователей")
-    @ApiResponse(code = 200, message = "Успешный выход и перенаправление")
+    @Operation(
+            summary = "Выход пользователя из системы",
+            description = "Завершает сессию пользователя и перенаправляет на главную страницу для неавторизованных пользователей")
+    @ApiResponse(responseCode = "200", description = "Успешный выход и перенаправление")
     @GetMapping(value = "/logout")
     public String logout(HttpSession session) {
         session.removeAttribute("loggedUser");

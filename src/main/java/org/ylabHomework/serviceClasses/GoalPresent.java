@@ -1,6 +1,6 @@
 package org.ylabHomework.serviceClasses;
 
-import javax.validation.*;
+import jakarta.validation.*;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

@@ -24,7 +24,7 @@
         })
             .then(response => {
                 if (response.ok) {
-                    window.location.href = '/';
+                    window.location.href = '..';
                 }
             })
             .catch(error => {

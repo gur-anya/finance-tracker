@@ -2,8 +2,11 @@ package TransactionControllersTests;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.ylabHomework.Main;
 import org.ylabHomework.controllers.financeControllers.ForwardingController;
 import org.ylabHomework.serviceClasses.Constants;
 
@@ -11,6 +14,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+@SpringBootTest(classes = Main.class)
+@AutoConfigureMockMvc
 class ForwardingControllerTests {
 
     private final ForwardingController controller = new ForwardingController();

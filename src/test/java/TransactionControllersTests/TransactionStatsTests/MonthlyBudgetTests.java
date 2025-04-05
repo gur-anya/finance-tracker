@@ -1,55 +1,40 @@
 package TransactionControllersTests.TransactionStatsTests;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
-import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import org.ylabHomework.DTOs.ResponseMessageDTO;
-
 import org.ylabHomework.DTOs.TransactionsDTOs.SingleParamDTO;
 import org.ylabHomework.DTOs.TransactionsDTOs.StateAndParamDTO;
-import org.ylabHomework.DTOs.TransactionsDTOs.TransactionDTO;
-import org.ylabHomework.controllers.financeControllers.financeStatsControllers.MonthlyBudgetController;
+import org.ylabHomework.Main;
 import org.ylabHomework.models.User;
+import org.ylabHomework.services.TransactionStatsService;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
-
-import org.ylabHomework.serviceClasses.GoalPresentConstraint;
-import org.ylabHomework.services.TransactionStatsService;
-
-
-import static org.mockito.Matchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SpringBootTest(classes = Main.class)
+@AutoConfigureMockMvc
 public class MonthlyBudgetTests {
+    @Autowired
     private MockMvc mockMvc;
-
-    @Mock
+    @MockBean
     private TransactionStatsService transactionStatsService;
-
-    @InjectMocks
-    private MonthlyBudgetController monthlyBudgetController;
 
     private MockHttpSession session;
     private User user;
@@ -61,32 +46,6 @@ public class MonthlyBudgetTests {
         session.setAttribute("loggedUser", user);
         session.setAttribute("username", user.getName());
         session.setAttribute("useremail", user.getEmail());
-
-        MockitoAnnotations.initMocks(this);
-        GoalPresentConstraint mockValidator = mock(GoalPresentConstraint.class);
-        when(mockValidator.isValid(any(TransactionDTO.class), any())).thenReturn(true);
-
-        Validator validator = Validation.byDefaultProvider()
-                .configure()
-                .messageInterpolator(new ParameterMessageInterpolator())
-                .constraintValidatorFactory(new ConstraintValidatorFactory() {
-                    @Override
-                    public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
-                        if (key == GoalPresentConstraint.class) {
-                            return (T) mockValidator;
-                        }
-                        return new ConstraintValidatorFactoryImpl().getInstance(key);
-                    }
-
-                    @Override
-                    public void releaseInstance(ConstraintValidator<?, ?> instance) {
-                    }
-                })
-                .buildValidatorFactory()
-                .getValidator();
-        mockMvc = MockMvcBuilders.standaloneSetup(monthlyBudgetController)
-                .setValidator(new SpringValidatorAdapter(validator))
-                .build();
     }
 
     @Test

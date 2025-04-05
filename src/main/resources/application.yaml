@@ -1,9 +1,21 @@
-db:
-  username: postgres
-  password: 1234
-  url: jdbc:postgresql://localhost:5432/finance_tracker_db
-  changeLogFile: ./db-changelog/main-changelog.xml
-springfox:
-  documentation:
-    swagger-ui:
-      base-url: /v2/api-docs
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/finance_tracker_db
+    username: postgres
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+  sql:
+    init:
+      mode: always
+      platform: postgresql
+      schema-locations: classpath:create_service_schema.sql
+  liquibase:
+    default-schema: service_schema
+    change-log: classpath:db-changelog/main-changelog.xml
+logging:
+  level:
+    web: debug

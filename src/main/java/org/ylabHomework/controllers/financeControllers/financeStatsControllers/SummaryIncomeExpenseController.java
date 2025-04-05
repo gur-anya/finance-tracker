@@ -1,6 +1,10 @@
 package org.ylabHomework.controllers.financeControllers.financeStatsControllers;
 
-import io.swagger.annotations.Api;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -9,24 +13,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.ylabHomework.models.User;
 import org.ylabHomework.services.TransactionStatsService;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
 
-import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-@Api(value = "API расходов, доходов, баланса за период")
+@Tag(name = "API расходов, доходов, баланса за период")
 @Controller
 @RequiredArgsConstructor
 public class SummaryIncomeExpenseController {
     private final TransactionStatsService transactionStatsService;
 
-    @ApiOperation(value = "Получить доходы, расходы и баланс за период",
-            notes = "Возвращает доходы, расходы и баланс за указанный период в виде карты")
-    @ApiResponse(code = 200, message = "Доходы, расходы и баланс за период", response = Map.class)
+    @Operation(
+            summary = "Получить доходы, расходы и баланс за период",
+            description = "Возвращает доходы, расходы и баланс за указанный период в виде карты")
+    @ApiResponse(responseCode = "200", description = "Доходы, расходы и баланс за период")
     @PostMapping(value = "/summary_income_expense")
     @ResponseBody
     public ResponseEntity<Map<String, Double>> getIncomeExpenseForPeriod(

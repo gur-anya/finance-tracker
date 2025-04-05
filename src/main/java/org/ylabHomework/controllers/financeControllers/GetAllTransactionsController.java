@@ -1,8 +1,10 @@
 package org.ylabHomework.controllers.financeControllers;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -12,20 +14,20 @@ import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.services.TransactionService;
 
-import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Api(value = "API получения всех транзакций")
+@Tag(name = "API получения всех транзакций")
 @Controller
 @RequiredArgsConstructor
 public class GetAllTransactionsController {
     private final TransactionService transactionService;
     private final TransactionMapper transactionMapper;
 
-    @ApiOperation(value = "Получить все транзакции")
-    @ApiResponse(code = 200, message = "Все транзакции пользователя", response = Map.class)
+    @Operation(
+            summary = "Получить все транзакции")
+    @ApiResponse(responseCode = "200", description = "Все транзакции пользователя")
     @GetMapping(value = "/get_all")
     public ResponseEntity<Map<String, Object>> getAllTransactions(HttpSession session) {
         User user = (User) session.getAttribute("loggedUser");

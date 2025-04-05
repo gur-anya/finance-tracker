@@ -1,9 +1,12 @@
 package org.ylabHomework.controllers.financeControllers.financeStatsControllers;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,17 +23,16 @@ import org.ylabHomework.DTOs.TransactionsDTOs.StateAndParamDTO;
 import org.ylabHomework.models.User;
 import org.ylabHomework.services.TransactionStatsService;
 
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-@Api(value = "API месячного бюджета")
+@Tag(name = "API месячного бюджета")
 @Controller
 @RequiredArgsConstructor
 public class MonthlyBudgetController {
     private final TransactionStatsService transactionStatsService;
 
-    @ApiOperation(value = "Получить месячный бюджет пользователя",
-            notes = "Возвращает текущий месячный бюджет пользователя")
-    @ApiResponse(code = 200, message = "Полученный месячный бюджет", response = SingleParamDTO.class)
+    @Operation(
+            summary = "Получить месячный бюджет пользователя",
+            description = "Возвращает текущий месячный бюджет пользователя")
+    @ApiResponse(responseCode = "200", description = "Полученный месячный бюджет")
     @GetMapping(value = "/get_monthly_budget_management")
     @ResponseBody
     public ResponseEntity<SingleParamDTO> getMonthlyBudget(HttpSession session) {
@@ -41,9 +43,10 @@ public class MonthlyBudgetController {
         return ResponseEntity.ok().body(paramDTO);
     }
 
-    @ApiOperation(value = "Проверить состояние месячного бюджета",
-            notes = "Возвращает текущий бюджет и его остаток (или превышение)")
-    @ApiResponse(code = 200, message = "Состояние бюджета", response = StateAndParamDTO.class)
+    @Operation(
+            summary = "Проверить состояние месячного бюджета",
+            description = "Возвращает текущий бюджет и его остаток (или превышение)")
+    @ApiResponse(responseCode = "200", description = "Состояние бюджета")
     @GetMapping(value = "/get_check_budget")
     @ResponseBody
     public ResponseEntity<StateAndParamDTO> checkBudget(HttpSession session) {
@@ -56,12 +59,12 @@ public class MonthlyBudgetController {
         return ResponseEntity.ok().body(dto);
     }
 
-    @ApiOperation(value = "Обновить месячный бюджет пользователя",
-            notes = "Обновляет месячный бюджет пользователя. В случае ошибки валидации возвращает список ошибок.")
+    @Operation(
+            summary = "Обновить месячный бюджет пользователя",
+            description = "Обновляет месячный бюджет пользователя. В случае ошибки валидации возвращает список ошибок.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Бюджет обновлен: Успешно обновлено!", response = ResponseMessageDTO.class),
-            @ApiResponse(code = 400, message = "Некорректные входные данные. Сообщение содержит список ошибок валидации",
-                    response = ResponseMessageDTO.class)
+            @ApiResponse(responseCode = "200", description = "Бюджет обновлен: Успешно обновлено!"),
+            @ApiResponse(responseCode = "400", description = "Некорректные входные данные. Сообщение содержит список ошибок валидации")
     })
     @PostMapping(value = "/update_budget")
     @ResponseBody

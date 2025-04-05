@@ -1,9 +1,10 @@
 package org.ylabHomework.controllers.financeControllers.financeManagementControllers;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +22,10 @@ import org.ylabHomework.models.User;
 import org.ylabHomework.services.TransactionService;
 import org.ylabHomework.services.TransactionStatsService;
 
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 
-@Api(value = "API создания транзакции")
+@Tag(name = "API создания транзакции")
 @Controller
 @RequiredArgsConstructor
 public class CreateTransactionsController {
@@ -33,11 +34,11 @@ public class CreateTransactionsController {
     private final TransactionMapper transactionMapper;
     private final TransactionStatsService transactionStatsService;
 
-    @ApiOperation(value = "Создать новую транзакцию",
-            notes = "Создает транзакцию на основе переданных данных")
+    @Operation(summary = "Создать новую транзакцию",
+            description = "Создает транзакцию на основе переданных данных")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Транзакция успешно создана. Сообщение может содержать дополнительные уведомления, например, о превышении месячного бюджета.", response = ResponseMessageDTO.class),
-            @ApiResponse(code = 400, message = "Ошибка валидации входных данных. Сообщение содержит список ошибок при валидации.", response = ResponseMessageDTO.class)
+            @ApiResponse(responseCode = "200", description = "Транзакция успешно создана. Сообщение может содержать дополнительные уведомления, например, о превышении месячного бюджета."),
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации входных данных. Сообщение содержит список ошибок при валидации.")
     })
     @PostMapping(value = "/create_transaction")
     @ResponseBody

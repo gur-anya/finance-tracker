@@ -1,9 +1,12 @@
 package org.ylabHomework.controllers.financeControllers.financeStatsControllers;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,17 +23,16 @@ import org.ylabHomework.DTOs.TransactionsDTOs.StateAndParamDTO;
 import org.ylabHomework.models.User;
 import org.ylabHomework.services.TransactionStatsService;
 
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-@Api(value = "API финансовой цели")
+@Tag(name = "API финансовой цели")
 @Controller
 @RequiredArgsConstructor
 public class GoalController {
     private final TransactionStatsService transactionStatsService;
 
-    @ApiOperation(value = "Получить цель пользователя",
-            notes = "Возвращает текущую финансовую цель пользователя")
-    @ApiResponse(code = 200, message = "Полученная цель", response = SingleParamDTO.class)
+    @Operation(
+            summary = "Получить цель пользователя",
+            description = "Возвращает текущую финансовую цель пользователя")
+    @ApiResponse(responseCode = "200", description = "Полученная цель")
     @GetMapping(value = "/get_goal_management")
     @ResponseBody
     public ResponseEntity<SingleParamDTO> getGoal(HttpSession session) {
@@ -42,12 +44,13 @@ public class GoalController {
     }
 
 
-    @ApiOperation(value = "Проверить прогресс достижения цели",
-            notes = "Возвращает текущую цель и прогресс её достижения")
-    @ApiResponse(code = 200, message = "Прогресс по цели", response = StateAndParamDTO.class)
+    @Operation(
+            summary = "Проверить прогресс достижения цели",
+            description = "Возвращает текущую цель и прогресс её достижения")
+    @ApiResponse(responseCode = "200", description = "Прогресс по цели")
     @GetMapping(value = "/get_check_goal")
     @ResponseBody
-     public ResponseEntity<StateAndParamDTO> checkGoal(HttpSession session) {
+    public ResponseEntity<StateAndParamDTO> checkGoal(HttpSession session) {
         User user = (User) session.getAttribute("loggedUser");
         StateAndParamDTO dto = new StateAndParamDTO();
         double goalState = transactionStatsService.checkGoalProgress(user);
@@ -58,11 +61,12 @@ public class GoalController {
     }
 
 
-    @ApiOperation(value = "Обновить цель пользователя",
-            notes = "Обновляет финансовую цель пользователя. В случае ошибки валидации возвращает список ошибок.")
+    @Operation(
+            summary = "Обновить цель пользователя",
+            description = "Обновляет финансовую цель пользователя. В случае ошибки валидации возвращает список ошибок.")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Цель обновлена: Успешно обновлено!", response = ResponseMessageDTO.class),
-            @ApiResponse(code = 400, message = "Некорректные входные данные. Сообщение содержит список ошибок валидации", response = ResponseMessageDTO.class)
+            @ApiResponse(responseCode = "200", description = "Цель обновлена: Успешно обновлено!"),
+            @ApiResponse(responseCode = "400", description = "Некорректные входные данные. Сообщение содержит список ошибок валидации")
     })
     @PostMapping(value = "/update_goal")
     @ResponseBody

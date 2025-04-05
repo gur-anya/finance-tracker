@@ -1,86 +1,48 @@
 package TransactionControllersTests.TransactionStatsTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
-import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
-import org.ylabHomework.DTOs.TransactionsDTOs.TransactionDTO;
-import org.ylabHomework.controllers.financeControllers.financeStatsControllers.GeneralReportController;
+import org.ylabHomework.Main;
 import org.ylabHomework.models.User;
-import org.ylabHomework.serviceClasses.GoalPresentConstraint;
 import org.ylabHomework.services.TransactionStatsService;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorFactory;
-import javax.validation.Validation;
-import javax.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SpringBootTest(classes = Main.class)
+@AutoConfigureMockMvc
 public class GeneralReportTests {
+    @Autowired
     private MockMvc mockMvc;
-
-    @Mock
+    @MockBean
     private TransactionStatsService transactionStatsService;
-
-    @InjectMocks
-    private GeneralReportController generalReportController;
-
     private MockHttpSession session;
 
     @BeforeEach
-    @SuppressWarnings("unchecked")
     public void setup() {
         User user = new User("anya", "anya@ya.ru", "1234", 1);
         session = new MockHttpSession();
         session.setAttribute("loggedUser", user);
         session.setAttribute("username", user.getName());
         session.setAttribute("useremail", user.getEmail());
-
-        MockitoAnnotations.initMocks(this);
-        GoalPresentConstraint mockValidator = mock(GoalPresentConstraint.class);
-        when(mockValidator.isValid(any(TransactionDTO.class), any())).thenReturn(true);
-
-        Validator validator = Validation.byDefaultProvider()
-                .configure()
-                .messageInterpolator(new ParameterMessageInterpolator())
-                .constraintValidatorFactory(new ConstraintValidatorFactory() {
-                    @Override
-                    public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
-                        if (key == GoalPresentConstraint.class) {
-                            return (T) mockValidator;
-                        }
-                        return new ConstraintValidatorFactoryImpl().getInstance(key);
-                    }
-
-                    @Override
-                    public void releaseInstance(ConstraintValidator<?, ?> instance) {
-                    }
-                })
-                .buildValidatorFactory()
-                .getValidator();
-        mockMvc = MockMvcBuilders.standaloneSetup(generalReportController)
-                .setValidator(new SpringValidatorAdapter(validator))
-                .build();
     }
 
     @Test
@@ -120,7 +82,7 @@ public class GeneralReportTests {
                 800.0, 300.0, 500.0, new HashMap<>(), new double[]{900.0, 100.0, 200.0, 300.0, 400.0}
         );
 
-        when(transactionStatsService.generateGeneralReport(any(User.class), any(LocalDateTime.class), (LocalDateTime) isNull())).thenReturn(report);
+        when(transactionStatsService.generateGeneralReport(any(User.class), any(LocalDateTime.class), isNull())).thenReturn(report);
 
         MvcResult result = mockMvc.perform(post("/general_report")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -143,7 +105,7 @@ public class GeneralReportTests {
                 600.0, 200.0, 400.0, new HashMap<>(), new double[]{800.0, 150.0, 250.0, 350.0, 450.0}
         );
 
-        when(transactionStatsService.generateGeneralReport(any(User.class), (LocalDateTime) isNull(), any(LocalDateTime.class))).thenReturn(report);
+        when(transactionStatsService.generateGeneralReport(any(User.class), isNull(), any(LocalDateTime.class))).thenReturn(report);
 
         MvcResult result = mockMvc.perform(post("/general_report")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -166,7 +128,7 @@ public class GeneralReportTests {
                 500.0, 100.0, 400.0, new HashMap<>(), new double[]{700.0, 120.0, 220.0, 320.0, 420.0}
         );
 
-        when(transactionStatsService.generateGeneralReport(any(User.class), (LocalDateTime) isNull(), (LocalDateTime) isNull())).thenReturn(report);
+        when(transactionStatsService.generateGeneralReport(any(User.class), isNull(), isNull())).thenReturn(report);
 
         MvcResult result = mockMvc.perform(post("/general_report")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -1,9 +1,11 @@
 package org.ylabHomework.controllers.financeControllers.financeManagementControllers;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,29 +16,27 @@ import org.ylabHomework.mappers.TransactionsMappers.TransactionMapper;
 import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.services.TransactionService;
-import org.ylabHomework.services.UserService;
 
 import java.time.LocalDateTime;
-import javax.servlet.http.HttpSession;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-@Api(value = "API демонстрации транзакций с фильтром")
+
+@Tag(name = "API демонстрации транзакций с фильтром")
 @Controller
 @RequiredArgsConstructor
 public class FilterTransactionsController {
-   private final TransactionService transactionService;
+    private final TransactionService transactionService;
     private final TransactionMapper transactionMapper;
 
 
-
-
-    @ApiOperation(value = "Просмотреть транзакции с фильтром",
-            notes = "Показывает транзакции, отфильтраванные по одному из параметров (до/после даты, по типу, по катории, без фильтра")
+    @Operation(
+            summary = "Просмотреть транзакции с фильтром",
+            description = "Показывает транзакции, отфильтраванные по одному из параметров (до/после даты, по типу, по катории, без фильтра")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Отфильтрованные транзакции. Содержит список транзакций или сообщение о том, что транзакции с этим фильтром не найдены.", response = Map.class),
-            @ApiResponse(code = 400, message = "Ошибка валидации входных данных. Сообщение содержит описание ошибки при валидации.", response = Map.class)
+            @ApiResponse(responseCode = "200", description = "Отфильтрованные транзакции. Содержит список транзакций или сообщение о том, что транзакции с этим фильтром не найдены."),
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации входных данных. Сообщение содержит описание ошибки при валидации.")
     })
     @PostMapping(value = "/show_transactions")
     @ResponseBody
@@ -88,7 +88,7 @@ public class FilterTransactionsController {
                 if (category != null && !category.isEmpty()) {
                     transactions = transactionService.getTransactionsByCategory(user, category);
                     if (transactions.isEmpty()) {
-                        if(category.trim().equalsIgnoreCase("цель") && transactionService.getGoal(user) == 0.0) {
+                        if (category.trim().equalsIgnoreCase("цель") && transactionService.getGoal(user) == 0.0) {
                             stateMessage = "Транзакции по категории '" + category + "' не найдены! Установить цель можно в разделе Статистика.";
                         } else {
                             stateMessage = "Транзакции по категории '" + category + "' не найдены!";
@@ -103,14 +103,14 @@ public class FilterTransactionsController {
                 }
                 break;
             case "41":
-                transactions = transactionService.getTransactionsByType(user,1);
+                transactions = transactionService.getTransactionsByType(user, 1);
                 if (transactions.isEmpty()) {
                     response.put("message", "Доходы не найдены!");
                     return ResponseEntity.ok().body(response);
                 }
                 break;
             case "42":
-                transactions = transactionService.getTransactionsByType(user,2);
+                transactions = transactionService.getTransactionsByType(user, 2);
                 if (transactions.isEmpty()) {
                     response.put("message", "Расходы не найдены!");
                     return ResponseEntity.ok().body(response);

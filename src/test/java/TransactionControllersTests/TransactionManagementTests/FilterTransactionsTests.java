@@ -1,51 +1,44 @@
 package TransactionControllersTests.TransactionManagementTests;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.ylabHomework.DTOs.ResponseMessageDTO;
-
-import org.ylabHomework.controllers.financeControllers.financeManagementControllers.FilterTransactionsController;
-import org.ylabHomework.models.User;
-
-import java.nio.charset.StandardCharsets;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-
-
 import org.ylabHomework.DTOs.TransactionsDTOs.BasicTransactionDTO;
+import org.ylabHomework.Main;
 import org.ylabHomework.mappers.TransactionsMappers.TransactionMapper;
 import org.ylabHomework.models.Transaction;
+import org.ylabHomework.models.User;
 import org.ylabHomework.services.TransactionService;
 
-
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import static org.mockito.Matchers.any;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SpringBootTest(classes = Main.class)
+@AutoConfigureMockMvc
 public class FilterTransactionsTests {
+    @Autowired
     private MockMvc mockMvc;
-
-    @Mock
+    @MockBean
     private TransactionService transactionService;
-    @Mock
+    @MockBean
     private TransactionMapper transactionMapper;
-
-    @InjectMocks
-    private FilterTransactionsController filterTransactionsController;
     private final MockHttpSession session = new MockHttpSession();
     private User user;
 
@@ -55,10 +48,6 @@ public class FilterTransactionsTests {
         session.setAttribute("loggedUser", user);
         session.setAttribute("username", user.getName());
         session.setAttribute("useremail", user.getEmail());
-        MockitoAnnotations.initMocks(this);
-
-        mockMvc = MockMvcBuilders.standaloneSetup(filterTransactionsController)
-                .build();
     }
 
 
@@ -73,12 +62,12 @@ public class FilterTransactionsTests {
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isOk())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("");
     }
@@ -92,12 +81,12 @@ public class FilterTransactionsTests {
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isOk())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("Транзакции до указанной даты не найдены!");
     }
@@ -109,12 +98,12 @@ public class FilterTransactionsTests {
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("Укажите дату для фильтрации!");
     }
@@ -130,12 +119,12 @@ public class FilterTransactionsTests {
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isOk())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("");
     }
@@ -149,7 +138,7 @@ public class FilterTransactionsTests {
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isOk())
                 .andReturn();
@@ -166,12 +155,12 @@ public class FilterTransactionsTests {
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("Укажите дату для фильтрации!");
     }
@@ -182,17 +171,17 @@ public class FilterTransactionsTests {
         String jsonRequest = "{\"filter\":\"3\",\"category\":\"еда\"}";
         List<Transaction> transactions = List.of(new Transaction(1, 100.0, "еда", "перекус"));
 
-        when(transactionService.getTransactionsByCategory(user,"еда")).thenReturn(transactions);
+        when(transactionService.getTransactionsByCategory(user, "еда")).thenReturn(transactions);
         when(transactionMapper.toDTOList(transactions)).thenReturn(List.of(new BasicTransactionDTO()));
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isOk())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("");
     }
@@ -206,12 +195,12 @@ public class FilterTransactionsTests {
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isOk())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("Транзакции по категории 'еда' не найдены!");
     }
@@ -223,12 +212,12 @@ public class FilterTransactionsTests {
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("Укажите категорию для фильтрации!");
     }
@@ -239,17 +228,17 @@ public class FilterTransactionsTests {
         String jsonRequest = "{\"filter\":\"41\"}";
         List<Transaction> transactions = List.of(new Transaction(1, 100.0, "нашла на улице", "класс"));
 
-        when(transactionService.getTransactionsByType(user,1)).thenReturn(transactions);
+        when(transactionService.getTransactionsByType(user, 1)).thenReturn(transactions);
         when(transactionMapper.toDTOList(transactions)).thenReturn(List.of(new BasicTransactionDTO()));
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isOk())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("");
     }
@@ -259,16 +248,16 @@ public class FilterTransactionsTests {
     public void testFilterTransactionsByIncomeEmpty() throws Exception {
         String jsonRequest = "{\"filter\":\"41\"}";
 
-        when(transactionService.getTransactionsByType(user,1)).thenReturn(new ArrayList<>());
+        when(transactionService.getTransactionsByType(user, 1)).thenReturn(new ArrayList<>());
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isOk())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("Доходы не найдены!");
     }
@@ -279,17 +268,17 @@ public class FilterTransactionsTests {
         String jsonRequest = "{\"filter\":\"42\"}";
         List<Transaction> transactions = List.of(new Transaction(2, 50.0, "еда", "перекус"));
 
-        when(transactionService.getTransactionsByType(user,2)).thenReturn(transactions);
+        when(transactionService.getTransactionsByType(user, 2)).thenReturn(transactions);
         when(transactionMapper.toDTOList(transactions)).thenReturn(List.of(new BasicTransactionDTO()));
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isOk())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("");
     }
@@ -299,16 +288,16 @@ public class FilterTransactionsTests {
     public void testFilterTransactionsByExpenseEmpty() throws Exception {
         String jsonRequest = "{\"filter\":\"42\"}";
 
-        when(transactionService.getTransactionsByType(user,2)).thenReturn(new ArrayList<>());
+        when(transactionService.getTransactionsByType(user, 2)).thenReturn(new ArrayList<>());
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isOk())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("Расходы не найдены!");
     }
@@ -324,12 +313,12 @@ public class FilterTransactionsTests {
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isOk())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("");
     }
@@ -343,12 +332,12 @@ public class FilterTransactionsTests {
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isOk())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("Транзакции отсутствуют!");
     }
@@ -360,12 +349,12 @@ public class FilterTransactionsTests {
 
         MvcResult result = mockMvc.perform(post("/show_transactions")
                         .contentType(MediaType.APPLICATION_JSON)
-                      .content(jsonRequest)
+                        .content(jsonRequest)
                         .session(session))
                 .andExpect(status().isBadRequest())
                 .andReturn();
 
-      String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+        String responseContent = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
         ResponseMessageDTO response = new ResponseMessageDTO(responseContent);
         assertThat(response.getMessage()).contains("Неверный фильтр!");
     }

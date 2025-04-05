@@ -1,9 +1,11 @@
 package org.ylabHomework.controllers.financeControllers.financeManagementControllers;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,9 +22,7 @@ import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.services.TransactionService;
 
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-@Api(value = "API удаления транзакции")
+@Tag(name = "API удаления транзакции")
 @Controller
 @RequiredArgsConstructor
 public class DeleteTransactionsController {
@@ -31,13 +31,12 @@ public class DeleteTransactionsController {
     private final TransactionMapper transactionMapper;
 
 
-
-
-    @ApiOperation(value = "Удалить транзакцию",
-            notes = "Удаляет существующую транзакцию")
+    @Operation(
+            summary = "Удалить транзакцию",
+            description = "Удаляет существующую транзакцию")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Транзакция успешно удалена: Успешно!", response = ResponseMessageDTO.class),
-            @ApiResponse(code = 400, message = "Ошибка валидации входных данных. Сообщение содержит список ошибок при валидации.", response = ResponseMessageDTO.class)
+            @ApiResponse(responseCode = "200", description = "Транзакция успешно удалена: Успешно!"),
+            @ApiResponse(responseCode = "400", description = "Ошибка валидации входных данных. Сообщение содержит список ошибок при валидации.")
     })
     @DeleteMapping(value = "/delete_transaction")
     @ResponseBody

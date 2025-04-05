@@ -1,24 +1,24 @@
 package org.ylabHomework.controllers.filters;
 
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import java.io.IOException;
 
 /**
- *  Фильтр, запрещающий неавторизованным пользователям доступ на страницы для авторизованных пользователей. При попытке
- *  гостя попасть на такую страницу он перенаправляется на страницу входа.
+ * Фильтр, запрещающий неавторизованным пользователям доступ на страницы для авторизованных пользователей. При попытке
+ * гостя попасть на такую страницу он перенаправляется на страницу входа.
  *
- *   @author Gureva Anna
- *   @version 1.0
- *   @since 30.03.2025
+ * @author Gureva Anna
+ * @version 1.0
+ * @since 30.03.2025
  */
 @Component
 public class AuthFilter extends OncePerRequestFilter {
@@ -30,7 +30,7 @@ public class AuthFilter extends OncePerRequestFilter {
         HttpSession session = request.getSession(false);
 
         boolean nonAuthorisedPage = path.equals("/") || path.equals("/login") || path.equals("/registration") ||
-                path.contains("/swagger-ui/index.html") || path.contains("/v2/api-docs");
+                path.contains("/swagger-ui.html") || path.contains("/v3/api-docs");
 
         if (nonAuthorisedPage || (session != null && session.getAttribute("loggedUser") != null)) {
             filterChain.doFilter(request, response);

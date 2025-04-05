@@ -1,4 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <html>
 <head>
@@ -32,7 +32,7 @@
     </div>
 
     <button type="submit" id="sendData">Зарегистрироваться</button>
-    <button onclick="window.location.href='/'" id="goBack">Назад</button>
+    <button onclick="window.location.href='..'" id="goBack">Назад</button>
 </form>
 <div>
     <p id="stateMessage"></p>

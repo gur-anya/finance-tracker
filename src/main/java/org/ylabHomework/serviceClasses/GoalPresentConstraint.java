@@ -1,6 +1,6 @@
 package org.ylabHomework.serviceClasses;
 
-import javax.validation.*;
+import jakarta.validation.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

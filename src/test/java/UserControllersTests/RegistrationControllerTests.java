@@ -1,90 +1,48 @@
 package UserControllersTests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
-import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import org.ylabHomework.DTOs.ResponseMessageDTO;
 import org.ylabHomework.DTOs.UserDTOs.BasicUserDTO;
-import org.ylabHomework.controllers.userControllers.RegistrationController;
+import org.ylabHomework.Main;
 import org.ylabHomework.mappers.UserMappers.UserMapper;
 import org.ylabHomework.models.User;
 import org.ylabHomework.serviceClasses.Constants;
 import org.ylabHomework.services.UserService;
 
-import javax.validation.*;
 import java.nio.charset.StandardCharsets;
-
-import org.ylabHomework.serviceClasses.UniqueConstraintUser;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
+@SpringBootTest(classes = Main.class)
+@AutoConfigureMockMvc
 public class RegistrationControllerTests {
-
+    @Autowired
     private MockMvc mockMvc;
 
-    @Mock
+    @MockBean
     private UserMapper userMapper;
 
-    @Mock
+    @MockBean
     private UserService userService;
 
-    @Mock
+    @MockBean
     private BindingResult bindingResult;
 
-    @InjectMocks
-    private RegistrationController registrationController;
-
-    @BeforeEach
-    @SuppressWarnings("unchecked")
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-
-
-        UniqueConstraintUser mockValidator = mock(UniqueConstraintUser.class);
-        when(mockValidator.isValid(anyString(), any())).thenReturn(true);
-
-
-        Validator validator = Validation.byDefaultProvider()
-                .configure()
-                .messageInterpolator(new ParameterMessageInterpolator())
-                .constraintValidatorFactory(new ConstraintValidatorFactory() {
-                    @Override
-                    public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
-                        if (key == UniqueConstraintUser.class) {
-                            return (T) mockValidator;
-                        }
-                        return new ConstraintValidatorFactoryImpl().getInstance(key);
-                    }
-
-                    @Override
-                    public void releaseInstance(ConstraintValidator<?, ?> instance) {
-
-                    }
-                })
-                .buildValidatorFactory()
-                .getValidator();
-
-
-        mockMvc = MockMvcBuilders.standaloneSetup(registrationController)
-                .setValidator(new SpringValidatorAdapter(validator))
-                .build();
-    }
 
     @Test
     @DisplayName("GET-запрос к /registration")
