@@ -9,9 +9,9 @@
 <p>
     Добро пожаловать в трекер финансов! Выберите, что хотите сделать:
 </p>
-    <button onclick="window.location.href='/registration'" id = "registration">Зарегистрировать нового пользователя</button>
+<button onclick="window.location.href='/registration'" id = "registration">Зарегистрировать нового пользователя</button>
 
-    <button onclick="window.location.href='/login'" id = "login">Войти в существующий аккаунт</button>
+<button onclick="window.location.href='/login'" id = "login">Войти в существующий аккаунт</button>
 
 </body>
 </html>

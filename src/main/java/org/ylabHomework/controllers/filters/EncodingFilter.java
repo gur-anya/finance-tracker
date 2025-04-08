@@ -1,28 +1,30 @@
 package org.ylabHomework.controllers.filters;
 
-import javax.servlet.*;
-import javax.servlet.annotation.WebFilter;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebFilter("/*")
-public class EncodingFilter implements Filter {
-    @Override
-    public void init(FilterConfig filterConfig) {
-
-    }
-
-    @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        servletRequest.setCharacterEncoding("UTF-8");
-        HttpServletResponse httpResponse = (HttpServletResponse) servletResponse;
-        httpResponse.setContentType("application/json; charset=UTF-8");
-        httpResponse.setCharacterEncoding("UTF-8");
-        filterChain.doFilter(servletRequest, httpResponse);
-    }
+/**
+ * Фильтр для установки кодировки UTF-8 для запросов и ответов.
+ *
+ * @author Gureva Anna
+ * @version 1.0
+ * @since 30.03.2025
+ */
+@Component
+public class EncodingFilter extends OncePerRequestFilter {
 
     @Override
-    public void destroy() {
-
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
+        filterChain.doFilter(request, response);
     }
 }

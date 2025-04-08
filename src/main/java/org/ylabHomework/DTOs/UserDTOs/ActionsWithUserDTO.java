@@ -1,64 +1,27 @@
 package org.ylabHomework.DTOs.UserDTOs;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.validation.constraints.AssertTrue;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.AssertTrue;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
+/**
+ * DTO, передающий новые данные о пользователе. Содержит поля для нового имени, email, старого и нового паролей, а также
+ * поле, хранящее список изменений пользователя.
+ *
+ * @author Gureva Anna
+ * @version 1.0
+ * @since 30.03.2025
+ */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class ActionsWithUserDTO {
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getNewPassword() {
-        return newPassword;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
-
-    public String getOldPassword() {
-        return oldPassword;
-    }
-
-    public void setOldPassword(String oldPassword) {
-        this.oldPassword = oldPassword;
-    }
-
-    public String getUpdatedValues() {
-        return updatedValues;
-    }
-
-    public void setUpdatedValues(String updatedValues) {
-        this.updatedValues = updatedValues;
-    }
-
-    public ActionsWithUserDTO() {
-    }
-
-    public ActionsWithUserDTO(String name, String email, String newPassword, String oldPassword, String updatedValues) {
-        this.name = name;
-        this.email = email;
-        this.newPassword = newPassword;
-        this.oldPassword = oldPassword;
-        this.updatedValues = updatedValues;
-    }
-
     @NotEmpty(message = "Имя не должно быть пустым.")
     private String name;
 

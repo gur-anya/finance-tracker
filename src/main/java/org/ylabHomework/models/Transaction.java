@@ -1,5 +1,7 @@
 package org.ylabHomework.models;
 
+import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 /**
@@ -13,13 +15,23 @@ import java.util.Objects;
  *   @since 07.03.2025
  */
 
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Transaction {
     private int type;
     private double sum;
     private String category;
     private LocalDateTime timestamp;
     private String description;
+
+    public Transaction(int type, double sum, String category, String description) {
+        this.type = type;
+        this.sum = sum;
+        this.category = category;
+        this.description = description;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -33,53 +45,5 @@ public class Transaction {
     @Override
     public int hashCode() {
         return Objects.hash(type, sum, category, timestamp, description);
-    }
-
-    public Transaction(int type, double sum, String category, String description) {
-        this.type = type;
-        this.sum = sum;
-        this.category = category;
-        this.timestamp = LocalDateTime.now();
-        this.description = description;
-    }
-
-    public int getType() {
-        return type;
-    }
-
-    public void setType(int type) {
-        this.type = type;
-    }
-
-    public double getSum() {
-        return sum;
-    }
-
-    public void setSum(double sum) {
-        this.sum = sum;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }

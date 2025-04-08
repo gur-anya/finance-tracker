@@ -130,48 +130,32 @@
         container.innerHTML = "";
         stateMessage.textContent = "";
 
-
-        if (!data || !data.transactions) {
-            stateMessage.textContent = "Нет данных о транзакциях или неверный формат ответа";
-            return;
-        }
-
-        const transactions = data.transactions;
-
-        if (data.message !== "") {
+        if (data.transactions) {
+            const transactions = data.transactions;
+            if (transactions.length === 0) {
+                stateMessage.textContent = "Транзакции не найдены";
+            } else {
+                let index = 1;
+                transactions.forEach((transaction) => {
+                    const ul = document.createElement("ul");
+                    const li = document.createElement("li");
+                    const typeText = transaction.type === 1 ? "Доход" : "Расход";
+                    const sum = transaction.sum;
+                    const category = transaction.category;
+                    const description = transaction.description;
+                    const timestamp = formatTimestamp(transaction.timestamp);
+                    li.textContent = index+". " + typeText +": " + sum +", " + category +", " + description+", "+timestamp;
+                    ul.appendChild(li);
+                    container.appendChild(ul);
+                    container.appendChild(document.createElement("hr"));
+                    index++;
+                });
+            }
+        } else if (data.message) {
             stateMessage.textContent = data.message;
-            return;
+        } else {
+            stateMessage.textContent = "Ошибка: неверный формат ответа от сервера";
         }
-
-        if (transactions.length === 0) {
-            stateMessage.textContent = "Транзакции не найдены";
-            return;
-        }
-
-        let index = 1;
-
-        transactions.forEach((transaction) => {
-
-
-            const ul = document.createElement("ul");
-            const li = document.createElement("li");
-
-
-            const typeText = transaction.type === 1 ? "Доход" : "Расход";
-            const sum = transaction.sum;
-            const category = transaction.category;
-            const description = transaction.description;
-            const timestamp = formatTimestamp(transaction.timestamp);
-
-
-            li.textContent = index+". " + typeText+": " + sum +", " + category +", " + description+", "+timestamp;
-            ul.appendChild(li);
-            index = index + 1;
-            container.appendChild(ul);
-
-            const hr = document.createElement("hr");
-            container.appendChild(hr);
-        });
     }
 </script>
 </body>

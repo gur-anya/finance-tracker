@@ -1,5 +1,8 @@
 package org.ylabHomework.services;
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
@@ -19,21 +22,14 @@ import java.util.stream.Collectors;
  * * @since 09.03.2025
  * </p>
  */
+@Service
+@Data
+@RequiredArgsConstructor
 public class TransactionStatsService {
 
     public final TransactionRepository repository;
-    public final User user;
 
-    /**
-     * Конструктор сервиса статистики транзакций.
-     *
-     * @param repository репозиторий транзакций
-     * @param user       пользователь, для которого выполняется анализ
-     */
-    public TransactionStatsService(TransactionRepository repository, User user) {
-        this.repository = repository;
-        this.user = user;
-    }
+
 
     /**
      * Проверяет остаток месячного бюджета пользователя.
@@ -41,12 +37,12 @@ public class TransactionStatsService {
      *
      * @return остаток бюджета (положительное значение — есть запас, отрицательное — превышение)
      */
-    public double checkMonthlyBudgetLimit() {
+    public double checkMonthlyBudgetLimit(User user) {
         List<Transaction> incomes;
         List<Transaction> expenses;
         try {
-            incomes = repository.getTransactionsByType(1);
-            expenses = repository.getTransactionsByType(2);
+            incomes = repository.getTransactionsByType(user,1);
+            expenses = repository.getTransactionsByType(user,2);
         } catch (SQLException e) {
             System.out.println(databaseError(e));
             return 0;
@@ -63,7 +59,7 @@ public class TransactionStatsService {
             double totalIncome = sortedIncomes.stream().mapToDouble(Transaction::getSum).sum();
             double totalExpense = sortedExpenses.stream().mapToDouble(Transaction::getSum).sum();
 
-            return repository.getMonthlyBudget() + totalIncome - totalExpense;
+            return repository.getMonthlyBudget(user) + totalIncome - totalExpense;
         } catch (SQLException e) {
             System.out.println(databaseError(e));
             return 0;
@@ -76,20 +72,20 @@ public class TransactionStatsService {
      *
      * @return разница между целью и накоплениями (положительное — осталось накопить, отрицательное — превышение)
      */
-    public double checkGoalProgress() {
+    public double checkGoalProgress(User user) {
         String goalCategory = "цель";
         List<Transaction> incomes;
         List<Transaction> expenses;
         try {
-            incomes = repository.getTransactionsByType(1);
-            expenses = repository.getTransactionsByType(2);
+            incomes = repository.getTransactionsByType(user,1);
+            expenses = repository.getTransactionsByType(user,2);
             List<Transaction> sortedIncomes = repository.getSortedTransactionsByCategory(goalCategory, incomes);
             List<Transaction> sortedExpenses = repository.getSortedTransactionsByCategory(goalCategory, expenses);
 
             double totalIncome = sortedIncomes.stream().mapToDouble(Transaction::getSum).sum();
             double totalExpense = sortedExpenses.stream().mapToDouble(Transaction::getSum).sum();
 
-            return repository.getGoal() - totalIncome + totalExpense;
+            return repository.getGoal(user) - totalIncome + totalExpense;
         } catch (SQLException e) {
             System.out.println(databaseError(e));
             return 0;
@@ -102,10 +98,10 @@ public class TransactionStatsService {
      *
      * @return карта категорий и соответствующих расходов
      */
-    public Map<String, Double> analyzeExpenseByCategories() {
+    public Map<String, Double> analyzeExpenseByCategories(User user) {
         List<Transaction> transactionList;
         try {
-            transactionList = repository.getAllTransactions();
+            transactionList = repository.getAllTransactions(user);
         } catch (SQLException e) {
             System.out.println(databaseError(e));
             return new LinkedHashMap<>();
@@ -126,10 +122,10 @@ public class TransactionStatsService {
      *
      * @return уведомление текущем о балансе (доходы минус расходы)
      */
-    public String calculateBalance() {
+    public String calculateBalance(User user) {
         List<Transaction> transactionList;
         try {
-            transactionList = repository.getAllTransactions();
+            transactionList = repository.getAllTransactions(user);
         } catch (SQLException e) {
             return databaseError(e);
         }
@@ -154,10 +150,10 @@ public class TransactionStatsService {
      * @param timestamp2 конечная дата периода
      * @return массив: [доходы, расходы, баланс]
      */
-    public double[] getIncomeExpenseForPeriod(LocalDateTime timestamp1, LocalDateTime timestamp2) {
+    public double[] getIncomeExpenseForPeriod(User user, LocalDateTime timestamp1, LocalDateTime timestamp2) {
         List<Transaction> transactionList;
         try {
-            transactionList = repository.getTransactionsBetweenTimestamps(timestamp1, timestamp2);
+            transactionList = repository.getTransactionsBetweenTimestamps(user, timestamp1, timestamp2);
         } catch (SQLException e) {
             System.out.println(databaseError(e));
             return new double[]{0, 0, 0};
@@ -182,8 +178,8 @@ public class TransactionStatsService {
      * @param endTime   конечная дата периода (может быть null для полного периода)
      * @return объект FinancialReport с данными отчёта или null, если транзакций нет
      */
-    public FinancialReport generateGeneralReport(LocalDateTime startTime, LocalDateTime endTime) {
-        List<Transaction> transactions = getTransactionsForPeriod(startTime, endTime);
+    public FinancialReport generateGeneralReport(User user, LocalDateTime startTime, LocalDateTime endTime) {
+        List<Transaction> transactions = getTransactionsForPeriod(user, startTime, endTime);
         if (!transactions.isEmpty()) {
             double[] basicStats = getBasicStats(transactions);
             assert basicStats != null;
@@ -216,7 +212,7 @@ public class TransactionStatsService {
                 categoryReport.put(category, stats);
             }
 
-            double[] goalData = calculateGoalData(startTime, endTime);
+            double[] goalData = calculateGoalData(user, startTime, endTime);
 
             return new FinancialReport(totalIncome, totalExpense, totalBalance, categoryReport, goalData);
         }
@@ -230,18 +226,18 @@ public class TransactionStatsService {
      * @param endTime   конечная дата периода (может быть null)
      * @return список транзакций за период или все транзакции, если период не задан
      */
-    private List<Transaction> getTransactionsForPeriod(LocalDateTime startTime, LocalDateTime endTime) {
+    private List<Transaction> getTransactionsForPeriod(User user, LocalDateTime startTime, LocalDateTime endTime) {
         try {
             if (startTime == null && endTime == null) {
-                return repository.getAllTransactions();
+                return repository.getAllTransactions(user);
             }
             if (startTime != null && endTime != null) {
-                return repository.getTransactionsBetweenTimestamps(startTime, endTime);
+                return repository.getTransactionsBetweenTimestamps(user, startTime, endTime);
             }
             if (startTime != null) {
-                return repository.getTransactionsAfterTimestamp(startTime);
+                return repository.getTransactionsAfterTimestamp(user, startTime);
             }
-            return repository.getTransactionsBeforeTimestamp(endTime);
+            return repository.getTransactionsBeforeTimestamp(user, endTime);
         } catch (SQLException e) {
             System.out.println(databaseError(e));
             return new ArrayList<>();
@@ -253,29 +249,29 @@ public class TransactionStatsService {
      *
      * @return массив: [цель, доходы по цели, расходы по цели, накоплено, осталось], или null, если нет транзакций
      */
-    public double[] calculateGoalData(LocalDateTime start, LocalDateTime end) {
+    public double[] calculateGoalData(User user, LocalDateTime start, LocalDateTime end) {
         List<Transaction> goalTransactions;
         try {
             if (start == null && end != null) {
-                goalTransactions = repository.getTransactionsBeforeTimestamp(end)
+                goalTransactions = repository.getTransactionsBeforeTimestamp(user, end)
                         .stream()
                         .filter(t -> "цель".equalsIgnoreCase(t.getCategory()))
                         .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
                         .collect(Collectors.toList());
             } else if (start != null && end == null) {
-                goalTransactions = repository.getTransactionsAfterTimestamp(start)
+                goalTransactions = repository.getTransactionsAfterTimestamp(user, start)
                         .stream()
                         .filter(t -> "цель".equalsIgnoreCase(t.getCategory()))
                         .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
                         .collect(Collectors.toList());
             } else if (start == null & end == null) {
-                goalTransactions = repository.getAllTransactions()
+                goalTransactions = repository.getAllTransactions(user)
                         .stream()
                         .filter(t -> "цель".equalsIgnoreCase(t.getCategory()))
                         .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
                         .collect(Collectors.toList());
             } else {
-                goalTransactions = repository.getTransactionsBetweenTimestamps(start, end)
+                goalTransactions = repository.getTransactionsBetweenTimestamps(user, start, end)
                         .stream()
                         .filter(t -> "цель".equalsIgnoreCase(t.getCategory()))
                         .sorted(Comparator.comparing(Transaction::getTimestamp).reversed())
@@ -298,7 +294,7 @@ public class TransactionStatsService {
 
             double goalSum;
             try {
-                goalSum = repository.getGoal();
+                goalSum = repository.getGoal(user);
             } catch (SQLException e) {
                 System.out.println(databaseError(e));
                 return null;
@@ -338,35 +334,35 @@ public class TransactionStatsService {
         return "Ошибка базы данных: " + e.getMessage() + " Попробуйте ещё раз!";
     }
 
-    public double getGoal() {
+    public double getGoal(User user) {
         try {
-            return repository.getGoal();
+            return repository.getGoal(user);
         } catch (SQLException e) {
             System.out.println("Ошибка! " + e.getMessage());
             return 0;
         }
     }
 
-    public void setGoal(double newGoal) {
+    public void setGoal(User user, double newGoal) {
         try {
-            repository.setGoal(newGoal);
+            repository.setGoal(user, newGoal);
         } catch (SQLException e) {
             System.out.println("Ошибка! " + e.getMessage());
         }
     }
 
-    public double getMonthlyBudget() {
+    public double getMonthlyBudget(User user) {
         try {
-            return repository.getMonthlyBudget();
+            return repository.getMonthlyBudget(user);
         } catch (SQLException e) {
             System.out.println("Ошибка! " + e.getMessage());
             return 0;
         }
     }
 
-    public void setMonthlyBudget(double newBudget) {
+    public void setMonthlyBudget(User user, double newBudget) {
         try {
-            repository.setMonthlyBudget(newBudget);
+            repository.setMonthlyBudget(user, newBudget);
         } catch (SQLException e) {
             System.out.println("Ошибка! " + e.getMessage());
         }
@@ -376,7 +372,7 @@ public class TransactionStatsService {
      * Финансовый отчёт пользователя.
      *
      */
-    public class FinancialReport {
+    public static class FinancialReport {
         public double totalIncome;
         public double totalExpense;
         public double totalBalance;
