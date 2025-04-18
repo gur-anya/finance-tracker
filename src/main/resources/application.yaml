@@ -1,9 +1,0 @@
-db:
-  username: postgres
-  password: 1234
-  url: jdbc:postgresql://localhost:5432/finance_tracker_db
-  changeLogFile: ./db-changelog/main-changelog.xml
-springfox:
-  documentation:
-    swagger-ui:
-      base-url: /v2/api-docs
