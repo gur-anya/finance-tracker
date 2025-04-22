@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.ylabHomework.models.User;
 import org.ylabHomework.serviceClasses.Constants;
 
-
 import java.sql.SQLException;
 import java.util.List;
 
@@ -36,12 +35,15 @@ public class UserRepository {
         return jdbcTemplate.query(
                 Constants.FIND_ALL_USERS,
                 (rs, rowNum) -> {
-                        User user = new User(
-                                rs.getString("name"),
-                                rs.getString("email").toLowerCase().trim(),
-                                rs.getString("password"),
-                                rs.getInt("role_id"));
-                        user.setActive(rs.getBoolean("is_active"));
+                    User user = new User(
+                            rs.getInt("id"),
+                            rs.getString("name"),
+                            rs.getString("email").toLowerCase().trim(),
+                            rs.getString("password"),
+                            rs.getInt("role_id"),
+                            rs.getBoolean("is_active"),
+                            rs.getDouble("monthly_budget"),
+                            rs.getDouble("goal"));
                     return user;
                 });
     }
@@ -71,20 +73,50 @@ public class UserRepository {
      * @throws SQLException если произошла ошибка при работе с базой данных
      */
     @Transactional(readOnly = true)
-    public User readUserByEmail(String email) throws SQLException {
+    public User readUserByEmail(String email) {
         String normalizedEmail = email.toLowerCase().trim();
         return jdbcTemplate.query(
                 Constants.FIND_USER_BY_EMAIL,
                 new Object[]{normalizedEmail},
                 (rs) -> {
                     if (rs.next()) {
-                        User user = new User(
+                        return new User(
+                                rs.getInt("id"),
                                 rs.getString("name"),
                                 rs.getString("email").toLowerCase().trim(),
                                 rs.getString("password"),
-                                rs.getInt("role_id"));
-                        user.setActive(rs.getBoolean("is_active"));
-                        return user;
+                                rs.getInt("role_id"),
+                                rs.getBoolean("is_active"),
+                                rs.getDouble("monthly_budget"),
+                                rs.getDouble("goal"));
+                    }
+                    return null;
+                });
+    }
+
+    /**
+     * Находит пользователя по id.
+     *
+     * @param id id пользователя
+     * @return объект User, если пользователь найден; null иначе
+     * @throws SQLException если произошла ошибка при работе с базой данных
+     */
+    @Transactional(readOnly = true)
+    public User readUserById(int id) {
+        return jdbcTemplate.query(
+                Constants.FIND_USER_BY_ID,
+                new Object[]{id},
+                (rs) -> {
+                    if (rs.next()) {
+                        return new User(
+                                rs.getInt("id"),
+                                rs.getString("name"),
+                                rs.getString("email").toLowerCase().trim(),
+                                rs.getString("password"),
+                                rs.getInt("role_id"),
+                                rs.getBoolean("is_active"),
+                                rs.getDouble("monthly_budget"),
+                                rs.getDouble("goal"));
                     }
                     return null;
                 });
@@ -100,9 +132,9 @@ public class UserRepository {
     @Transactional(rollbackFor = Exception.class)
     public boolean deleteUserByEmail(String email) throws SQLException {
         String normalizedEmail = email.toLowerCase().trim();
-        jdbcTemplate.update(Constants.DELETE_USER_BY_EMAIL,
+        int rowsAffected = jdbcTemplate.update(Constants.DELETE_USER_BY_EMAIL,
                 normalizedEmail);
-        return true;
+        return rowsAffected > 0;
     }
 
     /**
@@ -133,6 +165,7 @@ public class UserRepository {
                 user.getEmail().toLowerCase().trim());
     }
 
+
     /**
      * Присваивает пользователю новый зашифрованный пароль.
      *
@@ -150,36 +183,32 @@ public class UserRepository {
     /**
      * Изменяет статус активности аккаунта пользователя.
      *
-     * @param isActive новый статус активности аккаунта пользователя
+     * @param is_active новый статус активности аккаунта пользователя
      * @param user     пользователь, для которого обновляется статус
      * @throws SQLException если произошла ошибка при работе с базой данных
      */
     @Transactional(rollbackFor = Exception.class)
-    public void updateActive(boolean isActive, User user) throws SQLException {
+    public void updateActive(boolean is_active, User user) throws SQLException {
         jdbcTemplate.update(Constants.UPDATE_USER_ACTIVITY,
-                isActive,
+                is_active,
                 user.getEmail().toLowerCase().trim());
     }
 
-    /**
-     * Находит id пользователя по заданному адресу электронной почты. В случае выброса SQLException выводится содержимое исключения.
-     *
-     * @param email адрес электронной почты пользователя; нормализуется в методе
-     * @return int id - id пользователя с заданным адресом электронной почты, если пользователь существует;
-     * -1 иначе
-     */
-    @Transactional(readOnly = true)
-    public int findUserIdByEmail(String email) throws SQLException {
-        String normalizedEmail = email.toLowerCase().trim();
-        return jdbcTemplate.query(
-                Constants.FIND_USER_BY_EMAIL,
-                new Object[]{normalizedEmail},
-                (rs) -> {
-                    int userId = -1;
-                    if (rs.next()) {
-                        userId = rs.getInt("id");
-                    }
-                    return userId;
-                });
+
+    @Transactional(rollbackFor = Exception.class)
+    public void setMonthlyBudget(User user, double budget) throws SQLException {
+        jdbcTemplate.update(Constants.SET_MONTHLY_BUDGET,
+                budget,
+                user);
     }
+
+
+    @Transactional(rollbackFor = Exception.class)
+    public void setGoal(User user, double goal) throws SQLException {
+        jdbcTemplate.update(Constants.SET_GOAL,
+                goal,
+                user);
+    }
+
+
 }

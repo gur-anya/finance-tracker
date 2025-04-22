@@ -22,9 +22,9 @@ https://github.com/anya-ananasss/FinanceTracker/pull/1
 
 **Тестирование**:
 - Покрытие кода unit-тестами на 75%
- 
+
 ### Домашнее задание №2
-https://github.com/anya-ananasss/FinanceTracker/pull/2 
+https://github.com/anya-ananasss/FinanceTracker/pull/2
 
 Интеграция с базой данных PostgreSQL.
 
@@ -55,7 +55,7 @@ https://github.com/anya-ananasss/financeTracker/pull/3
 - Покрытие сервлетов тестами
 
 ### Домашнее задание №4
-https://github.com/anya-ananasss/FinanceTracker/pull/4 
+https://github.com/anya-ananasss/FinanceTracker/pull/4
 
 Миграция на Spring Framework.
 
@@ -68,7 +68,7 @@ https://github.com/anya-ananasss/FinanceTracker/pull/4
 - Написание тестов на контроллеры с WebMVC.
 
 ### Домашнее задание №5
-https://github.com/anya-ananasss/FinanceTracker/pull/5 
+https://github.com/anya-ananasss/FinanceTracker/pull/5
 
 Миграция на Spring Boot 3.2.0.
 

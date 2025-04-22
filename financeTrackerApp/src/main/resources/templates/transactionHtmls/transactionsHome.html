@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+    <title>Меню управления транзакциями</title>
+</head>
+<body>
+<p>
+    Выберите, что хотите сделать:
+</p>
+<div>
+    <button id="transactions" onclick="goToTransactions()">Перейти к транзакциям</button>
+</div>
+<div>
+    <button id="stats" onclick="goToStats()">Перейти к статистике</button>
+</div>
+<div>
+    <button id="goback" onclick="goBack()">Назад</button>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/home', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/home');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    });
+
+    async function goToTransactions() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/manage', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/manage');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    }
+
+    async function goToStats() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/stats/home', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/stats/home');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    }
+
+    async function goBack() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/home', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/home');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    }
+</script>
+</body>
+</html>

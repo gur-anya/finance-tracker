@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+    <title>Анализ расходов по категориям</title>
+</head>
+<body>
+<div id="expensesList"></div>
+<div>
+    <button id="goBack" onclick="goBack()">Назад</button>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/stats/categoryExpenses', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/stats/categoryExpenses');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    });
+
+    window.onload = function () {
+        const token = localStorage.getItem('token');
+        fetch('/transactions/stats/get/categoryExpenses', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    document.getElementById("expensesList").textContent = "Ошибка загрузки";
+                }
+                return response.json();
+            })
+            .then(data => {
+                fillTable(data);
+            })
+            .catch(error => {
+                if (error.message !== null && error.message !== "") {
+                    document.getElementById("expensesList").textContent = error.message;
+                } else {
+                    document.getElementById("expensesList").textContent = "Ошибка при загрузке транзакций";
+                }
+            });
+    };
+
+    function fillTable(data) {
+        const container = document.getElementById("expensesList");
+        container.innerHTML = "";
+
+        let index = 1;
+
+        Object.entries(data).forEach(([category, sum]) => {
+            const ul = document.createElement("ul");
+            const li = document.createElement("li");
+            const formattedCategory = category.toLowerCase().charAt(0).toUpperCase() + category.toLowerCase().slice(1);
+
+            li.textContent = index + ". " + formattedCategory + ": " + Number(sum).toFixed(2) + " руб.";
+            ul.appendChild(li);
+            container.appendChild(ul);
+
+            const hr = document.createElement("hr");
+            container.appendChild(hr);
+
+            index++;
+        });
+    }
+
+    async function goBack() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/stats/home', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/stats/home');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    }
+</script>
+</body>
+</html>

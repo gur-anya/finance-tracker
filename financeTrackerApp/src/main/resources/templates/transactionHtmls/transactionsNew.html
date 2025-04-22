@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+    <title>Создать транзакцию</title>
+</head>
+<body>
+<h1>
+    Создание транзакции
+</h1>
+<form id="transCreationForm">
+    <div>
+        <label> Тип:
+            <select id="formType" name="type">
+                <option value="1">Доход</option>
+                <option value="2">Расход</option>
+            </select>
+        </label>
+    </div>
+    <div>
+        <label> Сумма:
+            <input id="formSum" min="0" name="sum" step="0.01" type="number">
+        </label>
+    </div>
+    <div>
+        <label> Категория:
+            <input id="formCategory" maxlength="50" minlength="2" name="category" type="text">
+        </label>
+    </div>
+    <div>
+        <label> Описание:
+            <textarea id="formDescription" maxlength="200" name="description"></textarea>
+        </label>
+    </div>
+    <button id="sendData" type="submit">Создать транзакцию</button>
+    <button id="goBack" onclick="goBack()" type="button">Назад</button>
+</form>
+<div>
+    <p id="stateMessage"></p>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/manage/new', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/manage/new');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    });
+
+    document.querySelector("form").addEventListener("submit", function (event) {
+        event.preventDefault();
+    });
+
+    document.getElementById("sendData").addEventListener("click", function (event) {
+        event.preventDefault();
+        sendJSON();
+    });
+
+    function sendJSON() {
+        const formDataArr = new FormData(document.getElementById("transCreationForm"));
+        const result = {};
+
+        formDataArr.forEach((value, key) => {
+            result[key] = value;
+        });
+
+        const jsonString = JSON.stringify(result);
+        const token = localStorage.getItem('token');
+
+        fetch('/transactions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+                'Authorization': `Bearer ${token}`
+            },
+            body: jsonString
+        }).then(response => {
+            return response.json();
+        }).then(data => {
+            document.getElementById("stateMessage").innerText = data.message;
+        });
+    }
+
+    async function goBack() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/manage', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/manage');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    }
+</script>
+</body>
+</html>

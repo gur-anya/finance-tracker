@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+    <title>Обновить транзакцию</title>
+</head>
+<body>
+<p>Выберите транзакцию, которую хотите обновить</p>
+<div id="transactionList"></div>
+<form>
+    <label> Номер транзакции, которую обновить
+        <input id="transNumberInp" min="1" name="transNumber" oninput="transNumChanged()" required step="1"
+               type="number">
+    </label>
+</form>
+<form id="updateForm">
+    <div>
+        <label> Тип:
+            <select id="formType" name="type">
+                <option value="1">Доход</option>
+                <option value="2">Расход</option>
+            </select>
+            <input id="originalType" name="originalType" type="hidden">
+        </label>
+    </div>
+    <div>
+        <label> Сумма:
+            <input id="formSum" min="0" name="sum" step="0.01" type="number">
+            <input id="originalSum" name="originalSum" type="hidden">
+        </label>
+    </div>
+    <div>
+        <label> Новая категория:
+            <input id="formCategory" name="category" type="text">
+            <input id="originalCategory" name="originalName" type="hidden">
+        </label>
+    </div>
+    <div>
+        <label> Новое описание:
+            <input id="formDescription" name="description">
+            <input id="originalDescription" name="originalDescription" type="hidden">
+        </label>
+    </div>
+</form>
+<div>
+    <button id="goBack" onclick="goBack()">Назад</button>
+</div>
+<div>
+    <button id="doUpdate">Обновить транзакцию под выбранным номером</button>
+</div>
+<div>
+    <p id="stateMessage"></p>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/manage/edit', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/manage/edit');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    });
+
+    let transactions;
+
+    function formatTimestamp(timestamp) {
+        const date = new Date(timestamp);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return year + "-" + month + "-" + day + " " + hours + ":" + minutes;
+    }
+
+    window.onload = function () {
+        const token = localStorage.getItem('token');
+        fetch('/transactions', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    document.getElementById("stateMessage").textContent = "Ошибка при загрузке транзакций";
+                }
+                return response.json();
+            })
+            .then(data => {
+                fillTable(data);
+            })
+            .catch(error => {
+                if (error.message !== null || error.message !== "") {
+                    document.getElementById("stateMessage").textContent = error.message;
+                } else {
+                    document.getElementById("stateMessage").textContent = "Ошибка при загрузке транзакций";
+                }
+            });
+    };
+
+    function fillTable(data) {
+        const container = document.getElementById("transactionList");
+        const numberInput = document.getElementById("transNumberInp");
+        container.innerHTML = "";
+
+        transactions = data.transactions;
+
+        if (transactions.length === 0) {
+            container.textContent = "Транзакции не найдены";
+            return;
+        } else {
+            numberInput.max = transactions.length;
+        }
+
+        let index = 1;
+
+        transactions.forEach((transaction) => {
+            const ul = document.createElement("ul");
+            const li = document.createElement("li");
+
+            const typeText = transaction.type === 1 ? "Доход" : "Расход";
+            const sum = transaction.sum;
+            const category = transaction.category;
+            const description = transaction.description;
+            const timestamp = formatTimestamp(transaction.timestamp);
+
+            li.textContent = index + ". " + typeText + ": " + sum + ", " + category + ", " + description + ", " + timestamp;
+            ul.appendChild(li);
+            index = index + 1;
+            container.appendChild(ul);
+
+            const hr = document.createElement("hr");
+            container.appendChild(hr);
+        });
+
+        if (numberInput.value !== "" && !isNaN(parseInt(numberInput.value))) {
+            transNumChanged();
+        }
+    }
+
+    function transNumChanged() {
+        const input = document.getElementById("transNumberInp");
+        const deleteIndex = parseInt(input.value) - 1;
+
+        const toChange = transactions[deleteIndex];
+
+        document.getElementById("formType").value = toChange.type;
+        document.getElementById("originalType").value = toChange.type;
+
+        document.getElementById("formSum").value = toChange.sum;
+        document.getElementById("originalSum").value = toChange.sum;
+
+        document.getElementById("formCategory").value = toChange.category;
+        document.getElementById("originalCategory").value = toChange.category;
+
+        document.getElementById("formDescription").value = toChange.description;
+        document.getElementById("originalDescription").value = toChange.description;
+    }
+
+    function sendJSON() {
+        const input = document.getElementById("transNumberInp");
+        const result = {};
+
+        const deleteIndex = parseInt(input.value) - 1;
+
+        const toUpdate = transactions[deleteIndex];
+
+        result["type"] = document.getElementById("formType").value;
+        result["sum"] = document.getElementById("formSum").value;
+        result["category"] = document.getElementById("formCategory").value;
+        result["description"] = document.getElementById("formDescription").value;
+
+        if (result["type"] !== document.getElementById("originalType").value) {
+            result["isType"] = true;
+        }
+        if (result["sum"] !== document.getElementById("originalSum").value) {
+            result["isSum"] = true;
+        }
+        if (result["category"] !== document.getElementById("originalCategory").value) {
+            result["isCategory"] = true;
+        }
+        if (result["description"] !== document.getElementById("originalDescription").value) {
+            result["isDescription"] = true;
+        }
+
+        result["timestamp"] = toUpdate.timestamp;
+
+        const jsonString = JSON.stringify(result);
+        const token = localStorage.getItem('token');
+
+        fetch('/transactions', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+                'Authorization': `Bearer ${token}`
+            },
+            body: jsonString
+        }).then(response => {
+            return response.json();
+        }).then(data => {
+            document.getElementById("stateMessage").innerText = data.message;
+            fetch('/transactions', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        document.getElementById("stateMessage").textContent = "Ошибка при загрузке транзакций";
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    fillTable(data);
+                })
+                .catch(error => {
+                    if (error.message !== null || error.message !== "") {
+                        document.getElementById("stateMessage").textContent = error.message;
+                    } else {
+                        document.getElementById("stateMessage").textContent = "Ошибка при загрузке транзакций";
+                    }
+                });
+        });
+    }
+
+    async function goBack() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/manage', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/manage');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    }
+
+    document.getElementById("doUpdate").addEventListener("click", function (event) {
+        event.preventDefault();
+        sendJSON();
+    });
+</script>
+</body>
+</html>
