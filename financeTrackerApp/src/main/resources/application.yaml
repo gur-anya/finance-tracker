@@ -4,10 +4,6 @@ spring:
     username: postgres
     password: 1234
     driver-class-name: org.postgresql.Driver
-  mvc:
-    view:
-      prefix: WEB-INF/views/
-      suffix: .jsp
   sql:
     init:
       mode: always
@@ -16,6 +12,10 @@ spring:
   liquibase:
     default-schema: service_schema
     change-log: classpath:db-changelog/main-changelog.xml
-logging:
+
   level:
     web: debug
+
+jwt:
+  secret: dE567g8gHjh1kUIol0ovzWpo85hUIhhCF13gbnOPPm5vtI9784gvf56shk
+  expiration: 2592000000

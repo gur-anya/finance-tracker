@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+    <title>Вход</title>
+</head>
+<body>
+<h1>Вход</h1>
+<form id="loginForm">
+    <div>
+        <label>Адрес электронной почты:
+            <input maxlength="100" minlength="5" name="email" type="email">
+        </label>
+    </div>
+    <div>
+        <label>Пароль:
+            <input maxlength="128" minlength="8" name="password" type="password">
+        </label>
+    </div>
+    <div>
+        <button id="sendData" type="submit">Войти</button>
+        <button id="goBack" onclick="window.location.href='/'">Назад</button>
+    </div>
+    <div>
+        <p id="stateMessage"></p>
+    </div>
+    <script>
+        document.getElementById("sendData").addEventListener("click", function (event) {
+            event.preventDefault();
+            sendJSON();
+        });
+
+        async function sendJSON() {
+            const formDataArr = new FormData(document.getElementById("loginForm"));
+            const result = {};
+
+            formDataArr.forEach((value, key) => {
+                result[key] = value;
+            });
+
+            const jsonString = JSON.stringify(result);
+
+            const loginResponse = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=UTF-8'
+                },
+                body: jsonString
+            });
+
+            const data = await loginResponse.json();
+
+            if (loginResponse.ok) {
+                const token = data.token;
+                localStorage.setItem('token', token);
+                const homeResponse = await fetch('/home', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (homeResponse.ok) {
+                    document.open();
+                    document.write(await homeResponse.text());
+                    document.close();
+                    history.pushState({}, '', '/home');
+                } else {
+                    document.getElementById("stateMessage").innerText = 'Ошибка загрузки домашней страницы';
+                }
+            } else {
+                document.getElementById("stateMessage").innerText = data.message || 'Ошибка логина';
+            }
+        }
+    </script>
+</form>
+</body>
+</html>

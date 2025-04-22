@@ -2,13 +2,13 @@ package org.ylabHomework.DTOs.UserDTOs;
 
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ylabHomework.serviceClasses.Unique;
-
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import org.ylabHomework.serviceClasses.ValidPassword;
 
 /**
  * DTO, передающий объект логина пользователя. Содержит email и пароль, переданные при входе.
@@ -23,10 +23,14 @@ import jakarta.validation.constraints.NotEmpty;
 @AllArgsConstructor
 public class LoginDTO {
     @Email(message = "Введите корректный email.")
-    @NotEmpty(message = "Поле email не должно быть пустым.")
-    @Unique(uniqueRequired = true, message = "Пользователь с таким email не найден, повторите попытку.")
+    @NotBlank(message = "Поле email не должно быть пустым.")
+    @Size(min = 5, message = "Слишком короткий email!")
+    @Size(max = 100, message = "Слишком длинный email!")
     private String email;
 
-    @NotEmpty(message = "Пароль не должен быть пустым.")
+    @NotBlank(message = "Пароль не должен быть пустым.")
+    @Size(min = 8, message = "Слишком короткий пароль!")
+    @Size(max = 128, message = "Слишком длинный пароль!")
+    @ValidPassword
     private String password;
 }

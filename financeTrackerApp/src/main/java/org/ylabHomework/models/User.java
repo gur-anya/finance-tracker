@@ -1,9 +1,10 @@
 package org.ylabHomework.models;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static java.util.Objects.hash;
@@ -25,12 +26,12 @@ import static java.util.Objects.hash;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+    private int id;
     private String name;
     private String email;
     private String password;
     private int role;
     private boolean isActive;
-    private List<Transaction> transactions;
     private double monthlyBudget;
     private double goal;
 
@@ -44,23 +45,10 @@ public class User {
                 Objects.equals(this.password, toWork.password));
     }
 
+
     @Override
     public int hashCode() {
         return hash(this.email, this.name, this.password);
     }
 
-    public User(String name, String email, String password, int role) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.isActive = true;
-        this.role = role;
-        this.transactions = new ArrayList<>();
-        this.monthlyBudget = 0;
-        this.goal = 0;
-    }
-
-    public String toString() {
-        return "User(name=" + this.getName() + ", email=" + this.getEmail() + ", password=" + this.getPassword() + ", role=" + this.getRole() + ", isActive=" + this.isActive() + ", transactions=" + this.getTransactions() + ", monthlyBudget=" + this.getMonthlyBudget() + ", goal=" + this.getGoal() + ")";
-    }
 }

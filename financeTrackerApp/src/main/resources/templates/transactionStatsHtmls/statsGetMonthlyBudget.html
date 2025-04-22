@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+    <title>Управление месячным бюджетом</title>
+</head>
+<body>
+<div id="budgetContainer"></div>
+<button id="checkBudget" onclick="checkBudget()">Проверить остаток бюджета на месяц</button>
+<button id="changeBudget" onclick="changeBudget()">Изменить месячный бюджет</button>
+<button id="goBack" onclick="goBack()">Назад</button>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/stats/monthlyBudget', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/stats/monthlyBudget');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    });
+
+    window.onload = function () {
+        const token = localStorage.getItem('token');
+        fetch('/transactions/stats/monthlyBudget/get/monthlyBudget', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    document.getElementById("budgetContainer").textContent = "Ошибка загрузки";
+                }
+                return response.json();
+            })
+            .then(data => {
+                const budget = data.value;
+                if (budget === 0.0) {
+                    document.getElementById("budgetContainer").textContent = "Вы еще не установили месячный бюджет!";
+                } else {
+                    document.getElementById("budgetContainer").textContent = "Установленный месячный бюджет: " + Number(budget).toFixed(2) + " руб.";
+                }
+            })
+            .catch(error => {
+                if (error.message !== null && error.message !== "") {
+                    document.getElementById("budgetContainer").textContent = error.message;
+                } else {
+                    document.getElementById("budgetContainer").textContent = "Ошибка при загрузке транзакций";
+                }
+            });
+    };
+
+    async function checkBudget() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/stats/monthlyBudget/status', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/stats/monthlyBudget/status');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    }
+
+    async function changeBudget() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/stats/monthlyBudget/update', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/stats/monthlyBudget/update');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    }
+
+    async function goBack() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/stats/home', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/stats/home');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    }
+</script>
+</body>
+</html>

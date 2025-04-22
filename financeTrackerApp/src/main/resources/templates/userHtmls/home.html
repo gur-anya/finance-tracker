@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <title>Здравствуйте!</title>
+</head>
+<body>
+<p>
+    Здравствуйте, <span th:text="${username}"/>! Выберите, что хотите сделать:
+</p>
+<div>
+    <button id="personalAccount">Перейти в личный кабинет</button>
+</div>
+<div>
+    <button id="finances">Перейти к управлению финансами</button>
+</div>
+<div>
+    <button id="logout">Выйти</button>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/home', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/home');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    });
+
+    document.getElementById("personalAccount").addEventListener("click", async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+        try {
+            const response = await fetch('/profile', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/profile');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    });
+
+    document.getElementById("finances").addEventListener("click", async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+        try {
+            const response = await fetch('/transactions/home', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/home');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    });
+
+    document.getElementById("logout").addEventListener("click", async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/logout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    });
+</script>
+</body>
+</html>

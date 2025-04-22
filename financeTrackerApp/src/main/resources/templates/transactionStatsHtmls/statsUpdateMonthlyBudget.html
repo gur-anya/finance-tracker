@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+    <title>Изменить месячный бюджет</title>
+</head>
+<body>
+<div>На этой странице вы можете изменить месячный бюджет.</div>
+<div>
+    <form>
+        <label> Новый бюджет:
+            <input id="formSum" min="0" name="sum" step="0.01" type="number">
+        </label>
+    </form>
+</div>
+<div id="stateMessage"></div>
+<button id="sendData" type="submit">Обновить месячный бюджет</button>
+<button id="goBack" onclick="goBack()">Назад</button>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/stats/monthlyBudget/update', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/stats/monthlyBudget/update');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    });
+
+    document.querySelector("form").addEventListener("submit", function (event) {
+        event.preventDefault();
+    });
+
+    document.getElementById("sendData").addEventListener("click", function (event) {
+        event.preventDefault();
+        sendJSON();
+    });
+
+    function sendJSON() {
+        const newSumForm = document.getElementById("formSum");
+        const result = {};
+        result["newValue"] = newSumForm.value;
+        const jsonString = JSON.stringify(result);
+        const token = localStorage.getItem('token');
+
+        fetch('/transactions/stats/monthlyBudget/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json; charset=UTF-8',
+                'Authorization': `Bearer ${token}`
+            },
+            body: jsonString
+        }).then(response => {
+            return response.json();
+        }).then(data => {
+            document.getElementById("stateMessage").innerText = data.message;
+        });
+    }
+
+    async function goBack() {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = '/login';
+            return;
+        }
+
+        try {
+            const response = await fetch('/transactions/stats/monthlyBudget', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                document.open();
+                document.write(await response.text());
+                document.close();
+                history.pushState({}, '', '/transactions/stats/monthlyBudget');
+            } else {
+                localStorage.removeItem('token');
+                window.location.href = '/login';
+            }
+        } catch (error) {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+    }
+</script>
+</body>
+</html>
