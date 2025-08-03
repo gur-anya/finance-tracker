@@ -1,10 +1,13 @@
 package org.ylabHomework.models;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.ylabHomework.serviceClasses.enums.TypeEnum;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
@@ -19,38 +22,35 @@ import java.util.Objects;
  * @since 07.03.2025
  */
 
+@Entity
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class Transaction {
-    private int type;
-    private double sum;
+    @Id
+    private Long id;
+    @Enumerated(EnumType.STRING)
+    private TypeEnum type;
+    private BigDecimal sum;
     private String category;
-    private LocalDateTime timestamp;
     private String description;
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+    private LocalDateTime timestamp;
 
-
-    public Transaction(int type, double sum, String category, String description, int userId) {
-        this.type = type;
-        this.sum = sum;
-        this.category = category;
-        this.description = description;
-        this.userId = userId;
-    }
 
     @Override
-    public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
-        Transaction that = (Transaction) o;
-        return Double.compare(sum, that.sum) == 0 && type == that.type &&
-                Objects.equals(category, that.category) && Objects.equals(timestamp, that.timestamp)
-                && Objects.equals(description, that.description) && Objects.equals(userId, that.userId);
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Transaction that = (Transaction) object;
+        return Objects.equals(id, that.id) && type == that.type && Objects.equals(sum, that.sum) && Objects.equals(category, that.category) && Objects.equals(description, that.description) && Objects.equals(user, that.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, sum, category, timestamp, description, userId);
+        return Objects.hash(id, type, sum, category, description, user);
     }
 }

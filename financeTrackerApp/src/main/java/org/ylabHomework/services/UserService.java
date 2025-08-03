@@ -1,140 +1,99 @@
 package org.ylabHomework.services;
 
 
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.ylabHomework.DTOs.userDTOs.*;
+import org.ylabHomework.mappers.userMappers.CreateUserMapper;
+import org.ylabHomework.mappers.userMappers.UpdateUserMapper;
+import org.ylabHomework.mappers.userMappers.UserMapper;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.UserRepository;
-import org.ylabHomework.serviceClasses.customExceptions.CustomDatabaseException;
 import org.ylabHomework.serviceClasses.customExceptions.EmailAlreadyExistsException;
 import org.ylabHomework.serviceClasses.customExceptions.EmptyValueException;
-import org.ylabHomework.serviceClasses.customExceptions.NoUpdatesException;
+import org.ylabHomework.serviceClasses.customExceptions.UserNotFoundException;
+import org.ylabHomework.serviceClasses.enums.RoleEnum;
 import org.ylabHomework.serviceClasses.springConfigs.security.UserDetailsImpl;
 
-import java.sql.SQLException;
+import java.math.BigDecimal;
+import java.util.Optional;
 
 /**
  * Сервис для работы с сущностью User.
  *
  * @author Gureva Anna
  * @version 1.0
- * @since 09.03.2025
+ * @since 02.08.2025
  */
 @Service
-@Slf4j
-@Data
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserMapper userMapper;
+    private final CreateUserMapper createUserMapper;
+    private final UpdateUserMapper updateUserMapper;
 
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        String normalizedEmail = normalizeEmail(username);
-        User user = readUserByEmail(normalizedEmail);
-        if (user == null) {
-            throw new UsernameNotFoundException("Пользователь с email " + normalizedEmail + " не найден");
-        }
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        String normalizedEmail = normalizeEmail(email);
+        User user = userRepository.findByEmail(normalizedEmail).orElseThrow(UserNotFoundException::new);
         return UserDetailsImpl.build(user);
     }
 
     /**
      * Создаёт нового пользователя с заданными данными.
      */
-    public void createUser(User newUser) {
-        String normalizedEmail = normalizeEmail(newUser.getEmail());
-        if (repository.readUserByEmail(normalizedEmail) != null) {
+    public CreateUserResponseDTO createUser(CreateUserRequestDTO userRequestDTO) {
+        String normalizedEmail = normalizeEmail(userRequestDTO.getEmail());
+        Optional<User> foundUser = userRepository.findByEmail(normalizedEmail);
+        if (foundUser.isPresent()) {
             throw new EmailAlreadyExistsException();
         }
-        String encryptedPass = passwordEncoder.encode(newUser.getPassword());
-        newUser.setEmail(normalizedEmail);
-        newUser.setPassword(encryptedPass);
-        newUser.setRole(1);
+        User newUser = createUserMapper.toModel(userRequestDTO);
+        newUser.setRole(RoleEnum.USER);
         newUser.setActive(true);
-        newUser.setMonthlyBudget(0.0);
-        newUser.setGoal(0.0);
-        try {
-            repository.addUser(newUser);
-        } catch (SQLException e) {
-            throw new CustomDatabaseException(e);
-        }
+        newUser.setBudgetLimit(BigDecimal.ZERO);
+        newUser.setGoal(BigDecimal.ZERO);
+        userRepository.save(newUser);
+        UserDTO userDTO = userMapper.toDTO(newUser);
+        return new CreateUserResponseDTO(userDTO);
     }
 
-    public void updateUserEmail(String newEmail, User user) {
-        if (newEmail == null || newEmail.trim().isEmpty()) {
-            throw new EmptyValueException("email");
+    @Transactional
+    public UpdateUserResponseDTO updateUser(UpdateUserRequestDTO updateUserRequestDTO, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        if (updateUserRequestDTO.getName() != null) {
+            if (updateUserRequestDTO.getName().trim().isEmpty()) {
+                throw new EmptyValueException("name");
+            }
+            user.setName(updateUserRequestDTO.getName());
         }
-        String normalizedEmail = normalizeEmail(newEmail);
-        if (repository.readUserByEmail(normalizedEmail) != null) {
-            throw new EmailAlreadyExistsException();
+        if (updateUserRequestDTO.getNewPassword() != null && updateUserRequestDTO.getOldPassword() != null) {
+            if (updateUserRequestDTO.getNewPassword().trim().isEmpty()) {
+                throw new EmptyValueException("new password");
+            }
+            if (!passwordEncoder.matches(updateUserRequestDTO.getOldPassword(), user.getPassword())) {
+                throw new BadCredentialsException("wrong old password");
+            }
+            user.setPassword(passwordEncoder.encode(updateUserRequestDTO.getNewPassword()));
         }
-        try {
-            repository.updateEmail(normalizedEmail, user);
-        } catch (SQLException e) {
-            throw new CustomDatabaseException(e);
-        }
+        return updateUserMapper.toDTO(user);
+
     }
 
-    public void updateUserName(String newName, User user) {
-        if (newName == null || newName.trim().isEmpty()) {
-            throw new EmptyValueException("имя");
-        }
-        try {
-            repository.updateName(newName, user);
-        } catch (SQLException e) {
-            throw new CustomDatabaseException(e);
-        }
-    }
-
-    public void updateUserPassword(String newPassword, String oldPassword, User user) {
-        if (newPassword == null || newPassword.trim().isEmpty()) {
-            throw new EmptyValueException("пароль");
-        }
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new BadCredentialsException("Неверный текущий пароль!");
-        }
-        if (passwordEncoder.matches(newPassword, user.getPassword())) {
-            throw new NoUpdatesException("пароль");
-        }
-        try {
-            repository.updatePassword(passwordEncoder.encode(newPassword), user);
-        } catch (SQLException e) {
-            throw new CustomDatabaseException(e);
-        }
-    }
-
-    /**
-     * Удаляет пользователя.
-     *
-     * @return сообщение об успешном удалении или об ошибке
-     */
-    public boolean deleteUser(User user) {
-        try {
-            return repository.deleteUserByEmail(normalizeEmail(user.getEmail()));
-        } catch (SQLException e) {
-            throw new CustomDatabaseException(e);
-        }
-    }
-
-    public double getGoal(int userId) {
-        User user = repository.readUserById(userId);
-        if (user == null) {
-            log.error("Пользователь с id {} = null", userId);
-            return -1;
-        }
-        return user.getGoal();
-    }
-
-    public User readUserByEmail(String email) {
-        return repository.readUserByEmail(email);
+    @Transactional
+    public void deleteUser(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(UserNotFoundException::new);
+        userRepository.deleteById(user.getId());
     }
 
     private String normalizeEmail(String email) {
@@ -143,5 +102,6 @@ public class UserService implements UserDetailsService {
         }
         return email.toLowerCase().trim();
     }
+
 }
 

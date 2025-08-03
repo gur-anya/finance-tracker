@@ -26,19 +26,19 @@ public class JWTCore {
         Date expiration = new Date(now.getTime() + lifetime);
 
         return Jwts.builder()
-                .subject(userDetails.getEmail())
-                .issuedAt(now)
-                .expiration(expiration)
-                .signWith(secretKey)
-                .compact();
+            .subject(userDetails.getEmail())
+            .issuedAt(now)
+            .expiration(expiration)
+            .signWith(secretKey)
+            .compact();
     }
 
     public String getEmailFromJwt(String token) {
         return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+            .verifyWith(secretKey)
+            .build()
+            .parseSignedClaims(token)
+            .getPayload()
+            .getSubject();
     }
 }

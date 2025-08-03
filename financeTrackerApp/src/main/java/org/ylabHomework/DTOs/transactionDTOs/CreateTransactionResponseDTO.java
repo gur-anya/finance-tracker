@@ -1,0 +1,12 @@
+package org.ylabHomework.DTOs.transactionDTOs;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CreateTransactionResponseDTO {
+    TransactionDTO transaction;
+}
