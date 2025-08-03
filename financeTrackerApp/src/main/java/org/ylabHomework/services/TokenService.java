@@ -2,6 +2,7 @@ package org.ylabHomework.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.ylabHomework.models.Token;
 import org.ylabHomework.repositories.TokenRepository;
 import org.ylabHomework.serviceClasses.customExceptions.TokenException;
 import org.ylabHomework.serviceClasses.springConfigs.security.JWTCore;
@@ -18,13 +19,13 @@ public class TokenService {
      * Добавляет токен в чёрный список.
      *
      * @param token токен для добавления
-     * @throws IllegalArgumentException если токен недействителен
+     * @throws TokenException если токен недействителен
      */
     public void blacklistToken(String token) {
         try {
             jwtCore.getEmailFromJwt(token);
-            repository.addToken(token);
-
+            Token tokenToSave = new Token(token);
+            repository.save(tokenToSave);
         } catch (Exception e) {
             throw new TokenException(e);
         }
@@ -37,6 +38,6 @@ public class TokenService {
      * @return true, если токен в чёрном списке, иначе false
      */
     public boolean isTokenBlacklisted(String token) {
-        return repository.getToken(token) != null;
+        return repository.findByTokenValue(token).isPresent();
     }
 }

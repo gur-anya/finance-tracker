@@ -1,10 +1,17 @@
 package org.ylabHomework.models;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.ylabHomework.serviceClasses.enums.BudgetNotificationStatus;
+import org.ylabHomework.serviceClasses.enums.RoleEnum;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import static java.util.Objects.hash;
@@ -21,19 +28,24 @@ import static java.util.Objects.hash;
  * @version 1.0
  * @since 07.03.2025
  */
+@Entity
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-    private int id;
+    @Id
+    private Long id;
     private String name;
     private String email;
     private String password;
-    private int role;
+    @Enumerated(EnumType.STRING)
+    private RoleEnum role;
     private boolean isActive;
-    private double monthlyBudget;
-    private double goal;
+    private BigDecimal budgetLimit;
+    private BigDecimal goal;
+    @Enumerated(EnumType.STRING)
+    private BudgetNotificationStatus budgetNotificationStatus;
 
 
     @Override
@@ -41,8 +53,8 @@ public class User {
         if (obj == null || getClass() != obj.getClass()) return false;
         User toWork = (User) obj;
         return (Objects.equals(this.email, toWork.email) &
-                Objects.equals(this.name, toWork.name) &
-                Objects.equals(this.password, toWork.password));
+            Objects.equals(this.name, toWork.name) &
+            Objects.equals(this.password, toWork.password));
     }
 
 

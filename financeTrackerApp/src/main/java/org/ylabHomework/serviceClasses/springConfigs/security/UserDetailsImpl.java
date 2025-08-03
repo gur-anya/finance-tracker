@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.ylabHomework.models.User;
+import org.ylabHomework.serviceClasses.enums.RoleEnum;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -13,20 +14,20 @@ import java.util.Collections;
 @AllArgsConstructor
 @Getter
 public class UserDetailsImpl implements UserDetails {
-
+    private Long id;
     private String email;
     private String password;
-    private int role;
+    private RoleEnum role;
     private boolean isActive;
 
     public static UserDetailsImpl build(User user) {
-        return new UserDetailsImpl(user.getEmail(), user.getPassword(), user.getRole(), user.isActive());
+        return new UserDetailsImpl(user.getId(), user.getEmail(), user.getPassword(), user.getRole(), user.isActive());
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         String roleName = switch (this.role) {
-            case 0 -> "ROLE_ADMIN";
+            case ADMIN -> "ROLE_ADMIN";
             default -> "ROLE_USER";
         };
         return Collections.singletonList(new SimpleGrantedAuthority(roleName));

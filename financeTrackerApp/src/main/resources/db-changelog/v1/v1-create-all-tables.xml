@@ -4,62 +4,34 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
 
-    <changeSet id="create-role-mapping-table" author="Gureva Anna">
-        <createTable tableName="role_mapping" schemaName="main"
-                     remarks="Таблица для сопоставления численного значения и смысла роли пользователя">
-            <column name="id" type="INT"
-                    remarks="Численное значение роли">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="role" type="VARCHAR(10)" remarks="Смысловое значение роли">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
-    <changeSet id="create-type-mapping-table" author="Gureva Anna">
-        <createTable tableName="type_mapping" schemaName="main"
-                     remarks="Таблица для сопоставления численного значения и типа транзакции">
-            <column name="id" type="INT"
-                    remarks="Численное значение типа">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="type" type="VARCHAR(10)" remarks="Тип транзакции">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-    </changeSet>
-
     <changeSet id="create-users-table" author="Gureva Anna">
         <createTable tableName="users" schemaName="main"
                      remarks="Таблица для хранения всех зарегистрированных пользователей">
-            <column name="id" type="BIGINT" defaultValueComputed="nextval('main.user_id_seq') "
-                    remarks="Идентификатор пользователя">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="name" type="VARCHAR(50)" remarks="Имя пользователя">
+            <column name="name" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="email" type="VARCHAR(255)" remarks="Email пользователя (уникален для каждого пользователя)">
+            <column name="email" type="VARCHAR(255)">
                 <constraints nullable="false" unique="true"/>
             </column>
-            <column name="password" type="VARCHAR(255)" remarks="Зашифрованный пароль пользователя">
+            <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="role_id" type="INT" remarks="Числовое значение роли пользователя">
-                <constraints nullable="false" foreignKeyName="fk_user_role" references="main.role_mapping(id)"
-                             deleteCascade="true"/>
-            </column>
-            <column name="is_active" type="BOOLEAN" defaultValue="TRUE"
-                    remarks="Статус аккаунта пользователя (активен/не активен)">
+            <column name="role" type="VARCHAR(255)" defaultValue="USER">
                 <constraints nullable="false"/>
             </column>
-            <column name="monthly_budget" type="DOUBLE" defaultValue="0"
-                    remarks="Месячный бюджет пользователя">
+            <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
                 <constraints nullable="false"/>
             </column>
-            <column name="goal" type="DOUBLE" defaultValue="0"
-                    remarks="Финансовая цель пользователя">
+            <column name="budget_limit" type="DECIMAL(19, 2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="goal" type="DECIMAL(19, 2)" defaultValueNumeric="0.00">
+                <constraints nullable="false"/>
+            </column>
+            <column name="budget_notification_status" type="VARCHAR(255)" defaultValue="NOT_NOTIFIED">
                 <constraints nullable="false"/>
             </column>
         </createTable>
@@ -68,28 +40,24 @@
     <changeSet id="create-transactions-table" author="Gureva Anna">
         <createTable tableName="transactions" schemaName="main"
                      remarks="Таблица для хранения всех созданных транзакций">
-            <column name="id" type="BIGINT" defaultValueComputed="nextval('main.transactions_id_seq')"
-                    remarks="Идентификатор транзакции">
+            <column name="id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="type" type="INT" remarks="Числовое значение типа транзакции">
-                <constraints nullable="false" foreignKeyName="fk_transaction_type" references="main.type_mapping(id)"
-                             deleteCascade="true"/>
-            </column>
-            <column name="sum" type="DECIMAL(15,2)" remarks="Сумма транзакции">
+            <column name="type" type="VARCHAR(255)">
                 <constraints nullable="false"/>
             </column>
-            <column name="category" type="VARCHAR(50)" remarks="Категория транзакции">
+            <column name="sum" type="DECIMAL(19, 2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="description" type="VARCHAR(200)" remarks="Описание транзакции">
+            <column name="category" type="VARCHAR(50)">
                 <constraints nullable="false"/>
             </column>
-            <column name="timestamp" type="TIMESTAMP" remarks="Дата и время создания транзакции">
+            <column name="description" type="VARCHAR(200)"/>
+            <column name="timestamp" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP">
                 <constraints nullable="false"/>
             </column>
-            <column name="user_id" type="BIGINT" remarks="Идентификатор пользователя, создавшего транзакцию">
-                <constraints nullable="false" foreignKeyName="fk_user_id" references="main.users(id)"
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false" foreignKeyName="fk_transactions_users" references="main.users(id)"
                              deleteCascade="true"/>
             </column>
         </createTable>

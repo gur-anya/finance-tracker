@@ -16,10 +16,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import org.ylabHomework.DTOs.ResponseMessageDTO;
+import org.ylabHomework.DTOs.ErrorResponse;
 import org.ylabHomework.services.TokenService;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Component
 @Slf4j
@@ -29,7 +30,6 @@ public class TokenFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final TokenService tokenService;
 
-  
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -66,9 +66,9 @@ public class TokenFilter extends OncePerRequestFilter {
                     userDetails = userDetailsService.loadUserByUsername(email);
                     log.debug("Loaded UserDetails: {}", userDetails.getUsername());
                     auth = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
+                        userDetails,
+                        null,
+                        userDetails.getAuthorities()
                     );
                     log.info("Created authentication: {}", auth);
                     SecurityContextHolder.getContext().setAuthentication(auth);
@@ -97,13 +97,6 @@ public class TokenFilter extends OncePerRequestFilter {
     private void sendErrorResponse(HttpServletResponse response, HttpStatus status, String message) throws IOException {
         response.setContentType("application/json");
         response.setStatus(status.value());
-        new ObjectMapper().writeValue(response.getOutputStream(), new ResponseMessageDTO(message));
-    }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        return path.equals("/login") || path.equals("/signup") || path.equals("/") ||
-                path.startsWith("/static/") || path.equals("/styles.css") || path.equals("/favicon.ico");
+        new ObjectMapper().writeValue(response.getOutputStream(), new ErrorResponse(message, LocalDateTime.now()));
     }
 }
