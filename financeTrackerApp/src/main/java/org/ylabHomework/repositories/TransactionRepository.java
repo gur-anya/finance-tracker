@@ -53,4 +53,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
         "FROM Transaction AS trans " +
         "JOIN User AS us ON trans.user.id=us.id WHERE trans.user = :userId AND trans.category = 'цель' ")
     BigDecimal checkGoal(Long userId);
+    @Query("SELECT ALL FROM Transaction trans WHERE trans.user.id = :userId")
+    List<Transaction> findAllByUserId (Long userId);
 }
