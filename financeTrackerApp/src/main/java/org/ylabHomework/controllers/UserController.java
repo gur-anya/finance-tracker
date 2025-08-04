@@ -28,14 +28,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    @PreAuthorize("#userId == authentication.principal.id or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("#userId == authentication.principal.id or hasRole('ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PatchMapping("/block/{userId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MessageResponseDTO> blockUser(@PathVariable Long userId) {
         userService.blockUser(userId);
         return ResponseEntity.ok(new MessageResponseDTO("User " + userId + " blocked successfully."));
@@ -43,14 +43,14 @@ public class UserController {
     }
 
     @PatchMapping("/unblock/{userId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<MessageResponseDTO> unblockUser(@PathVariable Long userId) {
         userService.unblockUser(userId);
         return ResponseEntity.ok(new MessageResponseDTO("User " + userId + " unblocked successfully."));
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<GetAllUsersResponseDTO> getAllUsers(){
         GetAllUsersResponseDTO usersResponseDTO = userService.getAllUsers();
         return ResponseEntity.ok(usersResponseDTO);
