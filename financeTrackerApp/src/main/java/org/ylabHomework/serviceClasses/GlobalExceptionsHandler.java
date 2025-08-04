@@ -4,16 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.ylabHomework.DTOs.ErrorResponse;
-import org.ylabHomework.serviceClasses.customExceptions.TokenException;
-import org.ylabHomework.serviceClasses.customExceptions.TransactionNotFoundException;
-import org.ylabHomework.serviceClasses.customExceptions.UserNotFoundException;
-import org.ylabHomework.serviceClasses.customExceptions.ValueNotFoundException;
+import org.ylabHomework.serviceClasses.customExceptions.*;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -35,6 +34,12 @@ public class GlobalExceptionsHandler {
         return errors;
     }
 
+    @ExceptionHandler(NoUserActivenessUpdateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleUserActivenessUpdateException(NoUserActivenessUpdateException ex) {
+        log.warn(ex.getMessage());
+        return new ErrorResponse(ex.getMessage(), LocalDateTime.now());
+    }
 
     @ExceptionHandler({TokenException.class, BadCredentialsException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -55,6 +60,14 @@ public class GlobalExceptionsHandler {
         log.warn("Access denied: {}", ex.getMessage());
         return new ErrorResponse("Access denied", LocalDateTime.now());
     }
+
+    @ExceptionHandler({DisabledException.class, LockedException.class})
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleDisabledUser(Exception ex) {
+        log.warn("Account is blocked: {}", ex.getMessage());
+        return new ErrorResponse("Account is blocked.", LocalDateTime.now());
+    }
+
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)

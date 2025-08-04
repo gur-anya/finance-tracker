@@ -17,6 +17,7 @@ import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.UserRepository;
 import org.ylabHomework.serviceClasses.customExceptions.EmailAlreadyExistsException;
 import org.ylabHomework.serviceClasses.customExceptions.EmptyValueException;
+import org.ylabHomework.serviceClasses.customExceptions.NoUserActivenessUpdateException;
 import org.ylabHomework.serviceClasses.customExceptions.UserNotFoundException;
 import org.ylabHomework.serviceClasses.enums.RoleEnum;
 import org.ylabHomework.serviceClasses.springConfigs.security.UserDetailsImpl;
@@ -48,9 +49,9 @@ public class UserService implements UserDetailsService {
         return UserDetailsImpl.build(user);
     }
 
-    /**
-     * Создаёт нового пользователя с заданными данными.
-     */
+    public GetAllUsersResponseDTO getAllUsers(){
+        return new GetAllUsersResponseDTO(userRepository.findAll());
+    }
     public CreateUserResponseDTO createUser(CreateUserRequestDTO userRequestDTO) {
         String normalizedEmail = normalizeEmail(userRequestDTO.getEmail());
         Optional<User> foundUser = userRepository.findByEmail(normalizedEmail);
@@ -94,6 +95,24 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findById(userId)
             .orElseThrow(UserNotFoundException::new);
         userRepository.deleteById(user.getId());
+    }
+
+    @Transactional
+    public void blockUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        if (!user.isActive()) {
+            throw new NoUserActivenessUpdateException(userId, true);
+        }
+        user.setActive(false);
+    }
+
+    @Transactional
+    public void unblockUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        if (user.isActive()) {
+            throw new NoUserActivenessUpdateException(userId, false);
+        }
+        user.setActive(true);
     }
 
     private String normalizeEmail(String email) {

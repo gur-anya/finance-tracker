@@ -67,7 +67,7 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findById(transactionId)
             .orElseThrow(TransactionNotFoundException::new);
         if (!Objects.equals(transaction.getUser().getId(), userId)) {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException("Access to transaction denied");
         }
         if (requestDTO.getSum() != null) {
             transaction.setSum(requestDTO.getSum());
@@ -96,7 +96,7 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findById(transactionId)
             .orElseThrow(TransactionNotFoundException::new);
         if (!Objects.equals(transaction.getUser().getId(), userId)) {
-            throw new AccessDeniedException("Access denied");
+            throw new AccessDeniedException("Access to transaction denied");
         }
         transactionRepository.deleteById(transaction.getId());
         if (transaction.getCategory().trim().equalsIgnoreCase(GOAL_CATEGORY)) {
