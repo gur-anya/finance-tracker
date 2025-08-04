@@ -19,6 +19,7 @@ import org.ylabHomework.serviceClasses.customExceptions.EmailAlreadyExistsExcept
 import org.ylabHomework.serviceClasses.customExceptions.EmptyValueException;
 import org.ylabHomework.serviceClasses.customExceptions.NoUserActivenessUpdateException;
 import org.ylabHomework.serviceClasses.customExceptions.UserNotFoundException;
+import org.ylabHomework.serviceClasses.enums.BudgetNotificationStatus;
 import org.ylabHomework.serviceClasses.enums.RoleEnum;
 import org.ylabHomework.serviceClasses.springConfigs.security.UserDetailsImpl;
 
@@ -59,10 +60,13 @@ public class UserService implements UserDetailsService {
             throw new EmailAlreadyExistsException();
         }
         User newUser = createUserMapper.toModel(userRequestDTO);
+        String rawPassword = newUser.getPassword();
+        newUser.setPassword(passwordEncoder.encode(rawPassword));
         newUser.setRole(RoleEnum.USER);
         newUser.setActive(true);
         newUser.setBudgetLimit(BigDecimal.ZERO);
         newUser.setGoal(BigDecimal.ZERO);
+        newUser.setBudgetNotificationStatus(BudgetNotificationStatus.NOT_NOTIFIED);
         userRepository.save(newUser);
         UserDTO userDTO = userMapper.toDTO(newUser);
         return new CreateUserResponseDTO(userDTO);

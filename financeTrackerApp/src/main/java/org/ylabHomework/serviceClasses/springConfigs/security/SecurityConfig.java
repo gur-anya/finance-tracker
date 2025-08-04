@@ -36,13 +36,12 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
             .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint((request, response, authException) -> {
-                log.error("Authentication error: {}", authException.getMessage(), authException);
+                log.warn("Authentication error: {}", authException.getMessage(), authException);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed");
             }))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/signup").permitAll()
-                .requestMatchers("/favicon.ico", "/static/**", "/resources/**", "/webjars/**", "/styles.css").permitAll()
+                .requestMatchers("/api/v1/auth/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
