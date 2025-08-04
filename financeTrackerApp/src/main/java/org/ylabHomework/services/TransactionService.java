@@ -2,6 +2,8 @@ package org.ylabHomework.services;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -10,6 +12,7 @@ import org.ylabHomework.DTOs.transactionDTOs.*;
 import org.ylabHomework.events.GoalActionEvent;
 import org.ylabHomework.events.TransactionActionEvent;
 import org.ylabHomework.mappers.transactionMappers.CreateTransactionMapper;
+import org.ylabHomework.mappers.transactionMappers.GetAllTransactionsMapper;
 import org.ylabHomework.mappers.transactionMappers.TransactionMapper;
 import org.ylabHomework.mappers.transactionMappers.UpdateTransactionMapper;
 import org.ylabHomework.models.Transaction;
@@ -20,6 +23,7 @@ import org.ylabHomework.serviceClasses.customExceptions.NoGoalException;
 import org.ylabHomework.serviceClasses.customExceptions.TransactionNotFoundException;
 import org.ylabHomework.serviceClasses.customExceptions.UserNotFoundException;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -37,9 +41,18 @@ public class TransactionService {
     private final CreateTransactionMapper createTransactionMapper;
     private final UpdateTransactionMapper updateTransactionMapper;
     private final TransactionMapper transactionMapper;
+    private final GetAllTransactionsMapper getAllTransactionsMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
     private final String GOAL_CATEGORY = "цель";
 
+    @Cacheable(cacheNames = "userTransactions")
+    public GetAllTransactionsResponseDTO getAllTransactionsByUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        List<Transaction> transactionsList = transactionRepository.findAllByUserId(user.getId());
+        return getAllTransactionsMapper.toDTO(transactionsList);
+    }
+
+    @CacheEvict(cacheNames = "userTransactions", key = "#userId")
     public CreateTransactionResponseDTO createTransaction(CreateTransactionRequestDTO transactionRequestDTO, Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
@@ -63,6 +76,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = "userTransactions", key = "#userId")
     public UpdateTransactionResponseDTO updateTransaction(UpdateTransactionRequestDTO requestDTO, Long transactionId, Long userId) {
         Transaction transaction = transactionRepository.findById(transactionId)
             .orElseThrow(TransactionNotFoundException::new);
@@ -92,6 +106,7 @@ public class TransactionService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = "userTransactions", key = "#userId")
     public void deleteTransaction(Long transactionId, Long userId) {
         Transaction transaction = transactionRepository.findById(transactionId)
             .orElseThrow(TransactionNotFoundException::new);

@@ -7,10 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.ylabHomework.DTOs.transactionDTOs.CreateTransactionRequestDTO;
-import org.ylabHomework.DTOs.transactionDTOs.CreateTransactionResponseDTO;
-import org.ylabHomework.DTOs.transactionDTOs.UpdateTransactionRequestDTO;
-import org.ylabHomework.DTOs.transactionDTOs.UpdateTransactionResponseDTO;
+import org.ylabHomework.DTOs.transactionDTOs.*;
 import org.ylabHomework.serviceClasses.springConfigs.security.UserDetailsImpl;
 import org.ylabHomework.services.TransactionService;
 
@@ -43,5 +40,12 @@ public class TransactionController {
                                                @AuthenticationPrincipal UserDetailsImpl currentUser) {
         transactionService.deleteTransaction(transactionId, currentUser.getId());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @GetMapping()
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<GetAllTransactionsResponseDTO> getAllTransactionsByUser (@AuthenticationPrincipal UserDetailsImpl currentUser) {
+       GetAllTransactionsResponseDTO allTransactions = transactionService.getAllTransactionsByUser(currentUser.getId());
+       return ResponseEntity.ok(allTransactions);
     }
 }

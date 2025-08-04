@@ -2,6 +2,8 @@ package org.ylabHomework.services;
 
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.ylabHomework.DTOs.userDTOs.*;
 import org.ylabHomework.mappers.userMappers.CreateUserMapper;
+import org.ylabHomework.mappers.userMappers.GetAllUsersMapper;
 import org.ylabHomework.mappers.userMappers.UpdateUserMapper;
 import org.ylabHomework.mappers.userMappers.UserMapper;
 import org.ylabHomework.models.User;
@@ -24,6 +27,7 @@ import org.ylabHomework.serviceClasses.enums.RoleEnum;
 import org.ylabHomework.serviceClasses.springConfigs.security.UserDetailsImpl;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -41,6 +45,7 @@ public class UserService implements UserDetailsService {
     private final UserMapper userMapper;
     private final CreateUserMapper createUserMapper;
     private final UpdateUserMapper updateUserMapper;
+    private final GetAllUsersMapper getAllUsersMapper;
 
 
     @Override
@@ -50,9 +55,13 @@ public class UserService implements UserDetailsService {
         return UserDetailsImpl.build(user);
     }
 
-    public GetAllUsersResponseDTO getAllUsers(){
-        return new GetAllUsersResponseDTO(userRepository.findAll());
+    @Cacheable(cacheNames = "allUsers")
+    public GetAllUsersResponseDTO getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return getAllUsersMapper.toDTO(users);
     }
+
+    @CacheEvict(cacheNames = "allUsers", allEntries = true)
     public CreateUserResponseDTO createUser(CreateUserRequestDTO userRequestDTO) {
         String normalizedEmail = normalizeEmail(userRequestDTO.getEmail());
         Optional<User> foundUser = userRepository.findByEmail(normalizedEmail);
@@ -73,6 +82,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = "allUsers", allEntries = true)
     public UpdateUserResponseDTO updateUser(UpdateUserRequestDTO updateUserRequestDTO, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if (updateUserRequestDTO.getName() != null) {
@@ -95,6 +105,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = "allUsers", allEntries = true)
     public void deleteUser(Long userId) {
         User user = userRepository.findById(userId)
             .orElseThrow(UserNotFoundException::new);
@@ -102,6 +113,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = "allUsers", allEntries = true)
     public void blockUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if (!user.isActive()) {
@@ -111,6 +123,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    @CacheEvict(cacheNames = "allUsers", allEntries = true)
     public void unblockUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         if (user.isActive()) {

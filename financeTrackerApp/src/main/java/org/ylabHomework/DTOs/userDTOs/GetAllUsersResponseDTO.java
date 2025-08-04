@@ -8,5 +8,5 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class GetAllUsersResponseDTO {
-    List<User> users;
+    List<UserDTO> users;
 }
