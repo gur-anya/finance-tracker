@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  liquibase:
+    default-schema: service_schema
+    change-log: classpath:db-changelog/main-changelog.xml
+
+  level:
+    web: debug
+
+jwt:
+  secret: dE567g8gHjh1kUIol0ovzWpo85hUIhhCF13gbnOPPm5vtI9784gvf56shk
+  expiration: 2592000000
+
+frontend:
+  http: http://localhost:5173

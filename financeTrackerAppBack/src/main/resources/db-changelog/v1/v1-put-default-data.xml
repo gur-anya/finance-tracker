@@ -1,0 +1,58 @@
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <changeSet id="insert-initial-data" author="Gureva Anna">
+        <insert schemaName="main" tableName="users">
+            <column name="name" value="admin"/>
+            <column name="email" value="admin@ya.ru"/>
+            <column name="password" value="$2a$10$dBTSpnm8fv/gkaeQ/3zfl.v5cxSWE0/xWSwnAc1d6eTju.TcsSbvG"/>
+            <column name="role" value="ADMIN"/>
+            <column name="is_active" valueBoolean="true"/>
+        </insert>
+
+        <insert schemaName="main" tableName="users">
+            <column name="name" value="test"/>
+            <column name="email" value="test@example.com"/>
+            <column name="password" value="$2a$10$N9jfL.EkDTOL6wUF7YqiG.pr2YvOLmmAl.Tb/5eBQ/sPrAvH1DyTC"/>
+            <column name="role" value="USER"/>
+            <column name="is_active" valueBoolean="true"/>
+            <column name="budget_limit" valueNumeric="10000.00"/>
+            <column name="goal_name" value="Отпуск в Воркуте"/>
+            <column name="goal_sum" valueNumeric="10000.00"/>
+            <column name="budget_notification_status" value="NOT_NOTIFIED"/>
+        </insert>
+    </changeSet>
+
+    <changeSet id="insert-initial-transactions" author="Gureva Anna">
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="2500.00"/>
+            <column name="category" value="ЗАРПЛАТА"/>
+            <column name="description" value="Стипендия"/>
+            <column name="timestamp" value="2025-08-01 12:30:45"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="250.00"/>
+            <column name="category" value="ЕДА"/>
+            <column name="description" value="Карамельный макиато"/>
+            <column name="timestamp" value="2025-08-01 10:15:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="100.00"/>
+            <column name="category" value="ЦЕЛЬ"/>
+            <column name="description" value="Находка на улице"/>
+            <column name="timestamp" value="2025-08-04 15:15:15"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>
