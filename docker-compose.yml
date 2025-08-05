@@ -1,10 +1,26 @@
 services:
-  app:
-    build: .
+  backend:
+    build:
+      context: .
+      dockerfile: /financeTrackerAppBack/Dockerfile
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://tracker_app_database:5432/tracker_app_database
+      - SPRING_DATASOURCE_USERNAME=newAdmin
+      - SPRING_DATASOURCE_PASSWORD=5678
     depends_on:
       - tracker_app_database
-    stdin_open: true
-    tty: true
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build: financeTrackerAppFront
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://backend:8080
+    depends_on:
+      - backend
+
   tracker_app_database:
     image: postgres
     restart: always
@@ -13,10 +29,9 @@ services:
       POSTGRES_PASSWORD: 5678
       POSTGRES_DB: tracker_app_database
     volumes:
-      - tracker-app-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+      - ./db-init-scripts:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
 volumes:
-  tracker-app-data:
-
-#Для взаимодействия с приложением через консоль запускать командой docker-compose run app
+  postgres_data:

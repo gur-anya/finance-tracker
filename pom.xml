@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>auditionStarter</module>
-        <module>financeTrackerApp</module>
+        <module>financeTrackerAppBack</module>
         <module>loggingStarter</module>
     </modules>
     <properties>

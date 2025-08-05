@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+    <g fill="none" fill-rule="evenodd">
+        <!-- Основная часть кошелька -->
+        <path fill="#D2B48C" d="M2 10a4 4 0 0 1 4-4h20a4 4 0 0 1 4 4v12a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V10z"/>
+        <path fill="#A0522D" d="M26 6a4 4 0 0 1 4 4v2H2v-2a4 4 0 0 1 4-4h20z"/>
+        <!-- Застёжка -->
+        <circle cx="16" cy="16" r="3" fill="#FFD700"/>
+        <path stroke="#FFD700" stroke-width="2" d="M16 13v6"/>
+        <path stroke="#FFD700" stroke-width="2" d="M13 16h6"/>
+        <!-- Глаза -->
+        <circle cx="10" cy="22" r="1.5" fill="#333"/>
+        <circle cx="22" cy="22" r="1.5" fill="#333"/>
+        <!-- Улыбка -->
+        <path stroke="#333" stroke-width="1.5" stroke-linecap="round" d="M10 26c1.5-1 3-1.5 6-1.5s4.5.5 6 1.5"/>
+    </g>
+</svg>
