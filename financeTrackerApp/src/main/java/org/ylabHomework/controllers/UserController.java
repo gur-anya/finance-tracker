@@ -10,6 +10,7 @@ import org.ylabHomework.DTOs.MessageResponseDTO;
 import org.ylabHomework.DTOs.userDTOs.GetAllUsersResponseDTO;
 import org.ylabHomework.DTOs.userDTOs.UpdateUserRequestDTO;
 import org.ylabHomework.DTOs.userDTOs.UpdateUserResponseDTO;
+import org.ylabHomework.DTOs.userDTOs.UserDTO;
 import org.ylabHomework.services.UserService;
 
 @RestController
@@ -54,5 +55,12 @@ public class UserController {
     public ResponseEntity<GetAllUsersResponseDTO> getAllUsers(){
         GetAllUsersResponseDTO usersResponseDTO = userService.getAllUsers();
         return ResponseEntity.ok(usersResponseDTO);
+    }
+
+    @GetMapping("/{userId}")
+    @PreAuthorize("#userId == authentication.principal.id")
+    public ResponseEntity<UserDTO> getUserById(@PathVariable Long userId) {
+        UserDTO userDTO = userService.getUserById(userId);
+        return ResponseEntity.ok(userDTO);
     }
 }

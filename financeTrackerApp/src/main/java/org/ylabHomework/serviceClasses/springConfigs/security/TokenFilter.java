@@ -33,17 +33,13 @@ public class TokenFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-
-        log.info("TokenFilter invoked for request: {}", request.getRequestURI());
         String jwt = null;
         String email = null;
         UserDetails userDetails = null;
         UsernamePasswordAuthenticationToken auth = null;
         String headerAuth = request.getHeader("Authorization");
-        log.info("Authorization header received: {}", headerAuth);
         if (headerAuth != null && headerAuth.startsWith("Bearer ")) {
             jwt = headerAuth.substring(7);
-            log.info("Extracted JWT: {}", jwt);
         } else {
             log.warn("Invalid or missing Authorization header");
         }
@@ -70,9 +66,7 @@ public class TokenFilter extends OncePerRequestFilter {
                         null,
                         userDetails.getAuthorities()
                     );
-                    log.info("Created authentication: {}", auth);
                     SecurityContextHolder.getContext().setAuthentication(auth);
-                    log.info("Authentication set in SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication());
                 }
             } catch (ExpiredJwtException e) {
                 log.warn("Expired JWT: {}", e.getMessage());

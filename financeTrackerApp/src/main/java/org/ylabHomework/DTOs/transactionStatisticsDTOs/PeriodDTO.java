@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -15,10 +15,10 @@ import java.time.LocalDateTime;
 public class PeriodDTO {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @NotBlank(message = "Start timestamp is necessary")
+    @NotNull(message = "Start timestamp is necessary")
     private LocalDateTime startTimestamp;
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @NotBlank(message = "End timestamp is necessary")
+    @NotNull(message = "End timestamp is necessary")
     private LocalDateTime endTimestamp;
 }

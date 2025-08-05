@@ -42,7 +42,8 @@ public class User {
     private RoleEnum role;
     private boolean isActive;
     private BigDecimal budgetLimit;
-    private BigDecimal goal;
+    private String goalName; //todo возможно, вынести цель
+    private BigDecimal goalSum;
     @Enumerated(EnumType.STRING)
     private BudgetNotificationStatus budgetNotificationStatus;
 

@@ -6,8 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.ylabHomework.DTOs.transactionDTOs.GoalRequestDTO;
-import org.ylabHomework.DTOs.transactionDTOs.GoalResponseDTO;
+import org.ylabHomework.DTOs.transactionStatisticsDTOs.GoalRequestDTO;
+import org.ylabHomework.DTOs.transactionStatisticsDTOs.GoalResponseDTO;
+import org.ylabHomework.DTOs.transactionStatisticsDTOs.UpdateGoalRequestDTO;
 import org.ylabHomework.serviceClasses.springConfigs.security.UserDetailsImpl;
 import org.ylabHomework.services.GoalService;
 
@@ -33,9 +34,17 @@ public class GoalController {
         return ResponseEntity.ok(goalResponseDTO);
     }
 
+    @PatchMapping("/update")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<GoalResponseDTO> updateUserGoal(@RequestBody @Valid UpdateGoalRequestDTO updateRequestDTO,
+                                                       @AuthenticationPrincipal UserDetailsImpl currentUser) {
+        GoalResponseDTO goalResponseDTO = goalService.updateUserGoal(currentUser.getId(), updateRequestDTO);
+        return ResponseEntity.ok(goalResponseDTO);
+    }
+
     @PatchMapping("/reset")
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> setUserGoal(@AuthenticationPrincipal UserDetailsImpl currentUser) {
+    public ResponseEntity<?> resetUserGoal(@AuthenticationPrincipal UserDetailsImpl currentUser) {
         goalService.resetUserGoal(currentUser.getId());
         return ResponseEntity.noContent().build();
     }

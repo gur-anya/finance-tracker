@@ -25,10 +25,12 @@
             <column name="is_active" type="BOOLEAN" defaultValueBoolean="true">
                 <constraints nullable="false"/>
             </column>
-            <column name="budget_limit" type="DECIMAL(19, 2)" defaultValueNumeric="0.00">
+            <column name="budget_limit" type="DECIMAL(19, 2)" defaultValueNumeric="100000.00">
                 <constraints nullable="false"/>
             </column>
-            <column name="goal" type="DECIMAL(19, 2)" defaultValueNumeric="0.00">
+            <column name="goal_name" type="VARCHAR(255)">
+            </column>
+            <column name="goal_sum" type="DECIMAL(19, 2)" defaultValueNumeric="0.00">
                 <constraints nullable="false"/>
             </column>
             <column name="budget_notification_status" type="VARCHAR(255)" defaultValue="NOT_NOTIFIED">
@@ -66,8 +68,11 @@
     <changeSet id="create-token-blacklist" author="Gureva Anna">
         <createTable tableName="token_blacklist" schemaName="service_schema"
                      remarks="Служебная таблица для хранения устаревших токенов">
-            <column name="token" type="VARCHAR(500)" remarks="Токен">
-                <constraints primaryKey="true" nullable="false"/>
+            <column name="id" type="BIGSERIAL">
+            <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="token_value" type="VARCHAR(500)" remarks="Токен">
+                <constraints nullable="false"/>
             </column>
         </createTable>
     </changeSet>

@@ -19,6 +19,7 @@ import org.ylabHomework.DTOs.userDTOs.CreateUserResponseDTO;
 import org.ylabHomework.DTOs.userDTOs.LoginRequestDTO;
 import org.ylabHomework.DTOs.userDTOs.LoginResponseDTO;
 import org.ylabHomework.serviceClasses.springConfigs.security.JWTCore;
+import org.ylabHomework.serviceClasses.springConfigs.security.UserDetailsImpl;
 import org.ylabHomework.services.TokenService;
 import org.ylabHomework.services.UserService;
 
@@ -48,7 +49,11 @@ public class AuthController {
         );
 
         String jwt = jwtCore.generateToken(authentication);
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(jwt);
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+        Long userId = userDetails.getId();
+
+        LoginResponseDTO loginResponseDTO = new LoginResponseDTO(userId, jwt);
         return ResponseEntity.ok(loginResponseDTO);
     }
 

@@ -6,7 +6,7 @@ import org.ylabHomework.models.Transaction;
 
 @Getter
 @AllArgsConstructor
-public class GoalActionEvent {
+public class GoalActionTransactionEvent {
     Transaction transaction;
     Long userId;
 }
