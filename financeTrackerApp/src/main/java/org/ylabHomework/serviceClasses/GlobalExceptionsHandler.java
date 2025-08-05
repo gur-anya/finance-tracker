@@ -31,12 +31,20 @@ public class GlobalExceptionsHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
+        log.error("error: {}", ex.getMessage());
         return errors;
     }
 
     @ExceptionHandler(NoUserActivenessUpdateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleUserActivenessUpdateException(NoUserActivenessUpdateException ex) {
+        log.warn(ex.getMessage());
+        return new ErrorResponse(ex.getMessage(), LocalDateTime.now());
+    }
+
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ErrorResponse handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
         log.warn(ex.getMessage());
         return new ErrorResponse(ex.getMessage(), LocalDateTime.now());
     }

@@ -17,19 +17,19 @@ public class TransactionStatisticsService {
 
     public BalanceDTO getBalanceForPeriod(Long userId, PeriodDTO period) {
         BigDecimal balance = transactionRepository.getBalanceForPeriod(userId, period.getStartTimestamp(), period.getEndTimestamp())
-            .orElseThrow(() -> new ValueNotFoundException("balance"));
+            .orElse(BigDecimal.ZERO);
         return new BalanceDTO(balance);
     }
 
     public IncomesDTO getIncomesForPeriod(Long userId, PeriodDTO period) {
         BigDecimal incomes = transactionRepository.getIncomesForPeriod(userId, period.getStartTimestamp(), period.getEndTimestamp())
-            .orElseThrow(() -> new ValueNotFoundException("incomes"));
+            .orElse(BigDecimal.ZERO);
         return new IncomesDTO(incomes);
     }
 
     public ExpensesDTO getExpensesForPeriod(Long userId, PeriodDTO period) {
         BigDecimal expenses = transactionRepository.getExpensesForPeriod(userId, period.getStartTimestamp(), period.getEndTimestamp())
-            .orElseThrow(() -> new ValueNotFoundException("expenses"));
+            .orElse(BigDecimal.ZERO);
         return new ExpensesDTO(expenses);
     }
 
@@ -39,3 +39,5 @@ public class TransactionStatisticsService {
         return new ReportDTO(incomesGrouped, expensesGrouped);
     }
 }
+
+//TODO: понять, почему транзакции цели не влияют на цель; заинверсить баланс (старт=лимит, меньше 0 - плохо); понять почему доходы и расходы не вностся, использовать репорт

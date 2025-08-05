@@ -15,13 +15,14 @@ import java.util.Collections;
 @Getter
 public class UserDetailsImpl implements UserDetails {
     private Long id;
+    private String name;
     private String email;
     private String password;
     private RoleEnum role;
     private boolean isActive;
 
     public static UserDetailsImpl build(User user) {
-        return new UserDetailsImpl(user.getId(), user.getEmail(), user.getPassword(), user.getRole(), user.isActive());
+        return new UserDetailsImpl(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole(), user.isActive());
     }
 
     @Override

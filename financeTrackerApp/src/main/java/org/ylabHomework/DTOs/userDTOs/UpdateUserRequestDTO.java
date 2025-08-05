@@ -25,7 +25,6 @@ public class UpdateUserRequestDTO {
     private String name;
     @Size(min = 8, message = "Новый пароль слишком короткий!")
     @Size(max = 128, message = "Новый пароль слишком длинный!")
-    @ValidPassword
     private String newPassword;
     private String oldPassword;
 }

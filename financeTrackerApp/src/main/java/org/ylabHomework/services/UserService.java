@@ -61,6 +61,11 @@ public class UserService implements UserDetailsService {
         return getAllUsersMapper.toDTO(users);
     }
 
+    public UserDTO getUserById(Long id){
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        return userMapper.toDTO(user);
+    }
+
     @CacheEvict(cacheNames = "allUsers", allEntries = true)
     public CreateUserResponseDTO createUser(CreateUserRequestDTO userRequestDTO) {
         String normalizedEmail = normalizeEmail(userRequestDTO.getEmail());
@@ -74,7 +79,7 @@ public class UserService implements UserDetailsService {
         newUser.setRole(RoleEnum.USER);
         newUser.setActive(true);
         newUser.setBudgetLimit(BigDecimal.ZERO);
-        newUser.setGoal(BigDecimal.ZERO);
+        newUser.setGoalSum(BigDecimal.ZERO);
         newUser.setBudgetNotificationStatus(BudgetNotificationStatus.NOT_NOTIFIED);
         userRepository.save(newUser);
         UserDTO userDTO = userMapper.toDTO(newUser);

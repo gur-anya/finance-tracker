@@ -21,38 +21,40 @@ import java.util.Optional;
  */
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
     @Query("SELECT SUM(CASE WHEN trans.type = 'INCOME' THEN trans.sum ELSE -trans.sum END) FROM Transaction AS trans WHERE " +
-        "trans.timestamp >= :startTimestamp AND trans.timestamp <= :endTimestamp AND trans.category != 'цель' AND trans.user = :userId")
+        "trans.timestamp >= :startTimestamp AND trans.timestamp <= :endTimestamp AND trans.category != 'ЦЕЛЬ' AND trans.user.id = :userId")
     Optional<BigDecimal> getBalanceForPeriod(Long userId, LocalDateTime startTimestamp, LocalDateTime endTimestamp);
 
     @Query("SELECT SUM(trans.sum) FROM Transaction AS trans WHERE" +
-        " trans.timestamp >= :startTimestamp AND trans.timestamp <= :endTimestamp AND trans.type = 'INCOME' AND trans.category != 'цель' AND trans.user = :userId")
+        " trans.timestamp >= :startTimestamp AND trans.timestamp <= :endTimestamp AND trans.type = 'INCOME' AND trans.category != 'ЦЕЛЬ' AND trans.user.id = :userId")
     Optional<BigDecimal> getIncomesForPeriod(Long userId, LocalDateTime startTimestamp, LocalDateTime endTimestamp);
 
     @Query("SELECT SUM(trans.sum) FROM Transaction AS trans WHERE" +
-        " trans.timestamp >= :startTimestamp AND trans.timestamp <= :endTimestamp AND trans.type = 'EXPENSE' AND trans.category != 'цель' AND trans.user = :userId")
+        " trans.timestamp >= :startTimestamp AND trans.timestamp <= :endTimestamp AND trans.type = 'EXPENSE' AND trans.category != 'ЦЕЛЬ' AND trans.user.id = :userId")
     Optional<BigDecimal> getExpensesForPeriod(Long userId, LocalDateTime startTimestamp, LocalDateTime endTimestamp);
 
     @Query("SELECT new org.ylabHomework.DTOs.transactionStatisticsDTOs.CategoryStatDTO(trans.category, SUM(trans.sum)) FROM Transaction AS trans WHERE" +
-        " trans.timestamp >= :startTimestamp AND trans.timestamp <= :endTimestamp AND trans.type = 'INCOME' AND trans.category != 'цель' AND trans.user = :userId GROUP BY trans.category")
+        " trans.timestamp >= :startTimestamp AND trans.timestamp <= :endTimestamp AND trans.type = 'INCOME' AND trans.category != 'ЦЕЛЬ' AND trans.user.id = :userId GROUP BY trans.category")
     List<CategoryStatDTO> getIncomesForPeriodGroupByCategories(Long userId, LocalDateTime startTimestamp, LocalDateTime endTimestamp);
 
     @Query("SELECT new org.ylabHomework.DTOs.transactionStatisticsDTOs.CategoryStatDTO(trans.category, SUM(trans.sum)) FROM Transaction AS trans WHERE" +
-        " trans.timestamp >= :startTimestamp AND trans.timestamp <= :endTimestamp AND trans.type = 'EXPENSE' AND trans.category != 'цель' AND trans.user = :userId GROUP BY trans.category")
+        " trans.timestamp >= :startTimestamp AND trans.timestamp <= :endTimestamp AND trans.type = 'EXPENSE' AND trans.category != 'ЦЕЛЬ' AND trans.user.id = :userId GROUP BY trans.category")
     List<CategoryStatDTO> getExpensesForPeriodGroupByCategories(Long userId, LocalDateTime startTimestamp, LocalDateTime endTimestamp);
 
     @Query("SELECT  CASE WHEN us.budgetLimit > 0 THEN  (100.0 - SUM(CASE WHEN trans.type = 'INCOME' THEN trans.sum ELSE -trans.sum END)/us.budgetLimit*100) ELSE 0.0 END " +
         "FROM Transaction AS trans " +
-        "JOIN User AS us ON trans.user.id=us.id WHERE trans.user = :userId AND trans.category != 'цель' ")
-    BigDecimal getPercentageLeftToReachBudgetLimit(Long userId);
+        "JOIN User AS us ON trans.user.id=us.id WHERE trans.user.id = :userId AND trans.category != 'ЦЕЛЬ' " +
+        "GROUP BY us.budgetLimit")
+    Optional<BigDecimal>  getPercentageLeftToReachBudgetLimit(Long userId);
 
     @Modifying
     @Query("DELETE FROM Transaction trans WHERE trans.category = :category AND trans.user.id = :userId")
     void deleteByCategoryAndUserId(String category, Long userId);
 
-    @Query("SELECT  CASE WHEN us.goal > 0 THEN  (100.0 - SUM(CASE WHEN trans.type = 'INCOME' THEN trans.sum ELSE -trans.sum END)/us.goal*100) ELSE 0.0 END " +
+    @Query("SELECT  CASE WHEN us.goalSum > 0 THEN  (100.0 - SUM(CASE WHEN trans.type = 'INCOME' THEN trans.sum ELSE -trans.sum END)/us.goalSum*100) ELSE 0.0 END " +
         "FROM Transaction AS trans " +
-        "JOIN User AS us ON trans.user.id=us.id WHERE trans.user = :userId AND trans.category = 'цель' ")
-    BigDecimal checkGoal(Long userId);
-    @Query("SELECT ALL FROM Transaction trans WHERE trans.user.id = :userId")
+        "JOIN User AS us ON trans.user.id=us.id WHERE trans.user.id = :userId AND trans.category = 'ЦЕЛЬ' " +
+        "GROUP BY us.goalSum")
+    Optional<BigDecimal>  checkGoal(Long userId);
+    @Query("SELECT trans FROM Transaction trans WHERE trans.user.id = :userId")
     List<Transaction> findAllByUserId (Long userId);
 }

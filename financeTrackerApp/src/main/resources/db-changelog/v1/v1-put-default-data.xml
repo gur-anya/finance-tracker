@@ -20,7 +20,8 @@
             <column name="role" value="USER"/>
             <column name="is_active" valueBoolean="true"/>
             <column name="budget_limit" valueNumeric="1000.00"/>
-            <column name="goal" valueNumeric="10000.00"/>
+            <column name="goal_name" value="булочка с сосиской"/>
+            <column name="goal_sum" valueNumeric="10000.00"/>
             <column name="budget_notification_status" value="NOT_NOTIFIED"/>
         </insert>
     </changeSet>

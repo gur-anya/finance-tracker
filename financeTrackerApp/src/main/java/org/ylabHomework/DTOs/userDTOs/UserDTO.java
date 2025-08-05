@@ -9,6 +9,7 @@ import org.ylabHomework.serviceClasses.enums.RoleEnum;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDTO {
+    Long id;
     String name;
     String email;
     RoleEnum role;

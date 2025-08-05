@@ -27,7 +27,7 @@ public class BudgetService {
     @Transactional
     public void handleTransactionAction(TransactionActionEvent event) {
         User user = userRepository.findById(event.getUserId()).orElseThrow(UserNotFoundException::new);
-        BigDecimal percentageLeftToReachLimit = transactionRepository.getPercentageLeftToReachBudgetLimit(event.getUserId());
+        BigDecimal percentageLeftToReachLimit = transactionRepository.getPercentageLeftToReachBudgetLimit(event.getUserId()).orElse(BigDecimal.ZERO);
         if (percentageLeftToReachLimit.compareTo(BUDGET_WARNING_PERCENTAGE) > 0
             && user.getBudgetNotificationStatus() != (BudgetNotificationStatus.NOT_NOTIFIED)) {
             user.setBudgetNotificationStatus(BudgetNotificationStatus.NOT_NOTIFIED);

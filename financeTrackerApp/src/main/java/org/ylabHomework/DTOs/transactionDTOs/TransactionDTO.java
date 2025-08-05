@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionDTO {
+    private Long id;
     private TypeEnum type;
     private BigDecimal sum;
     private String category;
