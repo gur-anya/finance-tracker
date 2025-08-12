@@ -68,7 +68,6 @@ public class GoalService {
     }
 
     public CheckGoalResponseDTO checkSavedToGoal(Long userId){
-        final BigDecimal HALF_OF_GOAL = BigDecimal.valueOf(50.0);
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         BigDecimal savedForGoal = transactionRepository.checkSavedToGoal(user.getId())
             .orElse(BigDecimal.ZERO);

@@ -120,7 +120,7 @@ class ApiService {
         console.log('Request data:', requestData);
         
         try {
-            const response = await fetch(`${this.baseURL}/transactions/${user.id}`, {
+            const response = await fetch(`${this.baseURL}/transactions`, {
                 method: 'POST',
                 headers: this.getHeaders(),
                 body: JSON.stringify(requestData)
