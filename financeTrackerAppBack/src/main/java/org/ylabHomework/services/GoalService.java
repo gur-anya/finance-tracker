@@ -67,7 +67,7 @@ public class GoalService {
         transactionRepository.deleteByCategoryAndUserId(GOAL_CATEGORY, user.getId());
     }
 
-    public CheckGoalResponseDTO checkSavedToGoal(Long userId){
+    public CheckGoalResponseDTO checkSavedToGoal(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         BigDecimal savedForGoal = transactionRepository.checkSavedToGoal(user.getId())
             .orElse(BigDecimal.ZERO);

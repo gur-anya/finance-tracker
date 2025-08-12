@@ -69,7 +69,7 @@
         <createTable tableName="token_blacklist" schemaName="service_schema"
                      remarks="Служебная таблица для хранения устаревших токенов">
             <column name="id" type="BIGSERIAL">
-            <constraints primaryKey="true" nullable="false"/>
+                <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="token_value" type="VARCHAR(500)" remarks="Токен">
                 <constraints nullable="false"/>

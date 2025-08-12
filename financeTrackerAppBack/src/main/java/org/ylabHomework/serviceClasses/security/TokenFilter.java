@@ -1,4 +1,4 @@
-package org.ylabHomework.serviceClasses.springConfigs.security;
+package org.ylabHomework.serviceClasses.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;

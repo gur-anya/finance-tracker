@@ -62,7 +62,6 @@ public class TransactionService {
         }
 
 
-
         Transaction transaction = createTransactionMapper.toModel(transactionRequestDTO);
         transaction.setUser(user);
         transactionRepository.save(transaction);

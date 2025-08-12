@@ -54,13 +54,14 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
         "FROM Transaction AS trans " +
         "JOIN User AS us ON trans.user.id=us.id WHERE trans.user.id = :userId AND trans.category = 'ЦЕЛЬ' " +
         "GROUP BY us.goalSum")
-    Optional<BigDecimal>  checkLeftToGoal(Long userId);
+    Optional<BigDecimal> checkLeftToGoal(Long userId);
 
     @Query("SELECT  CASE WHEN us.goalSum > 0 THEN  (SUM(CASE WHEN trans.type = 'INCOME' THEN trans.sum ELSE -trans.sum END)) ELSE 0.0 END " +
         "FROM Transaction AS trans " +
         "JOIN User AS us ON trans.user.id=us.id WHERE trans.user.id = :userId AND trans.category = 'ЦЕЛЬ' " +
         "GROUP BY us.goalSum")
-    Optional<BigDecimal>  checkSavedToGoal(Long userId);
+    Optional<BigDecimal> checkSavedToGoal(Long userId);
+
     @Query("SELECT trans FROM Transaction trans WHERE trans.user.id = :userId")
-    List<Transaction> findAllByUserId (Long userId);
+    List<Transaction> findAllByUserId(Long userId);
 }

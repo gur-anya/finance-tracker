@@ -1,6 +1,5 @@
 package org.ylabHomework.mappers.userMappers;
 
-import lombok.AllArgsConstructor;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.ylabHomework.DTOs.userDTOs.GetAllUsersResponseDTO;

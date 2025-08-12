@@ -1,6 +1,5 @@
 package org.ylabHomework.mappers.transactionMappers;
 
-import lombok.AllArgsConstructor;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.ylabHomework.DTOs.transactionDTOs.GetAllTransactionsResponseDTO;

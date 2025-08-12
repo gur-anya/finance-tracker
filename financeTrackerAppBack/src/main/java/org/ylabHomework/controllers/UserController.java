@@ -24,6 +24,7 @@ import org.ylabHomework.services.UserService;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+
     @Operation(
         summary = "Обновляет данные пользователя")
     @ApiResponses(value = {
@@ -43,6 +44,7 @@ public class UserController {
         return ResponseEntity.ok(userResponseDTO);
 
     }
+
     @Operation(
         summary = "Удаляет пользователя")
     @ApiResponses(value = {
@@ -60,6 +62,7 @@ public class UserController {
         userService.deleteUser(userId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
+
     @Operation(
         summary = "Блокирует пользователя")
     @ApiResponses(value = {
@@ -78,6 +81,7 @@ public class UserController {
         return ResponseEntity.ok(new MessageResponseDTO("User " + userId + " blocked successfully."));
 
     }
+
     @Operation(
         summary = "Разблокирует пользователя")
     @ApiResponses(value = {
@@ -95,6 +99,7 @@ public class UserController {
         userService.unblockUser(userId);
         return ResponseEntity.ok(new MessageResponseDTO("User " + userId + " unblocked successfully."));
     }
+
     @Operation(
         summary = "Получает всех пользователей")
     @ApiResponses(value = {
@@ -106,7 +111,7 @@ public class UserController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<GetAllUsersResponseDTO> getAllUsers(){
+    public ResponseEntity<GetAllUsersResponseDTO> getAllUsers() {
         GetAllUsersResponseDTO usersResponseDTO = userService.getAllUsers();
         return ResponseEntity.ok(usersResponseDTO);
     }

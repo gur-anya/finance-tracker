@@ -5,7 +5,6 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.ylabHomework.serviceClasses.ValidPassword;
 
 /**
  * DTO, передающий новые данные о пользователе. Содержит поля для нового имени, email, старого и нового паролей, а также

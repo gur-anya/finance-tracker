@@ -1,4 +1,4 @@
-package org.ylabHomework.serviceClasses.springConfigs.security;
+package org.ylabHomework.serviceClasses.security;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

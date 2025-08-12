@@ -15,7 +15,7 @@ import org.ylabHomework.DTOs.transactionStatisticsDTOs.CheckGoalResponseDTO;
 import org.ylabHomework.DTOs.transactionStatisticsDTOs.GoalRequestDTO;
 import org.ylabHomework.DTOs.transactionStatisticsDTOs.GoalResponseDTO;
 import org.ylabHomework.DTOs.transactionStatisticsDTOs.UpdateGoalRequestDTO;
-import org.ylabHomework.serviceClasses.springConfigs.security.UserDetailsImpl;
+import org.ylabHomework.serviceClasses.security.UserDetailsImpl;
 import org.ylabHomework.services.GoalService;
 
 @RestController
@@ -57,6 +57,7 @@ public class GoalController {
         GoalResponseDTO goalResponseDTO = goalService.setUserGoal(currentUser.getId(), goalRequestDTO);
         return ResponseEntity.ok(goalResponseDTO);
     }
+
     @Operation(
         summary = "Обновляет и возращает финансовую цель пользователя")
     @ApiResponses(value = {
@@ -73,6 +74,7 @@ public class GoalController {
         GoalResponseDTO goalResponseDTO = goalService.updateUserGoal(currentUser.getId(), updateRequestDTO);
         return ResponseEntity.ok(goalResponseDTO);
     }
+
     @Operation(
         summary = "Сбрасывает финансовую цель пользователя")
     @ApiResponses(value = {
@@ -88,6 +90,7 @@ public class GoalController {
         goalService.resetUserGoal(currentUser.getId());
         return ResponseEntity.noContent().build();
     }
+
     @Operation(
         summary = "Удаляет все транзакции для цели")
     @ApiResponses(value = {

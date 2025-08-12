@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.ylabHomework.DTOs.transactionStatisticsDTOs.*;
-import org.ylabHomework.serviceClasses.springConfigs.security.UserDetailsImpl;
+import org.ylabHomework.serviceClasses.security.UserDetailsImpl;
 import org.ylabHomework.services.TransactionStatisticsService;
 
 import java.time.LocalDateTime;

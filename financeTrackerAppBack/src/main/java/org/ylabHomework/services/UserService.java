@@ -25,7 +25,7 @@ import org.ylabHomework.serviceClasses.customExceptions.NoUserActivenessUpdateEx
 import org.ylabHomework.serviceClasses.customExceptions.UserNotFoundException;
 import org.ylabHomework.serviceClasses.enums.BudgetNotificationStatus;
 import org.ylabHomework.serviceClasses.enums.RoleEnum;
-import org.ylabHomework.serviceClasses.springConfigs.security.UserDetailsImpl;
+import org.ylabHomework.serviceClasses.security.UserDetailsImpl;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -63,7 +63,7 @@ public class UserService implements UserDetailsService {
         return getAllUsersMapper.toDTO(users);
     }
 
-    public UserDTO getUserById(Long id){
+    public UserDTO getUserById(Long id) {
         User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         return userMapper.toDTO(user);
     }

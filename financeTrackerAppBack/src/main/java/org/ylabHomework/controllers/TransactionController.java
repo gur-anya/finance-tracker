@@ -13,7 +13,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.ylabHomework.DTOs.transactionDTOs.*;
-import org.ylabHomework.serviceClasses.springConfigs.security.UserDetailsImpl;
+import org.ylabHomework.serviceClasses.security.UserDetailsImpl;
 import org.ylabHomework.services.TransactionService;
 
 @RestController
@@ -89,8 +89,8 @@ public class TransactionController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping()
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<GetAllTransactionsResponseDTO> getAllTransactionsByUser (@AuthenticationPrincipal UserDetailsImpl currentUser) {
-       GetAllTransactionsResponseDTO allTransactions = transactionService.getAllTransactionsByUser(currentUser.getId());
-       return ResponseEntity.ok(allTransactions);
+    public ResponseEntity<GetAllTransactionsResponseDTO> getAllTransactionsByUser(@AuthenticationPrincipal UserDetailsImpl currentUser) {
+        GetAllTransactionsResponseDTO allTransactions = transactionService.getAllTransactionsByUser(currentUser.getId());
+        return ResponseEntity.ok(allTransactions);
     }
 }

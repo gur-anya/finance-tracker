@@ -22,8 +22,8 @@ import org.ylabHomework.DTOs.userDTOs.CreateUserRequestDTO;
 import org.ylabHomework.DTOs.userDTOs.CreateUserResponseDTO;
 import org.ylabHomework.DTOs.userDTOs.LoginRequestDTO;
 import org.ylabHomework.DTOs.userDTOs.LoginResponseDTO;
-import org.ylabHomework.serviceClasses.springConfigs.security.JWTCore;
-import org.ylabHomework.serviceClasses.springConfigs.security.UserDetailsImpl;
+import org.ylabHomework.serviceClasses.security.JWTCore;
+import org.ylabHomework.serviceClasses.security.UserDetailsImpl;
 import org.ylabHomework.services.TokenService;
 import org.ylabHomework.services.UserService;
 
@@ -39,6 +39,7 @@ public class AuthController {
     private final TokenService tokenService;
     private final AuthenticationManager authenticationManager;
     private final JWTCore jwtCore;
+
     @Operation(
         summary = "Регистрирует нового пользователя")
     @ApiResponses(value = {
