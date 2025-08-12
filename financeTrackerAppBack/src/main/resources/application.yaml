@@ -7,13 +7,15 @@ spring:
   liquibase:
     default-schema: service_schema
     change-log: classpath:db-changelog/main-changelog.xml
-
-  level:
-    web: debug
+  data:
+    redis:
+      port: ${REDIS_PORT}
+      host: ${REDIS_HOST}
+      password: ${REDIS_PASSWORD}
 
 jwt:
-  secret: dE567g8gHjh1kUIol0ovzWpo85hUIhhCF13gbnOPPm5vtI9784gvf56shk
+  secret: ${JWT_SECRET}
   expiration: 2592000000
 
 frontend:
-  http: http://localhost:5173
+  url: ${FRONTED_URL}

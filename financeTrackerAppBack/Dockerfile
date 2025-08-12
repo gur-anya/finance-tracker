@@ -1,11 +1,21 @@
 FROM maven:3.9.6-eclipse-temurin-17 AS builder
+
 WORKDIR /app
 
-COPY . .
+COPY pom.xml .
+
+COPY financeTrackerAppBack/pom.xml ./financeTrackerAppBack/
+COPY auditionStarter/pom.xml ./auditionStarter/
+COPY loggingStarter/pom.xml ./loggingStarter/
 
 RUN mvn dependency:go-offline
 
+COPY financeTrackerAppBack/src ./financeTrackerAppBack/src
+COPY auditionStarter/src ./auditionStarter/src
+COPY loggingStarter/src ./loggingStarter/src
+
 RUN mvn clean install -DskipTests
+
 
 FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app

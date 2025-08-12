@@ -35,7 +35,7 @@ public class SecurityConfig {
     private final TokenFilter tokenFilter;
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
-    @Value("${frontend.http}")
+    @Value("${frontend.url}")
     private String frontend;
 
     @Bean

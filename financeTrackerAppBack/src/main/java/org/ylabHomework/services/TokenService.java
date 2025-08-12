@@ -1,43 +1,29 @@
 package org.ylabHomework.services;
 
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.ylabHomework.models.Token;
-import org.ylabHomework.repositories.TokenRepository;
-import org.ylabHomework.serviceClasses.customExceptions.TokenException;
-import org.ylabHomework.serviceClasses.springConfigs.security.JWTCore;
+
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Service
-@RequiredArgsConstructor
 public class TokenService {
+    private final StringRedisTemplate tokensBlacklist;
+    private final Long TOKEN_TTL;
 
-    private final TokenRepository repository;
-    private final JWTCore jwtCore;
-
-
-    /**
-     * Добавляет токен в чёрный список.
-     *
-     * @param token токен для добавления
-     * @throws TokenException если токен недействителен
-     */
-    public void blacklistToken(String token) {
-        try {
-            jwtCore.getEmailFromJwt(token);
-            Token tokenToSave = new Token(token);
-            repository.save(tokenToSave);
-        } catch (Exception e) {
-            throw new TokenException(e);
-        }
+    public TokenService(StringRedisTemplate tokensBlacklist,
+                        @Value("${jwt.expiration}") Long tokenTtl) {
+        this.tokensBlacklist = tokensBlacklist;
+        this.TOKEN_TTL = tokenTtl;
     }
 
-    /**
-     * Проверяет, находится ли токен в чёрном списке.
-     *
-     * @param token токен для проверки
-     * @return true, если токен в чёрном списке, иначе false
-     */
+    public void blacklistToken(String token) {
+        tokensBlacklist.opsForValue().set(token, "blacklisted", TOKEN_TTL, TimeUnit.MILLISECONDS);
+    }
+
     public boolean isTokenBlacklisted(String token) {
-        return repository.findByTokenValue(token).isPresent();
+        Boolean isBlacklisted = tokensBlacklist.hasKey(token);
+        return Objects.requireNonNullElse(isBlacklisted, false);
     }
 }
