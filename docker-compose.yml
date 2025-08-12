@@ -5,10 +5,16 @@ services:
       dockerfile: /financeTrackerAppBack/Dockerfile
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://tracker_app_database:5432/tracker_app_database
-      - SPRING_DATASOURCE_USERNAME=newAdmin
-      - SPRING_DATASOURCE_PASSWORD=5678
+      - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
+      - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - FRONTEND_URL=http://localhost:5173
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     depends_on:
       - tracker_app_database
+      - redis
     ports:
       - "8080:8080"
 
@@ -21,12 +27,18 @@ services:
     depends_on:
       - backend
 
+  redis:
+    image: redis:8.2.0
+    command: --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "6379:6379"
+
   tracker_app_database:
     image: postgres
     restart: always
     environment:
-      POSTGRES_USER: newAdmin
-      POSTGRES_PASSWORD: 5678
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: tracker_app_database
     volumes:
       - postgres_data:/var/lib/postgresql/data
