@@ -52,7 +52,7 @@ public class TokenFilter extends OncePerRequestFilter {
         if (jwt != null) {
             if (tokenService.isTokenBlacklisted(jwt)) {
                 log.warn("Token is blacklisted: {}", jwt);
-                sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Токен недействителен! Пожалуйста, войдите в аккаунт еще раз!");
+                sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Token is invalid, please log in again");
                 return;
             }
             try {
@@ -70,15 +70,15 @@ public class TokenFilter extends OncePerRequestFilter {
                 }
             } catch (ExpiredJwtException e) {
                 log.warn("Expired JWT: {}", e.getMessage());
-                sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Токен истёк! Пожалуйста, войдите в аккаунт еще раз!");
+                sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Token is expired, please log in again");
                 return;
             } catch (MalformedJwtException e) {
                 log.warn("Malformed JWT: {}", e.getMessage());
-                sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Неверный или повреждённый токен!");
+                sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Malformed JWT");
                 return;
             } catch (Exception e) {
                 log.error("Authentication error: {}", e.getMessage(), e);
-                sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Ошибка аутентификации!");
+                sendErrorResponse(response, HttpStatus.UNAUTHORIZED, "Authentication error");
                 return;
             }
         } else {

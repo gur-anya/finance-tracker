@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidPassword {
-    String message() default "Пароль должен содержать хотя бы одну заглавную букву, одну строчную, одну цифру и один специальный символ!";
+    String message() default "The password must contain at least one uppercase letter, one lowercase letter, one number and one special character";
 
     Class<?>[] groups() default {};
 

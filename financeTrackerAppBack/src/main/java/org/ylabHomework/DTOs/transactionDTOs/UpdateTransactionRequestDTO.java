@@ -1,9 +1,6 @@
 package org.ylabHomework.DTOs.transactionDTOs;
 
-import jakarta.validation.constraints.Digits;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,15 +13,13 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class UpdateTransactionRequestDTO {
 
-    @Positive(message = "Сумма должна быть больше 0!")
-    @Digits(integer = 15, fraction = 2)
+    @Positive(message = "Sum must be greater than 0")
     private BigDecimal sum;
 
-    @NotBlank
-    @Size(min = 2, max = 50)
+
     private String category;
 
-    @Size(max = 200)
+    @Size(max = 200, message = "Description must not have more than 200 symbols!")
     private String description;
 
     private TypeEnum type;
