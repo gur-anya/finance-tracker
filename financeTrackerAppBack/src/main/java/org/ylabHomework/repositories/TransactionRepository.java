@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.ylabHomework.DTOs.transactionStatisticsDTOs.CategoryStatDTO;
 import org.ylabHomework.models.Transaction;
+import org.ylabHomework.serviceClasses.enums.CategoryEnum;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -52,7 +53,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long>,
 
     @Modifying
     @Query("DELETE FROM Transaction trans WHERE trans.category = :category AND trans.user.id = :userId")
-    void deleteByCategoryAndUserId(String category, Long userId);
+    void deleteByCategoryAndUserId(CategoryEnum category, Long userId);
 
     @Query("SELECT  CASE WHEN us.goalSum > 0 THEN  (100.0 - SUM(CASE WHEN trans.type = 'INCOME' THEN trans.sum ELSE -trans.sum END)/us.goalSum*100) ELSE 0.0 END " +
         "FROM Transaction AS trans " +

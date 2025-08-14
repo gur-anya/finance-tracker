@@ -4,6 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ylabHomework.serviceClasses.enums.CategoryEnum;
 import org.ylabHomework.serviceClasses.enums.TypeEnum;
 
 import java.math.BigDecimal;
@@ -17,7 +18,7 @@ public class UpdateTransactionRequestDTO {
     private BigDecimal sum;
 
 
-    private String category;
+    private CategoryEnum category;
 
     @Size(max = 200, message = "Description must not have more than 200 symbols!")
     private String description;

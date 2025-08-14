@@ -3,6 +3,7 @@ package org.ylabHomework.DTOs.transactionDTOs;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ylabHomework.serviceClasses.enums.CategoryEnum;
 import org.ylabHomework.serviceClasses.enums.TypeEnum;
 
 import java.math.BigDecimal;
@@ -22,7 +23,7 @@ public class TransactionDTO {
     private Long id;
     private TypeEnum type;
     private BigDecimal sum;
-    private String category;
+    private CategoryEnum category;
     private String description;
     private LocalDateTime timestamp;
 }

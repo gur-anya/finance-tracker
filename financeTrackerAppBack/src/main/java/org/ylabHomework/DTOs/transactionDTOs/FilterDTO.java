@@ -3,6 +3,7 @@ package org.ylabHomework.DTOs.transactionDTOs;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ylabHomework.serviceClasses.enums.CategoryEnum;
 import org.ylabHomework.serviceClasses.enums.TypeEnum;
 
 import java.math.BigDecimal;
@@ -17,5 +18,5 @@ public class FilterDTO {
     private BigDecimal sumLessThan;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private String category;
+    private CategoryEnum category;
 }

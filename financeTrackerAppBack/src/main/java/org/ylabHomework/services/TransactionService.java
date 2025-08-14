@@ -26,6 +26,7 @@ import org.ylabHomework.serviceClasses.TransactionSpecification;
 import org.ylabHomework.serviceClasses.customExceptions.NoGoalException;
 import org.ylabHomework.serviceClasses.customExceptions.TransactionNotFoundException;
 import org.ylabHomework.serviceClasses.customExceptions.UserNotFoundException;
+import org.ylabHomework.serviceClasses.enums.CategoryEnum;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -47,7 +48,6 @@ public class TransactionService {
     private final TransactionMapper transactionMapper;
     private final GetAllTransactionsMapper getAllTransactionsMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final String GOAL_CATEGORY = "ЦЕЛЬ";
 
     @Cacheable(cacheNames = "userTransactions")
     public GetAllTransactionsResponseDTO getAllTransactionsByUser(Long userId, Pageable pageable, FilterDTO filterDTO) {
@@ -76,7 +76,7 @@ public class TransactionService {
     public CreateTransactionResponseDTO createTransaction(CreateTransactionRequestDTO transactionRequestDTO, Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        if (transactionRequestDTO.getCategory().trim().equalsIgnoreCase(GOAL_CATEGORY) && user.getGoalSum().equals(BigDecimal.ZERO) && user.getGoalName().isEmpty()) {
+        if (transactionRequestDTO.getCategory().equals(CategoryEnum.GOAL) && user.getGoalSum().equals(BigDecimal.ZERO) && user.getGoalName().isEmpty()) {
             throw new NoGoalException();
         }
 
@@ -85,7 +85,7 @@ public class TransactionService {
         transaction.setUser(user);
         transactionRepository.save(transaction);
 
-        if (transaction.getCategory().trim().equalsIgnoreCase(GOAL_CATEGORY)) {
+        if (transaction.getCategory().equals(CategoryEnum.GOAL)) {
             applicationEventPublisher.publishEvent(new GoalActionTransactionEvent(transaction, user.getId()));
         } else {
             applicationEventPublisher.publishEvent(new TransactionActionEvent(transaction, user.getId()));
@@ -108,9 +108,7 @@ public class TransactionService {
             transaction.setSum(requestDTO.getSum());
         }
         if (requestDTO.getCategory() != null) {
-            if (!requestDTO.getCategory().isBlank()) {
-                transaction.setCategory(requestDTO.getCategory().trim().toUpperCase());
-            }
+                transaction.setCategory(requestDTO.getCategory());
         }
         if (requestDTO.getDescription() != null) {
             transaction.setDescription(requestDTO.getDescription());
@@ -118,7 +116,7 @@ public class TransactionService {
         if (requestDTO.getType() != null) {
             transaction.setType(requestDTO.getType());
         }
-        if (transaction.getCategory().trim().equalsIgnoreCase(GOAL_CATEGORY)) {
+        if (transaction.getCategory().equals(CategoryEnum.GOAL)) {
             applicationEventPublisher.publishEvent(new GoalActionTransactionEvent(transaction, userId));
         } else {
             applicationEventPublisher.publishEvent(new TransactionActionEvent(transaction, userId));
@@ -135,7 +133,7 @@ public class TransactionService {
             throw new AccessDeniedException("Access to transaction denied");
         }
         transactionRepository.deleteById(transaction.getId());
-        if (transaction.getCategory().trim().equalsIgnoreCase(GOAL_CATEGORY)) {
+        if (transaction.getCategory().equals(CategoryEnum.GOAL)) {
             applicationEventPublisher.publishEvent(new GoalActionTransactionEvent(transaction, userId));
         } else {
             applicationEventPublisher.publishEvent(new TransactionActionEvent(transaction, userId));

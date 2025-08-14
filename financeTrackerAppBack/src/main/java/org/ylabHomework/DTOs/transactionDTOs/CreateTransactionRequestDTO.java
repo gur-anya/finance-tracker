@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ylabHomework.serviceClasses.enums.CategoryEnum;
 import org.ylabHomework.serviceClasses.enums.TypeEnum;
 
 import java.math.BigDecimal;
@@ -20,8 +21,8 @@ public class CreateTransactionRequestDTO {
     @Positive(message = "Sum must be greater than 0")
     private BigDecimal sum;
 
-    @NotBlank(message = "Category must not be empty")
-    private String category;
+    @NotNull(message = "Category must not be empty")
+    private CategoryEnum category;
 
     @Size(max = 200, message = "Description must not have more than 200 symbols!")
     private String description;

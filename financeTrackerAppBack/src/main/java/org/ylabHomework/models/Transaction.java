@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
+import org.ylabHomework.serviceClasses.enums.CategoryEnum;
 import org.ylabHomework.serviceClasses.enums.TypeEnum;
 
 import java.math.BigDecimal;
@@ -36,7 +37,8 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private TypeEnum type;
     private BigDecimal sum;
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private CategoryEnum category;
     private String description;
     @ManyToOne
     @JoinColumn(name = "user_id")

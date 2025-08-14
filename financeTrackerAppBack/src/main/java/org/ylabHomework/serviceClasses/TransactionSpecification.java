@@ -2,6 +2,7 @@ package org.ylabHomework.serviceClasses;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.ylabHomework.models.Transaction;
+import org.ylabHomework.serviceClasses.enums.CategoryEnum;
 import org.ylabHomework.serviceClasses.enums.TypeEnum;
 
 import java.math.BigDecimal;
@@ -47,7 +48,7 @@ public class TransactionSpecification {
             return builder.between(root.get("timestamp"), start, end);
         };
     }
-    public static Specification<Transaction> hasCategory(String category) {//todo енум категорий
+    public static Specification<Transaction> hasCategory(CategoryEnum category) {
         return (root, query, builder) -> {
 
             if (category == null) {

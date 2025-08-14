@@ -30,7 +30,7 @@
         <insert schemaName="main" tableName="transactions">
             <column name="type" value="INCOME"/>
             <column name="sum" valueNumeric="2500.00"/>
-            <column name="category" value="ЗАРПЛАТА"/>
+            <column name="category" value="WAGE"/>
             <column name="description" value="Стипендия"/>
             <column name="timestamp" value="2025-08-01 12:30:45"/>
             <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
@@ -39,7 +39,7 @@
         <insert schemaName="main" tableName="transactions">
             <column name="type" value="EXPENSE"/>
             <column name="sum" valueNumeric="250.00"/>
-            <column name="category" value="ЕДА"/>
+            <column name="category" value="FOOD"/>
             <column name="description" value="Карамельный макиато"/>
             <column name="timestamp" value="2025-08-01 10:15:00"/>
             <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
@@ -48,7 +48,7 @@
         <insert schemaName="main" tableName="transactions">
             <column name="type" value="INCOME"/>
             <column name="sum" valueNumeric="100.00"/>
-            <column name="category" value="ЦЕЛЬ"/>
+            <column name="category" value="GOAL"/>
             <column name="description" value="Находка на улице"/>
             <column name="timestamp" value="2025-08-04 15:15:15"/>
             <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
