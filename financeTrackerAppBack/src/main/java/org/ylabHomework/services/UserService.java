@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -28,7 +30,6 @@ import org.ylabHomework.serviceClasses.enums.RoleEnum;
 import org.ylabHomework.serviceClasses.security.UserDetailsImpl;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -58,8 +59,8 @@ public class UserService implements UserDetailsService {
     }
 
     @Cacheable(cacheNames = "allUsers")
-    public GetAllUsersResponseDTO getAllUsers() {
-        List<User> users = userRepository.findAll();
+    public GetAllUsersResponseDTO getAllUsers(Pageable pageable) {
+        Page<User> users = userRepository.findAll(pageable);
         return getAllUsersMapper.toDTO(users);
     }
 

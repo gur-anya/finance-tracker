@@ -1,6 +1,10 @@
 package org.ylabHomework.repositories;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.ylabHomework.DTOs.transactionStatisticsDTOs.CategoryStatDTO;
@@ -19,7 +23,7 @@ import java.util.Optional;
  * * @since 01.08.2025
  * </p>
  */
-public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+public interface TransactionRepository extends JpaRepository<Transaction, Long>, JpaSpecificationExecutor<Transaction> {
     @Query("SELECT SUM(CASE WHEN trans.type = 'INCOME' THEN trans.sum ELSE -trans.sum END) FROM Transaction AS trans WHERE " +
         "trans.timestamp >= :startTimestamp AND trans.timestamp <= :endTimestamp AND trans.category != 'ЦЕЛЬ' AND trans.user.id = :userId")
     Optional<BigDecimal> getBalanceForPeriod(Long userId, LocalDateTime startTimestamp, LocalDateTime endTimestamp);
@@ -63,5 +67,5 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     Optional<BigDecimal> checkSavedToGoal(Long userId);
 
     @Query("SELECT trans FROM Transaction trans WHERE trans.user.id = :userId")
-    List<Transaction> findAllByUserId(Long userId);
+    Page<Transaction> findAllByUserId(Long userId, Pageable pageable, Specification<Transaction> specification);
 }

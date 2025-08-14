@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -89,8 +90,10 @@ public class TransactionController {
     @SecurityRequirement(name = "bearerAuth")
     @GetMapping()
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<GetAllTransactionsResponseDTO> getAllTransactionsByUser(@AuthenticationPrincipal UserDetailsImpl currentUser) {
-        GetAllTransactionsResponseDTO allTransactions = transactionService.getAllTransactionsByUser(currentUser.getId());
+    public ResponseEntity<GetAllTransactionsResponseDTO> getAllTransactionsByUser(Pageable pageable,
+                                                                                    FilterDTO filterDTO,
+                                                                                  @AuthenticationPrincipal UserDetailsImpl currentUser) {
+        GetAllTransactionsResponseDTO allTransactions = transactionService.getAllTransactionsByUser(currentUser.getId(), pageable, filterDTO);
         return ResponseEntity.ok(allTransactions);
     }
 }

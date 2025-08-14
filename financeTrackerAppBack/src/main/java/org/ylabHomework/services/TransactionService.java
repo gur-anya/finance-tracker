@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +22,12 @@ import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
 import org.ylabHomework.repositories.UserRepository;
+import org.ylabHomework.serviceClasses.TransactionSpecification;
 import org.ylabHomework.serviceClasses.customExceptions.NoGoalException;
 import org.ylabHomework.serviceClasses.customExceptions.TransactionNotFoundException;
 import org.ylabHomework.serviceClasses.customExceptions.UserNotFoundException;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -47,10 +50,26 @@ public class TransactionService {
     private final String GOAL_CATEGORY = "ЦЕЛЬ";
 
     @Cacheable(cacheNames = "userTransactions")
-    public GetAllTransactionsResponseDTO getAllTransactionsByUser(Long userId) {
+    public GetAllTransactionsResponseDTO getAllTransactionsByUser(Long userId, Pageable pageable, FilterDTO filterDTO) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        List<Transaction> transactionsList = transactionRepository.findAllByUserId(user.getId());
-        return getAllTransactionsMapper.toDTO(transactionsList);
+        Specification<Transaction> spec = Specification.where(null);
+        if (filterDTO.getType() != null) {
+            spec = spec.and(TransactionSpecification.hasType(filterDTO.getType()));
+        }
+        if (filterDTO.getSumMoreThan() != null) {
+            spec = spec.and(TransactionSpecification.sumMoreThan(filterDTO.getSumMoreThan()));
+        }
+        if (filterDTO.getSumLessThan() != null) {
+            spec = spec.and(TransactionSpecification.sumLessThan(filterDTO.getSumLessThan()));
+        }
+        if (filterDTO.getStartTime() != null && filterDTO.getEndTime() != null) {
+            spec = spec.and(TransactionSpecification.dateInPeriod(filterDTO.getStartTime(), filterDTO.getEndTime()));
+        }
+        if (filterDTO.getCategory() != null) {
+            spec = spec.and(TransactionSpecification.hasCategory(filterDTO.getCategory()));
+        }
+        Page<Transaction> transactions = transactionRepository.findAllByUserId(user.getId(), pageable, spec);
+        return getAllTransactionsMapper.toDTO(transactions);
     }
 
     @CacheEvict(cacheNames = "userTransactions", key = "#userId")

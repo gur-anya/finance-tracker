@@ -1,3 +1,5 @@
+import { getCategoryEnglishName, getCategoryDisplayName } from '../utils/categoryMapper';
+
 const API_BASE_URL = '/api/v1';
 
 class ApiService {
@@ -109,10 +111,13 @@ class ApiService {
         // Преобразуем тип транзакции в enum
         const type = transactionData.type === 1 ? 'INCOME' : 'EXPENSE';
         
+        // Преобразуем русскую категорию в английскую для бэкенда
+        const englishCategory = getCategoryEnglishName(transactionData.category);
+        
         const requestData = {
             type: type,
             sum: transactionData.sum,
-            category: transactionData.category,
+            category: englishCategory,
             description: transactionData.description
         };
         
@@ -138,10 +143,13 @@ class ApiService {
         // Преобразуем тип транзакции в enum
         const type = transactionData.type === 1 ? 'INCOME' : 'EXPENSE';
         
+        // Преобразуем русскую категорию в английскую для бэкенда
+        const englishCategory = getCategoryEnglishName(transactionData.category);
+        
         const requestData = {
             type: type,
             sum: transactionData.sum,
-            category: transactionData.category,
+            category: englishCategory,
             description: transactionData.description
         };
         
@@ -159,6 +167,64 @@ class ApiService {
             headers: this.getHeaders()
         });
         return this.handleResponse(response);
+    }
+
+    // Фильтрация транзакций с пагинацией
+    async getAllTransactionsWithFilters(filters = {}, page = 0, size = 10) {
+        const params = new URLSearchParams();
+        
+        // Добавляем параметры пагинации
+        params.append('page', page.toString());
+        params.append('size', size.toString());
+        
+        // Добавляем параметры фильтрации
+        if (filters.sumMoreThan) {
+            params.append('sumMoreThan', filters.sumMoreThan);
+        }
+        if (filters.sumLessThan) {
+            params.append('sumLessThan', filters.sumLessThan);
+        }
+        if (filters.category) {
+            params.append('category', filters.category);
+        }
+        if (filters.type) {
+            params.append('type', filters.type);
+        }
+        if (filters.startDate) {
+            // Преобразуем дату в формат ISO для backend
+            const startDateTime = new Date(filters.startDate);
+            startDateTime.setHours(0, 0, 0, 0);
+            params.append('startTime', startDateTime.toISOString());
+        }
+        if (filters.endDate) {
+            // Преобразуем дату в формат ISO для backend
+            const endDateTime = new Date(filters.endDate);
+            endDateTime.setHours(23, 59, 59, 999);
+            params.append('endTime', endDateTime.toISOString());
+        }
+        
+        const response = await fetch(`${this.baseURL}/transactions?${params.toString()}`, {
+            method: 'GET',
+            headers: this.getHeaders()
+        });
+        
+        const result = await this.handleResponse(response);
+        console.log('Filtered transactions response:', result);
+        
+        // Преобразуем английские категории в русские для отображения
+        const transactionsWithRussianCategories = (result.transactions || []).map(transaction => ({
+            ...transaction,
+            category: getCategoryDisplayName(transaction.category)
+        }));
+        
+        // Возвращаем объект с транзакциями и метаданными пагинации
+        return {
+            transactions: transactionsWithRussianCategories,
+            totalElements: result.totalElements || 0,
+            totalPages: result.totalPages || 0,
+            currentPage: result.currentPage || 0,
+            pageSize: result.pageSize || size
+        };
     }
 
     // Фильтрация транзакций (фейковый эндпоинт)

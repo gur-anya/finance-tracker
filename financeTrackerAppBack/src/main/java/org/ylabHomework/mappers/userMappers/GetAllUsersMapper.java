@@ -2,12 +2,10 @@ package org.ylabHomework.mappers.userMappers;
 
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.ylabHomework.DTOs.userDTOs.GetAllUsersResponseDTO;
 import org.ylabHomework.DTOs.userDTOs.UserDTO;
 import org.ylabHomework.models.User;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 
 @Mapper(componentModel = "spring", uses = {UserMapper.class})
@@ -15,15 +13,12 @@ public abstract class GetAllUsersMapper {
     @Autowired
     protected UserMapper userMapper;
 
-    public GetAllUsersResponseDTO toDTO(List<User> users) {
+    public GetAllUsersResponseDTO toDTO(Page<User> users) {
         if (users == null) {
             return null;
         }
 
-        List<UserDTO> userDTOs = users.stream()
-            .map(userMapper::toDTO)
-            .collect(Collectors.toList());
-
+        Page<UserDTO> userDTOs = users.map(userMapper::toDTO);
         return new GetAllUsersResponseDTO(userDTOs);
     }
 }

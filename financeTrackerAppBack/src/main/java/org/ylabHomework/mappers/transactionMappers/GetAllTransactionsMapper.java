@@ -2,6 +2,7 @@ package org.ylabHomework.mappers.transactionMappers;
 
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.ylabHomework.DTOs.transactionDTOs.GetAllTransactionsResponseDTO;
 import org.ylabHomework.DTOs.transactionDTOs.TransactionDTO;
 import org.ylabHomework.models.Transaction;
@@ -14,15 +15,12 @@ public abstract class GetAllTransactionsMapper {
     @Autowired
     protected TransactionMapper transactionMapper;
 
-    public GetAllTransactionsResponseDTO toDTO(List<Transaction> transactions) {
+    public GetAllTransactionsResponseDTO toDTO(Page<Transaction> transactions) {
         if (transactions == null) {
             return null;
         }
 
-        List<TransactionDTO> transactionDTOs = transactions.stream()
-            .map(transactionMapper::toDTO)
-            .collect(Collectors.toList());
-
+        Page<TransactionDTO> transactionDTOs = transactions.map(transactionMapper::toDTO);
         return new GetAllTransactionsResponseDTO(transactionDTOs);
     }
 }

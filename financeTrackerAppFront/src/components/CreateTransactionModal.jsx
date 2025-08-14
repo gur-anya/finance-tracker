@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Modal, Form, Button, Alert } from 'react-bootstrap';
 import apiService from '../services/api';
+import { getExpenseCategories, getIncomeCategories, getCategoryDisplayName } from '../utils/categoryMapper';
 
 function CreateTransactionModal({ show, onHide, onTransactionCreated }) {
     const [formData, setFormData] = useState({
@@ -13,8 +14,8 @@ function CreateTransactionModal({ show, onHide, onTransactionCreated }) {
     const [isLoading, setIsLoading] = useState(false);
 
     const categories = {
-        '0': ['ЕДА', 'ТРАНСПОРТ', 'РАЗВЛЕЧЕНИЯ', 'ПОКУПКИ', 'ЗДОРОВЬЕ', 'ОБРАЗОВАНИЕ', 'ДОМ', 'ДРУГОЕ'],
-        '1': ['ЗАРПЛАТА', 'ФРИЛАНС', 'ПОДАРКИ', 'ИНВЕСТИЦИИ', 'ПРОДАЖИ', 'ДРУГОЕ']
+        '0': getExpenseCategories(),
+        '1': getIncomeCategories()
     };
 
     const handleChange = (e) => {
@@ -135,7 +136,7 @@ function CreateTransactionModal({ show, onHide, onTransactionCreated }) {
                             <option value="">Выберите категорию</option>
                             {categories[formData.type].map(category => (
                                 <option key={category} value={category}>
-                                    {category}
+                                    {getCategoryDisplayName(category)}
                                 </option>
                             ))}
                         </Form.Select>
