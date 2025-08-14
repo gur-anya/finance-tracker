@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Card, Row, Col, Button, Form, Alert, Spinner, ProgressBar, Modal } from 'react-bootstrap';
 import apiService from '../services/api';
+import { getCategoryDisplayName } from '../utils/categoryMapper';
 
 function Stats({ onStatsChange }) {
     const [stats, setStats] = useState(null);
@@ -80,13 +81,17 @@ function Stats({ onStatsChange }) {
             // Преобразуем данные отчета в нужный формат
             if (reportResponse.incomesGrouped && Array.isArray(reportResponse.incomesGrouped)) {
                 reportResponse.incomesGrouped.forEach(item => {
-                    reportData.categoryExpenses.income[item.category] = parseFloat(item.sum);
+                    // Преобразуем английскую категорию в русскую для отображения
+                    const russianCategory = getCategoryDisplayName(item.category);
+                    reportData.categoryExpenses.income[russianCategory] = parseFloat(item.sum);
                 });
             }
 
             if (reportResponse.expensesGrouped && Array.isArray(reportResponse.expensesGrouped)) {
                 reportResponse.expensesGrouped.forEach(item => {
-                    reportData.categoryExpenses.expense[item.category] = parseFloat(item.sum);
+                    // Преобразуем английскую категорию в русскую для отображения
+                    const russianCategory = getCategoryDisplayName(item.category);
+                    reportData.categoryExpenses.expense[russianCategory] = parseFloat(item.sum);
                 });
             }
 

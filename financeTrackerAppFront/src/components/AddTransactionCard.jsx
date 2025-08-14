@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button, Form, Alert } from 'react-bootstrap';
 import apiService from '../services/api';
+import { getExpenseCategories, getIncomeCategories, getCategoryDisplayName } from '../utils/categoryMapper';
 
 function AddTransactionCard({ onTransactionCreated }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -14,8 +15,8 @@ function AddTransactionCard({ onTransactionCreated }) {
     const [isLoading, setIsLoading] = useState(false);
 
     const categories = {
-        '0': ['ЕДА', 'ТРАНСПОРТ', 'РАЗВЛЕЧЕНИЯ', 'ПОКУПКИ', 'ЗДОРОВЬЕ', 'ОБРАЗОВАНИЕ', 'ДОМ', 'ЦЕЛЬ', 'ДРУГОЕ'],
-        '1': ['ЗАРПЛАТА', 'ФРИЛАНС', 'ПОДАРКИ', 'ИНВЕСТИЦИИ', 'ПРОДАЖИ', 'ЦЕЛЬ', 'ДРУГОЕ']
+        '0': [...getExpenseCategories(), 'GOAL'],
+        '1': [...getIncomeCategories(), 'GOAL']
     };
 
     // Временно используем моковую цель для тестирования
@@ -25,7 +26,7 @@ function AddTransactionCard({ onTransactionCreated }) {
         setIsEditing(true);
         setFormData({
             description: '',
-            category: 'ЕДА',
+            category: 'FOOD',
             sum: '',
             type: '0'
         });
@@ -36,7 +37,7 @@ function AddTransactionCard({ onTransactionCreated }) {
         setIsEditing(false);
         setFormData({
             description: '',
-            category: 'ЕДА',
+            category: 'FOOD',
             sum: '',
             type: '0'
         });
@@ -58,8 +59,8 @@ function AddTransactionCard({ onTransactionCreated }) {
             newErrors.category = 'Выберите категорию';
         }
 
-        // Проверка для категории "ЦЕЛЬ"
-        if (formData.category === 'ЦЕЛЬ' && !hasGoal) {
+        // Проверка для категории "GOAL"
+        if (formData.category === 'GOAL' && !hasGoal) {
             newErrors.category = 'Сначала создайте финансовую цель в разделе "ЦЕЛЬ"';
         }
 
@@ -86,7 +87,7 @@ function AddTransactionCard({ onTransactionCreated }) {
             setIsEditing(false);
             setFormData({
                 description: '',
-                category: 'ЕДА',
+                category: 'FOOD',
                 sum: '',
                 type: '0'
             });
@@ -156,13 +157,13 @@ function AddTransactionCard({ onTransactionCreated }) {
                                 isInvalid={!!errors.category}
                             >
                                 {categories[formData.type].map(cat => (
-                                    <option key={cat} value={cat}>{cat}</option>
+                                    <option key={cat} value={cat}>{getCategoryDisplayName(cat)}</option>
                                 ))}
                             </Form.Select>
                             <Form.Control.Feedback type="invalid">
                                 {errors.category}
                             </Form.Control.Feedback>
-                            {formData.category === 'ЦЕЛЬ' && !hasGoal && (
+                            {formData.category === 'GOAL' && !hasGoal && (
                                 <Form.Text className="text-warning">
                                     ⚠️ Для использования категории "ЦЕЛЬ" сначала создайте финансовую цель
                                 </Form.Text>

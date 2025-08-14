@@ -10,5 +10,4 @@
     <include file="v1-put-default-data.xml" relativeToChangelogFile="true"/>
 
 
-
 </databaseChangeLog>

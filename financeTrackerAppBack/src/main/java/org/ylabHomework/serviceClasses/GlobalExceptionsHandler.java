@@ -56,7 +56,7 @@ public class GlobalExceptionsHandler {
         return new ErrorResponse(ex.getMessage(), LocalDateTime.now());
     }
 
-    @ExceptionHandler({UserNotFoundException.class, TransactionNotFoundException.class, ValueNotFoundException.class})
+    @ExceptionHandler({UserNotFoundException.class, TransactionNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFoundException(RuntimeException ex) {
         return new ErrorResponse(ex.getMessage(), LocalDateTime.now());

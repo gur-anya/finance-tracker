@@ -1,4 +1,4 @@
-package org.ylabHomework.serviceClasses.springConfigs.security;
+package org.ylabHomework.serviceClasses.security;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package org.ylabHomework.serviceClasses.springConfigs.security;
+package org.ylabHomework.serviceClasses.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;

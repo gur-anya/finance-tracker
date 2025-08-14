@@ -1,4 +1,4 @@
-package org.ylabHomework.serviceClasses;
+package org.ylabHomework.serviceClasses.enums;
 
 public enum BudgetStatusEnum {
     OK,

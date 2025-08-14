@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.ylabHomework.DTOs.transactionStatisticsDTOs.*;
 import org.ylabHomework.repositories.TransactionRepository;
-import org.ylabHomework.serviceClasses.customExceptions.ValueNotFoundException;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -39,5 +38,3 @@ public class TransactionStatisticsService {
         return new ReportDTO(incomesGrouped, expensesGrouped);
     }
 }
-
-//TODO: понять, почему транзакции цели не влияют на цель; заинверсить баланс (старт=лимит, меньше 0 - плохо); понять почему доходы и расходы не вностся, использовать репорт

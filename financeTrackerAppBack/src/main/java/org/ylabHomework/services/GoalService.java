@@ -16,6 +16,7 @@ import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
 import org.ylabHomework.repositories.UserRepository;
 import org.ylabHomework.serviceClasses.customExceptions.UserNotFoundException;
+import org.ylabHomework.serviceClasses.enums.CategoryEnum;
 
 import java.math.BigDecimal;
 
@@ -63,12 +64,10 @@ public class GoalService {
     @Transactional
     public void clearGoalTransactions(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        String GOAL_CATEGORY = "ЦЕЛЬ";
-        transactionRepository.deleteByCategoryAndUserId(GOAL_CATEGORY, user.getId());
+        transactionRepository.deleteByCategoryAndUserId(CategoryEnum.GOAL, user.getId());
     }
 
-    public CheckGoalResponseDTO checkSavedToGoal(Long userId){
-        final BigDecimal HALF_OF_GOAL = BigDecimal.valueOf(50.0);
+    public CheckGoalResponseDTO checkSavedToGoal(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         BigDecimal savedForGoal = transactionRepository.checkSavedToGoal(user.getId())
             .orElse(BigDecimal.ZERO);

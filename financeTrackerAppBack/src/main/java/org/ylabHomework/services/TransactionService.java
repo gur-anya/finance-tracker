@@ -5,6 +5,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +22,13 @@ import org.ylabHomework.models.Transaction;
 import org.ylabHomework.models.User;
 import org.ylabHomework.repositories.TransactionRepository;
 import org.ylabHomework.repositories.UserRepository;
+import org.ylabHomework.serviceClasses.TransactionSpecification;
 import org.ylabHomework.serviceClasses.customExceptions.NoGoalException;
 import org.ylabHomework.serviceClasses.customExceptions.TransactionNotFoundException;
 import org.ylabHomework.serviceClasses.customExceptions.UserNotFoundException;
+import org.ylabHomework.serviceClasses.enums.CategoryEnum;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -44,30 +48,47 @@ public class TransactionService {
     private final TransactionMapper transactionMapper;
     private final GetAllTransactionsMapper getAllTransactionsMapper;
     private final ApplicationEventPublisher applicationEventPublisher;
-    private final String GOAL_CATEGORY = "ЦЕЛЬ";
 
     @Cacheable(cacheNames = "userTransactions")
-    public GetAllTransactionsResponseDTO getAllTransactionsByUser(Long userId) {
+    public GetAllTransactionsResponseDTO getAllTransactionsByUser(Long userId, Pageable pageable, FilterDTO filterDTO) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        List<Transaction> transactionsList = transactionRepository.findAllByUserId(user.getId());
-        return getAllTransactionsMapper.toDTO(transactionsList);
+        Specification<Transaction> spec = TransactionSpecification.hasUser(user);
+        if (filterDTO.getType() != null) {
+            spec = spec.and(TransactionSpecification.hasType(filterDTO.getType()));
+        }
+        if (filterDTO.getSumMoreThan() != null) {
+            spec = spec.and(TransactionSpecification.sumMoreThan(filterDTO.getSumMoreThan()));
+        }
+        if (filterDTO.getSumLessThan() != null) {
+            spec = spec.and(TransactionSpecification.sumLessThan(filterDTO.getSumLessThan()));
+        }
+        if (filterDTO.getStartTime() != null) {
+            spec = spec.and(TransactionSpecification.dateAfter(filterDTO.getStartTime()));
+        }
+        if (filterDTO.getEndTime() != null) {
+            spec = spec.and(TransactionSpecification.dateBefore(filterDTO.getEndTime()));
+        }
+        if (filterDTO.getCategory() != null) {
+            spec = spec.and(TransactionSpecification.hasCategory(filterDTO.getCategory()));
+        }
+        Page<Transaction> transactions = transactionRepository.findAll(spec, pageable);
+        return getAllTransactionsMapper.toDTO(transactions);
     }
 
     @CacheEvict(cacheNames = "userTransactions", key = "#userId")
     public CreateTransactionResponseDTO createTransaction(CreateTransactionRequestDTO transactionRequestDTO, Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        if (transactionRequestDTO.getCategory().trim().equalsIgnoreCase(GOAL_CATEGORY) && user.getGoalSum().equals(BigDecimal.ZERO) && user.getGoalName().isEmpty()) {
+        if (transactionRequestDTO.getCategory().equals(CategoryEnum.GOAL) && user.getGoalSum().equals(BigDecimal.ZERO) && user.getGoalName().isEmpty()) {
             throw new NoGoalException();
         }
-
 
 
         Transaction transaction = createTransactionMapper.toModel(transactionRequestDTO);
         transaction.setUser(user);
         transactionRepository.save(transaction);
 
-        if (transaction.getCategory().trim().equalsIgnoreCase(GOAL_CATEGORY)) {
+        if (transaction.getCategory().equals(CategoryEnum.GOAL)) {
             applicationEventPublisher.publishEvent(new GoalActionTransactionEvent(transaction, user.getId()));
         } else {
             applicationEventPublisher.publishEvent(new TransactionActionEvent(transaction, user.getId()));
@@ -90,9 +111,7 @@ public class TransactionService {
             transaction.setSum(requestDTO.getSum());
         }
         if (requestDTO.getCategory() != null) {
-            if (!requestDTO.getCategory().isBlank()) {
-                transaction.setCategory(requestDTO.getCategory().trim().toUpperCase());
-            }
+                transaction.setCategory(requestDTO.getCategory());
         }
         if (requestDTO.getDescription() != null) {
             transaction.setDescription(requestDTO.getDescription());
@@ -100,7 +119,7 @@ public class TransactionService {
         if (requestDTO.getType() != null) {
             transaction.setType(requestDTO.getType());
         }
-        if (transaction.getCategory().trim().equalsIgnoreCase(GOAL_CATEGORY)) {
+        if (transaction.getCategory().equals(CategoryEnum.GOAL)) {
             applicationEventPublisher.publishEvent(new GoalActionTransactionEvent(transaction, userId));
         } else {
             applicationEventPublisher.publishEvent(new TransactionActionEvent(transaction, userId));
@@ -117,7 +136,7 @@ public class TransactionService {
             throw new AccessDeniedException("Access to transaction denied");
         }
         transactionRepository.deleteById(transaction.getId());
-        if (transaction.getCategory().trim().equalsIgnoreCase(GOAL_CATEGORY)) {
+        if (transaction.getCategory().equals(CategoryEnum.GOAL)) {
             applicationEventPublisher.publishEvent(new GoalActionTransactionEvent(transaction, userId));
         } else {
             applicationEventPublisher.publishEvent(new TransactionActionEvent(transaction, userId));

@@ -1,3 +1,5 @@
+import { getCategoryEnglishName, getCategoryDisplayName } from '../utils/categoryMapper';
+
 const API_BASE_URL = '/api/v1';
 
 class ApiService {
@@ -90,8 +92,8 @@ class ApiService {
         });
         const result = await this.handleResponse(response);
         console.log('All transactions from backend:', result);
-        // API возвращает объект с полем transactions, а не массив напрямую
-        return result.transactions || [];
+        // API возвращает объект с полем transactions, которое содержит Page<TransactionDTO>
+        return result.transactions?.content || [];
     }
 
     async createTransaction(transactionData) {
@@ -109,10 +111,13 @@ class ApiService {
         // Преобразуем тип транзакции в enum
         const type = transactionData.type === 1 ? 'INCOME' : 'EXPENSE';
         
+        // Преобразуем русскую категорию в английскую для бэкенда
+        const englishCategory = getCategoryEnglishName(transactionData.category);
+        
         const requestData = {
             type: type,
             sum: transactionData.sum,
-            category: transactionData.category,
+            category: englishCategory,
             description: transactionData.description
         };
         
@@ -120,7 +125,7 @@ class ApiService {
         console.log('Request data:', requestData);
         
         try {
-            const response = await fetch(`${this.baseURL}/transactions/${user.id}`, {
+            const response = await fetch(`${this.baseURL}/transactions`, {
                 method: 'POST',
                 headers: this.getHeaders(),
                 body: JSON.stringify(requestData)
@@ -138,10 +143,13 @@ class ApiService {
         // Преобразуем тип транзакции в enum
         const type = transactionData.type === 1 ? 'INCOME' : 'EXPENSE';
         
+        // Преобразуем русскую категорию в английскую для бэкенда
+        const englishCategory = getCategoryEnglishName(transactionData.category);
+        
         const requestData = {
             type: type,
             sum: transactionData.sum,
-            category: transactionData.category,
+            category: englishCategory,
             description: transactionData.description
         };
         
@@ -161,13 +169,65 @@ class ApiService {
         return this.handleResponse(response);
     }
 
-    // Фильтрация транзакций (фейковый эндпоинт)
-    async filterTransactions(filters) {
-        // TODO: Заменить на реальный эндпоинт когда будет готов
-        console.log('Фильтрация транзакций:', filters);
-        // Временно возвращаем все транзакции
-        return this.getAllTransactions();
+    // Фильтрация транзакций с пагинацией
+    async getAllTransactionsWithFilters(filters = {}, page = 0, size = 10) {
+        const params = new URLSearchParams();
+        
+        // Добавляем параметры пагинации
+        params.append('page', page.toString());
+        params.append('size', size.toString());
+        
+        // Добавляем параметры фильтрации
+        if (filters.sumMoreThan) {
+            params.append('sumMoreThan', filters.sumMoreThan);
+        }
+        if (filters.sumLessThan) {
+            params.append('sumLessThan', filters.sumLessThan);
+        }
+        if (filters.category) {
+            params.append('category', filters.category);
+        }
+        if (filters.type) {
+            params.append('type', filters.type);
+        }
+        if (filters.startDate) {
+            // Преобразуем дату в формат ISO для Spring
+            const startDateTime = new Date(filters.startDate);
+            startDateTime.setHours(0, 0, 0, 0);
+            params.append('startTime', startDateTime.toISOString());
+        }
+        if (filters.endDate) {
+            // Преобразуем дату в формат ISO для Spring
+            const endDateTime = new Date(filters.endDate);
+            endDateTime.setHours(23, 59, 59, 999);
+            params.append('endTime', endDateTime.toISOString());
+        }
+        
+        const response = await fetch(`${this.baseURL}/transactions?${params.toString()}`, {
+            method: 'GET',
+            headers: this.getHeaders()
+        });
+        
+        const result = await this.handleResponse(response);
+        console.log('Filtered transactions response:', result);
+        
+        // Преобразуем английские категории в русские для отображения
+        const transactionsWithRussianCategories = (result.transactions.content || []).map(transaction => ({
+            ...transaction,
+            category: getCategoryDisplayName(transaction.category)
+        }));
+        
+        // Возвращаем объект с транзакциями и метаданными пагинации
+        return {
+            transactions: transactionsWithRussianCategories,
+            totalElements: result.transactions.totalElements || 0,
+            totalPages: result.transactions.totalPages || 0,
+            currentPage: result.transactions.number || 0,
+            pageSize: result.transactions.size || size
+        };
     }
+
+
 
     // Цели
     async getUserGoal() {

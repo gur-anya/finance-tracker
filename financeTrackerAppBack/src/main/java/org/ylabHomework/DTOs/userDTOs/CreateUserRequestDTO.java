@@ -12,15 +12,15 @@ import org.ylabHomework.serviceClasses.ValidPassword;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateUserRequestDTO {
-    @NotBlank(message = "Имя не должно быть пустым или состоять только из пробелов!")
-    @Size(min = 2, max = 50, message = "Имя должно содержать от 2 до 50 символов!")
+    @NotBlank(message = "Name must not be empty")
+    @Size(min = 2, max = 50, message = "Name must be between 2 and 50 characters long")
     String name;
-    @Email(message = "Введите корректный email.")
-    @NotBlank(message = "Поле email не должно быть пустым.")
+    @Email(message = "Incorrect email")
+    @NotBlank(message = "Email must not be empty")
     String email;
-    @NotBlank(message = "Пароль не должен быть пустым.")
-    @Size(min = 8, message = "Слишком короткий пароль!")
-    @Size(max = 128, message = "Слишком длинный пароль!")
+    @NotBlank(message = "Password must not be empty")
+    @Size(min = 8, message = "Password is too short")
+    @Size(max = 128, message = "Password is too long")
     @ValidPassword
     String password;
 }

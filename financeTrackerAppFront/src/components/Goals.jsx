@@ -26,7 +26,8 @@ function Goals({ onGoalChange, onGoalTransactionsCleared }) {
         setIsLoading(true);
         try {
             const response = await apiService.getUserGoal();
-            if (response.goalName && response.goalSum) {
+            console.log('Goal response:', response);
+            if (response && response.goalName && response.goalSum) {
                 // Преобразуем ответ бэкенда в формат фронтенда
                 setGoal({
                     title: response.goalName,

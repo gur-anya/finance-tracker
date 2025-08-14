@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ylabHomework.serviceClasses.enums.CategoryEnum;
 import org.ylabHomework.serviceClasses.enums.TypeEnum;
 
 import java.math.BigDecimal;
@@ -16,15 +17,13 @@ import java.math.BigDecimal;
 public class CreateTransactionRequestDTO {
     private TypeEnum type;
 
-    @NotNull(message = "Сумма не должна быть пустой!")
-    @Positive(message = "Сумма должна быть больше 0!")
-    @Digits(integer = 15, fraction = 2, message = "Сумма должна содержать не более 15 цифр до запятой и 2 после!")
+    @NotNull(message = "Sum must not be empty")
+    @Positive(message = "Sum must be greater than 0")
     private BigDecimal sum;
 
-    @NotBlank(message = "Категория не должна быть пустой или состоять только из пробелов!")
-    @Size(min = 2, max = 50, message = "Категория должна содержать от 2 до 50 символов!")
-    private String category;
+    @NotNull(message = "Category must not be empty")
+    private CategoryEnum category;
 
-    @Size(max = 200, message = "Описание не должно превышать 200 символов!")
+    @Size(max = 200, message = "Description must not have more than 200 symbols!")
     private String description;
 }

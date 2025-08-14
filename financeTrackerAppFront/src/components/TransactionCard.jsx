@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button, Modal, Alert, Form } from 'react-bootstrap';
+import { getExpenseCategories, getIncomeCategories, getCategoryDisplayName } from '../utils/categoryMapper';
 
 function TransactionCard({ id, type, timestamp, category, sum, description, onDelete, onEdit }) {
     // Функции должны быть объявлены в начале компонента
@@ -56,7 +57,7 @@ function TransactionCard({ id, type, timestamp, category, sum, description, onDe
         
         setEditForm({
             description: description,
-            category: availableCategories.includes(category) ? category : availableCategories[0] || 'ДРУГОЕ',
+            category: availableCategories.includes(category) ? category : availableCategories[0] || 'OTHER',
             sum: sum,
             type: typeKey
         });
@@ -92,7 +93,7 @@ function TransactionCard({ id, type, timestamp, category, sum, description, onDe
         
         setEditForm({
             description: description,
-            category: availableCategories.includes(category) ? category : availableCategories[0] || 'ДРУГОЕ',
+            category: availableCategories.includes(category) ? category : availableCategories[0] || 'OTHER',
             sum: sum,
             type: typeKey
         });
@@ -120,8 +121,8 @@ function TransactionCard({ id, type, timestamp, category, sum, description, onDe
     };
 
     const categories = {
-        '0': ['ЕДА', 'ТРАНСПОРТ', 'РАЗВЛЕЧЕНИЯ', 'ПОКУПКИ', 'ЗДОРОВЬЕ', 'ОБРАЗОВАНИЕ', 'ДОМ', 'ЦЕЛЬ', 'ДРУГОЕ'],
-        '1': ['ЗАРПЛАТА', 'ФРИЛАНС', 'ПОДАРКИ', 'ИНВЕСТИЦИИ', 'ПРОДАЖИ', 'ЦЕЛЬ', 'ДРУГОЕ']
+        '0': [...getExpenseCategories(), 'GOAL'],
+        '1': [...getIncomeCategories(), 'GOAL']
     };
 
     // Получаем доступные категории для текущего типа
@@ -191,7 +192,7 @@ function TransactionCard({ id, type, timestamp, category, sum, description, onDe
                                 onChange={handleEditChange}
                             >
                                 {availableCategories.map(cat => (
-                                    <option key={cat} value={cat}>{cat}</option>
+                                    <option key={cat} value={cat}>{getCategoryDisplayName(cat)}</option>
                                 ))}
                             </Form.Select>
                         </Form.Group>
