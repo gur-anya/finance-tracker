@@ -3,6 +3,7 @@ package org.ylabHomework.DTOs.transactionDTOs;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.ylabHomework.serviceClasses.enums.CategoryEnum;
 import org.ylabHomework.serviceClasses.enums.TypeEnum;
 
@@ -16,7 +17,12 @@ public class FilterDTO {
     private TypeEnum type;
     private BigDecimal sumMoreThan;
     private BigDecimal sumLessThan;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime startTime;
+
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     private LocalDateTime endTime;
+
     private CategoryEnum category;
 }

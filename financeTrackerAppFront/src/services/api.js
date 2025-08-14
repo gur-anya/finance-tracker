@@ -92,8 +92,8 @@ class ApiService {
         });
         const result = await this.handleResponse(response);
         console.log('All transactions from backend:', result);
-        // API возвращает объект с полем transactions, а не массив напрямую
-        return result.transactions || [];
+        // API возвращает объект с полем transactions, которое содержит Page<TransactionDTO>
+        return result.transactions?.content || [];
     }
 
     async createTransaction(transactionData) {
@@ -191,13 +191,13 @@ class ApiService {
             params.append('type', filters.type);
         }
         if (filters.startDate) {
-            // Преобразуем дату в формат ISO для backend
+            // Преобразуем дату в формат ISO для Spring
             const startDateTime = new Date(filters.startDate);
             startDateTime.setHours(0, 0, 0, 0);
             params.append('startTime', startDateTime.toISOString());
         }
         if (filters.endDate) {
-            // Преобразуем дату в формат ISO для backend
+            // Преобразуем дату в формат ISO для Spring
             const endDateTime = new Date(filters.endDate);
             endDateTime.setHours(23, 59, 59, 999);
             params.append('endTime', endDateTime.toISOString());
@@ -212,7 +212,7 @@ class ApiService {
         console.log('Filtered transactions response:', result);
         
         // Преобразуем английские категории в русские для отображения
-        const transactionsWithRussianCategories = (result.transactions || []).map(transaction => ({
+        const transactionsWithRussianCategories = (result.transactions.content || []).map(transaction => ({
             ...transaction,
             category: getCategoryDisplayName(transaction.category)
         }));
@@ -220,20 +220,14 @@ class ApiService {
         // Возвращаем объект с транзакциями и метаданными пагинации
         return {
             transactions: transactionsWithRussianCategories,
-            totalElements: result.totalElements || 0,
-            totalPages: result.totalPages || 0,
-            currentPage: result.currentPage || 0,
-            pageSize: result.pageSize || size
+            totalElements: result.transactions.totalElements || 0,
+            totalPages: result.transactions.totalPages || 0,
+            currentPage: result.transactions.number || 0,
+            pageSize: result.transactions.size || size
         };
     }
 
-    // Фильтрация транзакций (фейковый эндпоинт)
-    async filterTransactions(filters) {
-        // TODO: Заменить на реальный эндпоинт когда будет готов
-        console.log('Фильтрация транзакций:', filters);
-        // Временно возвращаем все транзакции
-        return this.getAllTransactions();
-    }
+
 
     // Цели
     async getUserGoal() {

@@ -6,7 +6,7 @@ import CreateTransactionModal from "../components/CreateTransactionModal.jsx";
 import TransactionFilters from "../components/TransactionFilters.jsx";
 import Stats from "../components/Stats.jsx";
 import Goals from "../components/Goals.jsx"; // Added Goals import
-import { Button, Alert, Spinner, Pagination } from 'react-bootstrap';
+import { Button, Alert, Spinner, Pagination, Form } from 'react-bootstrap';
 import apiService from '../services/api';
 
 function Main() {
@@ -100,34 +100,7 @@ function Main() {
         }
     };
 
-    const applyFilters = async () => {
-        if (filters.type === 'all' && filters.category === 'all') {
-            // Если фильтры не применены, показываем все транзакции
-            setFilteredTransactions(transactions);
-            return;
-        }
 
-        try {
-            // Используем фейковый эндпоинт для фильтрации
-            const response = await apiService.filterTransactions(filters);
-            // Теперь API возвращает массив транзакций напрямую
-            setFilteredTransactions(response || []);
-        } catch (error) {
-            console.error('Ошибка фильтрации:', error);
-            // В случае ошибки применяем фильтры локально
-            let filtered = [...transactions];
-            
-            if (filters.type !== 'all') {
-                filtered = filtered.filter(t => t.type.toString() === filters.type);
-            }
-            
-            if (filters.category !== 'all') {
-                filtered = filtered.filter(t => t.category === filters.category);
-            }
-            
-            setFilteredTransactions(filtered);
-        }
-    };
 
     // Новый обработчик для динамического удаления транзакций цели
     const handleGoalTransactionsCleared = () => {
@@ -212,13 +185,21 @@ function TransactionsList({
         <>
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h4>Транзакции ({paginationData.totalElements})</h4>
+                <Form.Select
+                    value={pageSize}
+                    onChange={(e) => onPageSizeChange(parseInt(e.target.value))}
+                    style={{ width: 'auto' }}
+                >
+                    <option value={10}>10</option>
+                    <option value={50}>50</option>
+                    <option value={100}>100</option>
+                </Form.Select>
             </div>
 
             {/* Новый компонент фильтров */}
             <TransactionFilters 
                 onFiltersChange={onFiltersChange}
-                onPageSizeChange={onPageSizeChange}
-                pageSize={pageSize}
+                appliedFilters={filters}
             />
 
             <div className="transactions-list">

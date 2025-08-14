@@ -52,7 +52,7 @@ public class TransactionService {
     @Cacheable(cacheNames = "userTransactions")
     public GetAllTransactionsResponseDTO getAllTransactionsByUser(Long userId, Pageable pageable, FilterDTO filterDTO) {
         User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-        Specification<Transaction> spec = Specification.where(null);
+        Specification<Transaction> spec = TransactionSpecification.hasUser(user);
         if (filterDTO.getType() != null) {
             spec = spec.and(TransactionSpecification.hasType(filterDTO.getType()));
         }
@@ -62,13 +62,16 @@ public class TransactionService {
         if (filterDTO.getSumLessThan() != null) {
             spec = spec.and(TransactionSpecification.sumLessThan(filterDTO.getSumLessThan()));
         }
-        if (filterDTO.getStartTime() != null && filterDTO.getEndTime() != null) {
-            spec = spec.and(TransactionSpecification.dateInPeriod(filterDTO.getStartTime(), filterDTO.getEndTime()));
+        if (filterDTO.getStartTime() != null) {
+            spec = spec.and(TransactionSpecification.dateAfter(filterDTO.getStartTime()));
+        }
+        if (filterDTO.getEndTime() != null) {
+            spec = spec.and(TransactionSpecification.dateBefore(filterDTO.getEndTime()));
         }
         if (filterDTO.getCategory() != null) {
             spec = spec.and(TransactionSpecification.hasCategory(filterDTO.getCategory()));
         }
-        Page<Transaction> transactions = transactionRepository.findAllByUserId(user.getId(), pageable, spec);
+        Page<Transaction> transactions = transactionRepository.findAll(spec, pageable);
         return getAllTransactionsMapper.toDTO(transactions);
     }
 
