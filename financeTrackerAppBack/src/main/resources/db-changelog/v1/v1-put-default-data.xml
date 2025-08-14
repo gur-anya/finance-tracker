@@ -55,4 +55,407 @@
         </insert>
     </changeSet>
 
+    <changeSet id="insert-50-test-transactions" author="Gureva Anna">
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="150.50"/>
+            <column name="category" value="FOOD"/>
+            <column name="description" value="test1"/>
+            <column name="timestamp" value="2025-06-01 10:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="5000.00"/>
+            <column name="category" value="FREELANCE"/>
+            <column name="description" value="test2"/>
+            <column name="timestamp" value="2025-06-01 14:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="320.00"/>
+            <column name="category" value="TRANSPORT"/>
+            <column name="description" value="test3"/>
+            <column name="timestamp" value="2025-06-02 08:30:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="1200.00"/>
+            <column name="category" value="SHOPPING"/>
+            <column name="description" value="test4"/>
+            <column name="timestamp" value="2025-06-02 18:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="100.00"/>
+            <column name="category" value="GIFT"/>
+            <column name="description" value="test5"/>
+            <column name="timestamp" value="2025-06-03 12:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="850.00"/>
+            <column name="category" value="ENTERTAINMENT"/>
+            <column name="description" value="test6"/>
+            <column name="timestamp" value="2025-06-03 20:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="55.00"/>
+            <column name="category" value="FOOD"/>
+            <column name="description" value="test7"/>
+            <column name="timestamp" value="2025-06-04 09:15:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="25000.00"/>
+            <column name="category" value="WAGE"/>
+            <column name="description" value="test8"/>
+            <column name="timestamp" value="2025-06-05 11:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="2500.00"/>
+            <column name="category" value="HEALTH"/>
+            <column name="description" value="test9"/>
+            <column name="timestamp" value="2025-06-05 16:30:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="750.00"/>
+            <column name="category" value="SALES"/>
+            <column name="description" value="test10"/>
+            <column name="timestamp" value="2025-06-06 13:45:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="4500.00"/>
+            <column name="category" value="EDUCATION"/>
+            <column name="description" value="test11"/>
+            <column name="timestamp" value="2025-06-07 10:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="1800.00"/>
+            <column name="category" value="HOME"/>
+            <column name="description" value="test12"/>
+            <column name="timestamp" value="2025-06-08 15:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="3000.00"/>
+            <column name="category" value="INVESTMENT"/>
+            <column name="description" value="test13"/>
+            <column name="timestamp" value="2025-06-09 17:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="220.00"/>
+            <column name="category" value="OTHER"/>
+            <column name="description" value="test14"/>
+            <column name="timestamp" value="2025-06-10 11:30:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="500.00"/>
+            <column name="category" value="GOAL"/>
+            <column name="description" value="test15"/>
+            <column name="timestamp" value="2025-06-11 19:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="175.25"/>
+            <column name="category" value="TRANSPORT"/>
+            <column name="description" value="test16"/>
+            <column name="timestamp" value="2025-06-12 08:45:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="999.00"/>
+            <column name="category" value="SHOPPING"/>
+            <column name="description" value="test17"/>
+            <column name="timestamp" value="2025-06-12 14:20:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="8000.00"/>
+            <column name="category" value="FREELANCE"/>
+            <column name="description" value="test18"/>
+            <column name="timestamp" value="2025-06-13 18:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="450.00"/>
+            <column name="category" value="FOOD"/>
+            <column name="description" value="test19"/>
+            <column name="timestamp" value="2025-06-14 13:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="1500.00"/>
+            <column name="category" value="ENTERTAINMENT"/>
+            <column name="description" value="test20"/>
+            <column name="timestamp" value="2025-06-14 21:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="250.00"/>
+            <column name="category" value="GIFT"/>
+            <column name="description" value="test21"/>
+            <column name="timestamp" value="2025-06-15 10:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="3200.00"/>
+            <column name="category" value="HEALTH"/>
+            <column name="description" value="test22"/>
+            <column name="timestamp" value="2025-06-16 15:30:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="25000.00"/>
+            <column name="category" value="WAGE"/>
+            <column name="description" value="test23"/>
+            <column name="timestamp" value="2025-06-17 11:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="780.00"/>
+            <column name="category" value="HOME"/>
+            <column name="description" value="test24"/>
+            <column name="timestamp" value="2025-06-18 19:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="1200.00"/>
+            <column name="category" value="SALES"/>
+            <column name="description" value="test25"/>
+            <column name="timestamp" value="2025-06-19 12:30:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="6000.00"/>
+            <column name="category" value="EDUCATION"/>
+            <column name="description" value="test26"/>
+            <column name="timestamp" value="2025-07-01 10:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="50.00"/>
+            <column name="category" value="OTHER"/>
+            <column name="description" value="test27"/>
+            <column name="timestamp" value="2025-07-02 14:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="80.00"/>
+            <column name="category" value="TRANSPORT"/>
+            <column name="description" value="test28"/>
+            <column name="timestamp" value="2025-07-03 09:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="1500.00"/>
+            <column name="category" value="INVESTMENT"/>
+            <column name="description" value="test29"/>
+            <column name="timestamp" value="2025-07-04 18:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="2000.00"/>
+            <column name="category" value="GOAL"/>
+            <column name="description" value="test30"/>
+            <column name="timestamp" value="2025-07-05 12:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="330.00"/>
+            <column name="category" value="FOOD"/>
+            <column name="description" value="test31"/>
+            <column name="timestamp" value="2025-07-06 10:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="6000.00"/>
+            <column name="category" value="FREELANCE"/>
+            <column name="description" value="test32"/>
+            <column name="timestamp" value="2025-07-07 14:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="400.00"/>
+            <column name="category" value="TRANSPORT"/>
+            <column name="description" value="test33"/>
+            <column name="timestamp" value="2025-07-08 08:30:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="1500.00"/>
+            <column name="category" value="SHOPPING"/>
+            <column name="description" value="test34"/>
+            <column name="timestamp" value="2025-07-09 18:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="200.00"/>
+            <column name="category" value="GIFT"/>
+            <column name="description" value="test35"/>
+            <column name="timestamp" value="2025-07-10 12:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="950.00"/>
+            <column name="category" value="ENTERTAINMENT"/>
+            <column name="description" value="test36"/>
+            <column name="timestamp" value="2025-07-11 20:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="65.00"/>
+            <column name="category" value="FOOD"/>
+            <column name="description" value="test37"/>
+            <column name="timestamp" value="2025-07-12 09:15:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="25000.00"/>
+            <column name="category" value="WAGE"/>
+            <column name="description" value="test38"/>
+            <column name="timestamp" value="2025-07-13 11:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="2800.00"/>
+            <column name="category" value="HEALTH"/>
+            <column name="description" value="test39"/>
+            <column name="timestamp" value="2025-07-14 16:30:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="850.00"/>
+            <column name="category" value="SALES"/>
+            <column name="description" value="test40"/>
+            <column name="timestamp" value="2025-07-15 13:45:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="4800.00"/>
+            <column name="category" value="EDUCATION"/>
+            <column name="description" value="test41"/>
+            <column name="timestamp" value="2025-07-16 10:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="2100.00"/>
+            <column name="category" value="HOME"/>
+            <column name="description" value="test42"/>
+            <column name="timestamp" value="2025-07-17 15:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="3500.00"/>
+            <column name="category" value="INVESTMENT"/>
+            <column name="description" value="test43"/>
+            <column name="timestamp" value="2025-07-18 17:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="300.00"/>
+            <column name="category" value="OTHER"/>
+            <column name="description" value="test44"/>
+            <column name="timestamp" value="2025-07-19 11:30:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="600.00"/>
+            <column name="category" value="GOAL"/>
+            <column name="description" value="test45"/>
+            <column name="timestamp" value="2025-07-20 19:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="190.75"/>
+            <column name="category" value="TRANSPORT"/>
+            <column name="description" value="test46"/>
+            <column name="timestamp" value="2025-07-21 08:45:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="1100.00"/>
+            <column name="category" value="SHOPPING"/>
+            <column name="description" value="test47"/>
+            <column name="timestamp" value="2025-07-22 14:20:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="INCOME"/>
+            <column name="sum" valueNumeric="9000.00"/>
+            <column name="category" value="FREELANCE"/>
+            <column name="description" value="test48"/>
+            <column name="timestamp" value="2025-07-23 18:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="550.00"/>
+            <column name="category" value="FOOD"/>
+            <column name="description" value="test49"/>
+            <column name="timestamp" value="2025-07-24 13:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+        <insert schemaName="main" tableName="transactions">
+            <column name="type" value="EXPENSE"/>
+            <column name="sum" valueNumeric="1800.00"/>
+            <column name="category" value="ENTERTAINMENT"/>
+            <column name="description" value="test50"/>
+            <column name="timestamp" value="2025-07-25 21:00:00"/>
+            <column name="user_id" valueComputed="(SELECT id FROM main.users WHERE email = 'test@example.com')"/>
+        </insert>
+    </changeSet>
+
 </databaseChangeLog>
