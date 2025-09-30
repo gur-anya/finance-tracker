@@ -4,22 +4,25 @@ WORKDIR /app
 
 COPY pom.xml .
 
-COPY financeTrackerAppBack/pom.xml ./financeTrackerAppBack/
+COPY commonDTOs/pom.xml ./commonDTOs/
 COPY auditionStarter/pom.xml ./auditionStarter/
 COPY loggingStarter/pom.xml ./loggingStarter/
+COPY financeTrackerAppBack/pom.xml ./financeTrackerAppBack/
 
 RUN mvn dependency:go-offline
 
-COPY financeTrackerAppBack/src ./financeTrackerAppBack/src
-COPY auditionStarter/src ./auditionStarter/src
-COPY loggingStarter/src ./loggingStarter/src
+COPY commonDTOs/src ./commonDTOs/src/
+COPY auditionStarter/src ./auditionStarter/src/
+COPY loggingStarter/src ./loggingStarter/src/
+COPY financeTrackerAppBack/src ./financeTrackerAppBack/src/
 
 RUN mvn clean install -DskipTests
 
 
 FROM eclipse-temurin:17-jre-jammy
+
 WORKDIR /app
 
-COPY --from=builder /app/financeTrackerAppBack/target/financeTrackerAppBack-1.0-SNAPSHOT.jar /app/financeTracker.jar
+COPY --from=builder /app/financeTrackerAppBack/target/*.jar ./financeTrackerAppBack.jar
 
-ENTRYPOINT ["java", "-jar", "/app/financeTracker.jar"]
+ENTRYPOINT ["java", "-jar", "./financeTrackerAppBack.jar"]

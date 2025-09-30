@@ -1,8 +1,8 @@
 package org.anyatasks.notifier.eventHandlers;
 
 import lombok.RequiredArgsConstructor;
-import org.anyatasks.notifier.dtos.Event;
-import org.anyatasks.notifier.dtos.UserRegisteredEvent;
+import org.anyaTasks.DTOs.Event;
+import org.anyaTasks.DTOs.UserRegisteredEvent;
 import org.anyatasks.notifier.services.EmailSendingService;
 import org.springframework.stereotype.Component;
 

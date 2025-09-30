@@ -1,4 +1,31 @@
 services:
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    hostname: kafka
+    container_name: kafka
+    ports:
+      - "9092:9092"
+      - "9094:9094"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:9093'
+      KAFKA_LISTENERS: 'LISTENER_INTERNAL://0.0.0.0:9092,LISTENER_EXTERNAL://0.0.0.0:9094,CONTROLLER://kafka:9093'
+      # LISTENER_INTERNAL - для общения внутри Docker-сети по имени сервиса
+      # LISTENER_EXTERNAL - для общения с снаружи по localhost
+      KAFKA_ADVERTISED_LISTENERS: 'LISTENER_INTERNAL://kafka:9092,LISTENER_EXTERNAL://localhost:9094'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,LISTENER_INTERNAL:PLAINTEXT,LISTENER_EXTERNAL:PLAINTEXT'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'LISTENER_INTERNAL'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      CLUSTER_ID: 'vYRTa1vJSYuYULk2qxV4xQ'
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - app-network
+
   backend:
     build:
       context: .
@@ -7,6 +34,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://tracker_app_database:5432/tracker_app_database
       - SPRING_DATASOURCE_USERNAME=${POSTGRES_USER}
       - SPRING_DATASOURCE_PASSWORD=${POSTGRES_PASSWORD}
+      - SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVER=kafka:9092
       - FRONTEND_URL=http://localhost:5173
       - JWT_SECRET=${JWT_SECRET}
       - REDIS_HOST=redis
@@ -15,8 +43,26 @@ services:
     depends_on:
       - tracker_app_database
       - redis
+      - kafka
     ports:
       - "8080:8080"
+    networks:
+      - app-network
+
+  notifier:
+    build:
+      context: .
+      dockerfile: /notifier/Dockerfile
+    environment:
+      - NOTIFIER_HOST=${NOTIFIER_HOST}
+      - NOTIFIER_PORT=${NOTIFIER_PORT}
+      - NOTIFIER_USERNAME=${NOTIFIER_USERNAME}
+      - NOTIFIER_PASSWORD=${NOTIFIER_PASSWORD}
+      - SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVER=kafka:9092
+    depends_on:
+      - kafka
+    networks:
+      - app-network
 
   frontend:
     build: financeTrackerAppFront
@@ -26,15 +72,19 @@ services:
       - VITE_API_URL=http://backend:8080
     depends_on:
       - backend
+    networks:
+      - app-network
 
   redis:
     image: redis:8.2.0
     command: --requirepass ${REDIS_PASSWORD}
     ports:
       - "6379:6379"
+    networks:
+      - app-network
 
   tracker_app_database:
-    image: postgres
+    image: postgres:17
     restart: always
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -45,5 +95,13 @@ services:
       - ./db-init-scripts:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
+    networks:
+      - app-network
+
 volumes:
   postgres_data:
+  kafka_data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -3,6 +3,8 @@ package org.ylabHomework.services;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.anyaTasks.DTOs.Event;
+import org.anyaTasks.DTOs.UserRegisteredEvent;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -30,7 +32,9 @@ import org.ylabHomework.serviceClasses.enums.RoleEnum;
 import org.ylabHomework.serviceClasses.security.UserDetailsImpl;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Сервис для работы с сущностью User.
@@ -49,6 +53,7 @@ public class UserService implements UserDetailsService {
     private final CreateUserMapper createUserMapper;
     private final UpdateUserMapper updateUserMapper;
     private final GetAllUsersMapper getAllUsersMapper;
+    private final KafkaProducer kafkaProducer;
 
 
     @Override
@@ -86,6 +91,7 @@ public class UserService implements UserDetailsService {
         newUser.setBudgetNotificationStatus(BudgetNotificationStatus.NOT_NOTIFIED);
         userRepository.save(newUser);
         UserDTO userDTO = userMapper.toDTO(newUser);
+        publishInKafka(userDTO.getId(), userDTO.getName(), userDTO.getEmail());
         return new CreateUserResponseDTO(userDTO);
     }
 
@@ -147,5 +153,17 @@ public class UserService implements UserDetailsService {
         return email.toLowerCase().trim();
     }
 
+    private void publishInKafka(Long userId, String username, String email){
+        Event<UserRegisteredEvent> event = new Event<>(UUID.randomUUID(), "user.successful-registration", Instant.now());
+        UserRegisteredEvent userEventData = new UserRegisteredEvent(userId, username, email);
+        event.setEventData(userEventData);
+        try {
+            kafkaProducer.publish("user.successful-registration", userId.toString(), event);
+        } catch (Exception e) {
+            log.error("CRITICAL: User {} was saved to DB, but failed to publish registration event to Kafka.", userId, e);
+            // (!): Transactional Outbox
+        }
+
+    }
 }
 

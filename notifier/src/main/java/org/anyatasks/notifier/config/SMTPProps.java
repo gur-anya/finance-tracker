@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:application.properties")
+@PropertySource("classpath:application.yaml")
 @ConfigurationProperties(prefix = "spring.mail")
 @Data
 public class SMTPProps {

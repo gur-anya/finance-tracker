@@ -13,9 +13,22 @@ spring:
       host: ${REDIS_HOST}
       password: ${REDIS_PASSWORD}
 
+  kafka:
+    producer:
+      bootstrap-servers: ${SPRING_KAFKA_PRODUCER_BOOTSTRAP_SERVER}
+      #гарантия доставки (подтверждение ото всех реплик)
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      #идемпотентность
+      properties:
+        enable.idempotence: true
+        spring.json.type.mappings: user.registered.event.v1:org.anyaTasks.DTOs.Event
+
 jwt:
   secret: ${JWT_SECRET}
   expiration: 2592000000
 
 frontend:
   url: ${FRONTED_URL}
+

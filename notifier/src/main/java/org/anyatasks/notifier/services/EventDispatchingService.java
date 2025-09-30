@@ -1,7 +1,7 @@
 package org.anyatasks.notifier.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.anyatasks.notifier.dtos.Event;
+import org.anyaTasks.DTOs.Event;
 import org.anyatasks.notifier.eventHandlers.EventHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

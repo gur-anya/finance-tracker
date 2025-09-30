@@ -11,6 +11,7 @@
         <module>auditionStarter</module>
         <module>financeTrackerAppBack</module>
         <module>loggingStarter</module>
+        <module>commonDTOs</module>
     </modules>
     <properties>
         <spring-boot.ver>3.2.0</spring-boot.ver>
