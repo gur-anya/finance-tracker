@@ -42,7 +42,7 @@ public class User {
     private RoleEnum role;
     private boolean isActive;
     private BigDecimal budgetLimit;
-    private String goalName; //todo возможно, вынести цель
+    private String goalName;
     private BigDecimal goalSum;
     @Enumerated(EnumType.STRING)
     private BudgetNotificationStatus budgetNotificationStatus;
@@ -63,4 +63,16 @@ public class User {
         return hash(this.email, this.name, this.password);
     }
 
+    public User(String name, String email, String password, RoleEnum role, boolean isActive,
+                BigDecimal budgetLimit, String goalName, BigDecimal goalSum, BudgetNotificationStatus budgetNotificationStatus) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.isActive = isActive;
+        this.budgetLimit = budgetLimit;
+        this.goalName = goalName;
+        this.goalSum = goalSum;
+        this.budgetNotificationStatus = budgetNotificationStatus;
+    }
 }

@@ -59,4 +59,13 @@ public class Transaction {
     public int hashCode() {
         return Objects.hash(id, type, sum, category, description, user);
     }
+
+    public Transaction(TypeEnum type, BigDecimal sum, CategoryEnum category, String description, User user, LocalDateTime timestamp) {
+        this.type = type;
+        this.sum = sum;
+        this.category = category;
+        this.description = description;
+        this.user = user;
+        this.timestamp = timestamp;
+    }
 }
