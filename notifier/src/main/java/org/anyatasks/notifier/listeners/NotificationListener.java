@@ -1,9 +1,10 @@
-package org.anyatasks.notifier.services;
+package org.anyatasks.notifier.listeners;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.anyaTasks.DTOs.Event;
 import org.anyaTasks.DTOs.UserRegisteredEvent;
+import org.anyatasks.notifier.services.EventDispatchingService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 

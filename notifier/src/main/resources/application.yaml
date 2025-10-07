@@ -21,3 +21,12 @@ spring:
         spring.json.trusted.packages: "org.anyaTasks.DTOs"
         spring.json.use.type.headers: true
         spring.json.type.mappings: user.registered.event.v1:org.anyaTasks.DTOs.Event
+      enable-auto-commit: false
+    #dlq-продюсер
+    producer:
+      bootstrap-servers: ${SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVER}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    dlq:
+      topic: "user.successful-registration.dlq"
