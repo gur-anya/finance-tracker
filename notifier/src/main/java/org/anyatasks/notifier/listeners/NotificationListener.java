@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class NotificationListener {
     private final EventDispatchingService eventDispatchingService;
 
-    @KafkaListener(topics = "user.successful-registration", groupId = "notification-service-group")
+    @KafkaListener(topics = "${spring.kafka.consumer.topic}", groupId = "${spring.kafka.consumer.group-id}")
     public void listen(Event<UserRegisteredEvent> event) {
         log.info("SUCCESSFULLY DESERIALIZED EVENT: {}", event);
 
