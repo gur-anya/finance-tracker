@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: notifier
+
+
+  mail:
+    protocol: smtps
+    host: ${NOTIFIER_HOST}
+    port: ${NOTIFIER_PORT}
+    username: ${NOTIFIER_USERNAME}
+    password: ${NOTIFIER_PASSWORD}
+
+  kafka:
+    consumer:
+      bootstrap-servers: ${SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVER}
+      topic: "user.successful-registration"
+      group-id: notification-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "org.anyaTasks.DTOs"
+        spring.json.use.type.headers: true
+        spring.json.type.mappings: user.registered.event.v1:org.anyaTasks.DTOs.Event
+      enable-auto-commit: false
+    #dlq-продюсер
+    producer:
+      bootstrap-servers: ${SPRING_KAFKA_CONSUMER_BOOTSTRAP_SERVER}
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
+    dlq:
+      topic: "user.successful-registration.dlq"
